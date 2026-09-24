@@ -45,5 +45,18 @@ public class DanhSachMau implements IQuanLy {
         }
     }
     
-    // Các hàm nhap(), xuat(), sua() tự viết logic tương tự...
+    @Override
+    public void nhap() {
+        // TODO: Viết logic vòng lặp nhập danh sách (gọi từ TienIch)
+    }
+
+    @Override
+    public void xuat() {
+        // TODO: Viết logic vòng lặp in danh sách ra màn hình
+    }
+
+    @Override
+    public void sua(String ma) {
+        // TODO: Viết logic tìm kiếm vị trí theo mã (giống hàm xóa) rồi set lại dữ liệu
+    }
 }
