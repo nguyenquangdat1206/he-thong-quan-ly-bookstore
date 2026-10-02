@@ -1,11 +1,15 @@
+package model.utils;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import model.interfaces.IGetMa; // Bắt buộc import để dùng đa hình
 
 public class TienIch {
-    private static Scanner sc = new Scanner(System.in);
-    // Khai báo một bộ định dạng chuẩn dùng chung cho tất cả các hàm
-    private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    public static Scanner sc = new Scanner(System.in);
+    // Dùng formatter chuẩn của LocalDate thay cho SimpleDateFormat
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     // 1. Nhập chuỗi chống rỗng
     public static String nhapChuoi(String thongBao) {
@@ -39,8 +43,8 @@ public class TienIch {
         return so;
     }
 
-    // 3. Nhập số thực dương (Dành cho Giá tiền/Đơn giá)
-    public static double nhapSoThucDuong(String thongBao) {
+    // 3. Nhập Giá tiền (Đã đổi tên từ nhapSoThucDuong để đồng bộ với các class MatHang)
+    public static double nhapGiaTien(String thongBao) {
         double so = 0;
         while (true) {
             try {
@@ -89,35 +93,59 @@ public class TienIch {
         return sdt;
     }
 
-    // 6. Nhập ngày tháng năm chuẩn xác (Dùng khi nhập liệu từ bàn phím)
-    public static Date nhapNgay(String thongBao) {
-        sdf.setLenient(false); // Chống nhập ngày ảo như 32/13/2026
+    // ================= CÁC HÀM XỬ LÝ NGÀY THÁNG =================
+
+    // 6. Nhập ngày (Đã đồng bộ sang LocalDate cho khớp với PhieuNhap)
+    public static LocalDate nhapNgay(String thongBao) {
+        String input;
         while (true) {
+            input = nhapChuoi(thongBao + " (dd/MM/yyyy): ");
+            if (input.isEmpty()) return null;
             try {
-                System.out.print(thongBao + " (dd/MM/yyyy): ");
-                return sdf.parse(sc.nextLine().trim());
-            } catch (Exception e) {
-                System.out.println("LỖI: Sai định dạng hoặc ngày không tồn tại! Hãy nhập lại.");
+                return LocalDate.parse(input, formatter);
+            } catch (DateTimeParseException e) {
+                System.out.println("LỖI! Vui lòng nhập đúng định dạng ngày tháng dd/MM/yyyy.");
             }
         }
     }
 
-    // ================= CÁC HÀM HỖ TRỢ ĐỌC / GHI FILE =================
-
-    // 7. Chuyển Date thành String (Dùng để nén thành chuỗi trước khi GHI xuống file .txt)
-    public static String chuyenNgaySangChuoi(Date date) {
-        if (date == null) return "";
-        return sdf.format(date); // Output: "24/09/2026"
+    // 7. Chuyển LocalDate thành String (Dùng để in ra màn hình hoặc ghi file)
+    public static String chuyenNgaySangChuoi(LocalDate ngay) {
+        if (ngay == null) return "";
+        return ngay.format(formatter);
+    }
+    
+    // Alias dự phòng (nếu có thành viên nào lỡ gọi hàm ngaytoString)
+    public static String ngaytoString(LocalDate ngay) {
+        return chuyenNgaySangChuoi(ngay);
     }
 
-    // 8. Chuyển String thành Date (Dùng để dịch ngược lại khi ĐỌC từ file .txt lên)
-    public static Date chuyenChuoiSangNgay(String str) {
-        try {
-            sdf.setLenient(false);
-            return sdf.parse(str);
-        } catch (Exception e) {
-            System.out.println("CẢNH BÁO: Lỗi đọc dữ liệu ngày tháng từ file text!");
-            return null; 
+    // ================= CÁC HÀM XỬ LÝ MẢNG CHUNG (TÍNH ĐA HÌNH) =================
+
+    // 8. Tìm kiếm vị trí siêu việt (Dùng Interface IGetMa để tìm được mọi loại mảng)
+    public static int timKiemViTri(IGetMa[] ds, int soLuong, String maCanTim) {
+        if (ds == null || maCanTim == null || maCanTim.trim().isEmpty()) {
+            return -1;
         }
+        for (int i = 0; i < soLuong; i++) {
+            if (ds[i] != null && ds[i].getMa().equalsIgnoreCase(maCanTim.trim())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    // 9. Bắt buộc nhập mã không được trùng lặp
+    public static String nhapMa(IGetMa[] ds, int soLuong, String thongBao) {
+        String ma;
+        while (true) {
+            ma = nhapChuoi(thongBao);
+            if (timKiemViTri(ds, soLuong, ma) != -1) {
+                System.out.println("LỖI: Mã này đã tồn tại trong hệ thống! Vui lòng nhập mã khác.");
+            } else {
+                break;
+            }
+        }
+        return ma;
     }
 }

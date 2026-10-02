@@ -1,3 +1,4 @@
+package model.interfaces;
 public interface IQuanLy {
     void nhap();
     void xuat();

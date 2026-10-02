@@ -1,4 +1,7 @@
 // ĐÂY LÀ CODE MẪU CHO CÁC BẠN LÀM CLASS DANH SÁCH (COPY VÀ SỬA TÊN CLASS)
+
+import model.interfaces.IQuanLy;
+
 public class DanhSachMau implements IQuanLy {
     private Object[] ds; // Đổi Object thành MatHang, NhanVien, HoaDon... tùy người làm
     private int soLuong;
