@@ -46,6 +46,15 @@ public class DanhSachMatHang implements IQuanLy, IFileIO {
         }
         return false;
     }
+    
+    // Cầu nối cho phép Phiếu Nhập và Hóa Đơn lấy đối tượng MatHang theo Mã
+    public MatHang timKiemMatHang(String ma) {
+        int viTri = TienIch.timKiemViTri(ds, soLuong, ma);
+        if (viTri != -1) {
+            return ds[viTri];
+        }
+        return null;
+    }
 
     // ================= 2. CÁC HÀM ĐỌC / GHI FILE =================
 
@@ -100,7 +109,6 @@ public class DanhSachMatHang implements IQuanLy, IFileIO {
                     default: themMatHangVaoMang(new Khac(ma, ten, gianhap, sl, phan[5].trim())); break;
                 }
             }
-            System.out.println(">>> ĐÃ TẢI DỮ LIỆU HÀNG HÓA TỪ FILE THÀNH CÔNG!");
         } catch (Exception e) {
             System.out.println("LỖI đọc file hàng hóa: " + e.getMessage());
         }
@@ -115,7 +123,7 @@ public class DanhSachMatHang implements IQuanLy, IFileIO {
 
     @Override
     public void nhap() {
-        them(); // Gọi thẳng hàm thêm cho tiện
+        them(); 
     }
 
     @Override
@@ -131,7 +139,6 @@ public class DanhSachMatHang implements IQuanLy, IFileIO {
         }
     }
 
-    @Override
     public void them() {
         System.out.println("\n--- CHỌN LOẠI MẶT HÀNG CẦN THÊM ---");
         System.out.println("1. Sách | 2. Vở | 3. Đồ chơi | 4. Dụng cụ học tập | 5. Khác");
@@ -148,7 +155,7 @@ public class DanhSachMatHang implements IQuanLy, IFileIO {
         
         if (mh != null) {
             System.out.println("--- Mời nhập thông tin chi tiết ---");
-            mh.nhap(); // Sẽ gọi hàm nhap() của class con tương ứng
+            mh.nhap(); 
             themMatHangVaoMang(mh);
             System.out.println(">>> ĐÃ THÊM MẶT HÀNG MỚI VÀO KỆ THÀNH CÔNG!");
         }
@@ -160,7 +167,7 @@ public class DanhSachMatHang implements IQuanLy, IFileIO {
             return;
         }
         String maSua = TienIch.nhapChuoi("Nhập mã mặt hàng cần sửa: ");
-        sua(maSua); // Trỏ xuống hàm sửa có tham số bên dưới
+        sua(maSua); 
     }
 
     @Override
@@ -172,7 +179,7 @@ public class DanhSachMatHang implements IQuanLy, IFileIO {
             System.out.println("--- THÔNG TIN HIỆN TẠI ---");
             ds[viTri].xuat();
             System.out.println("--- MỜI NHẬP THÔNG TIN MỚI ---");
-            ds[viTri].nhap(); // Gọi hàm nhập để ghi đè dữ liệu mới
+            ds[viTri].nhap(); 
             System.out.println(">>> CẬP NHẬT MẶT HÀNG THÀNH CÔNG!");
         }
     }
@@ -183,7 +190,7 @@ public class DanhSachMatHang implements IQuanLy, IFileIO {
             return;
         }
         String maXoa = TienIch.nhapChuoi("Nhập mã mặt hàng cần xóa: ");
-        xoa(maXoa); // Trỏ xuống hàm xóa có tham số bên dưới
+        xoa(maXoa);
     }
 
     @Override
@@ -192,11 +199,10 @@ public class DanhSachMatHang implements IQuanLy, IFileIO {
         if (viTri == -1) {
             System.out.println("LỖI: Không tìm thấy mặt hàng nào có mã: " + ma);
         } else {
-            // Dồn mảng để xóa phần tử
             for (int i = viTri; i < soLuong - 1; i++) {
                 ds[i] = ds[i + 1];
             }
-            ds[soLuong - 1] = null; // Hủy ô thừa ở cuối
+            ds[soLuong - 1] = null; 
             soLuong--;
             System.out.println(">>> ĐÃ XÓA HOÀN TOÀN MẶT HÀNG CÓ MÃ: " + ma);
         }

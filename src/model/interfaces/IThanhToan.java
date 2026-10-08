@@ -1,4 +1,5 @@
 package model.interfaces;
-public interface ThanhToan {
+
+public interface IThanhToan {
     boolean xuLyThanhToan(double soTien);
 }

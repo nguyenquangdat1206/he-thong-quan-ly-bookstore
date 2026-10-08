@@ -3,6 +3,7 @@ package model.kho;
 import model.interfaces.IFileIO;
 import model.interfaces.IQuanLy;
 import model.mathang.DanhSachMatHang;
+import model.mathang.MatHang;
 import model.utils.TienIch;
 
 public class Kho implements IQuanLy, IFileIO {
@@ -15,84 +16,110 @@ public class Kho implements IQuanLy, IFileIO {
         soLuongPN = 0;
     }
 
-    // Lấy tổng sức chứa (Cho Thành viên 5 gọi khi ráp main)
     public int getSucChuaToiDa() {
         return SUC_CHUA_TOI_DA;
     }
 
-    // Giao tiếp với mảng DanhSachMatHang để kiểm tra và cộng dồn số lượng
-    public boolean nhapHangTuPhieu(PhieuNhap pn, DanhSachMatHang dsMatHang) {
-        if (pn == null || dsMatHang == null) return false;
-        
-        // 1. Kiểm tra sức chứa (Tổng hàng hiện có + Hàng chuẩn bị nhập)
-        int tongHienTai = dsMatHang.getTongSoLuongTonToanHeThong();
-        int soLuongCanNhap = 0;
-        for (int i = 0; i < pn.getSoLuongCT(); i++) {
-            soLuongCanNhap += pn.getChiTiet()[i].getSoLuong();
-        }
-        
-        if (tongHienTai + soLuongCanNhap > SUC_CHUA_TOI_DA) {
-            System.out.println("LỖI: Kho không đủ chỗ trống để nhập thêm " + soLuongCanNhap + " sản phẩm!");
-            return false;
-        }
-
-        // 2. Chọc sang mảng Mặt Hàng để cộng dồn số lượng
-        for (int i = 0; i < pn.getSoLuongCT(); i++) {
-            ChiTietPhieuNhap ct = pn.getChiTiet()[i];
-            // Gọi hàm tangSoLuongTon (Thành viên 2 phải viết hàm này trong DanhSachMatHang)
-            dsMatHang.tangSoLuongTon(ct.getMatHang().getMa(), ct.getSoLuong());
-        }
-        System.out.println("Đã bơm hàng vào kho thành công từ phiếu: " + pn.getMa());
-        return true;
-    }
-
+    @Override
     public void nhap() {
-        int n = TienIch.nhapSoNguyenDuong("Nhập số lượng phiếu nhập thêm: ");
-        for (int i = 0; i < n; i++) {
-            System.out.println("====== Nhập phiếu thứ " + (i + 1) + " ======");
-            them();
-        }
+        System.out.println("Sử dụng tính năng Lập phiếu nhập ở Menu để thao tác.");
     }
 
+    @Override
     public void xuat() {
         if (soLuongPN == 0) {
             System.out.println("Danh sách phiếu nhập đang trống!");
             return;
         }
-        System.out.println("\n====== DANH SÁCH LỊCH SỬ PHIẾU NHẬP ======");
+        System.out.println("\n================ LỊCH SỬ PHIẾU NHẬP ================");
         for (int i = 0; i < soLuongPN; i++) {
-            PhieuNhap pn = dsPN[i];
-            System.out.printf("Mã Phiếu: %-10s | Ngày: %-15s | Nhà cung cấp: %-20s\n", 
-                              pn.getMa(), pn.getNgayNhap().toString(), pn.getNhaCungCap());
-        }
-    }
-
-    public void them() {
-        if (soLuongPN >= dsPN.length) {
-            PhieuNhap[] mangMoi = new PhieuNhap[dsPN.length * 2];
-            for (int i = 0; i < dsPN.length; i++) {
-                mangMoi[i] = dsPN[i];
+            if (dsPN[i] != null) {
+                dsPN[i].xuat(); // Gọi hàm xuat của PhieuNhap
             }
-            dsPN = mangMoi;
         }
-        // Logic tạo PhieuNhap mới do bạn tự triển khai
-        PhieuNhap pn = new PhieuNhap();
-        // Cần nhập thông tin phiếu và chi tiết phiếu ở đây...
-        
-        dsPN[soLuongPN] = pn;
-        soLuongPN++;
-        System.out.println("Thêm phiếu nhập thành công!");
     }
 
+    @Override
+    public void them() {
+        // Bỏ trống do sử dụng Overloading bên dưới
+    }
+
+    // ================= HÀM LẬP PHIẾU NHẬP CHÍNH =================
+    public void them(DanhSachMatHang dsHangHoa) {
+        System.out.println("\n--- BẮT ĐẦU LẬP PHIẾU NHẬP KHO ---");
+        
+        PhieuNhap pn = new PhieuNhap();
+        pn.nhap();
+
+        int soMon = TienIch.nhapSoNguyenDuong("Phiếu này nhập bao nhiêu loại mặt hàng? ");
+        if (soMon == 0) {
+            System.out.println("Đã hủy lập phiếu nhập!");
+            return;
+        }
+
+        for (int i = 0; i < soMon; i++) {
+            System.out.println("\n> Nhập mặt hàng thứ " + (i + 1) + ":");
+            String maHang = TienIch.nhapChuoi("- Nhập MÃ mặt hàng cần nhập: ");
+            
+            // Lấy nguyên đối tượng Mặt hàng từ Kệ Hàng để truyền cho Phiếu Nhập
+            MatHang matHangGoc = dsHangHoa.timKiemMatHang(maHang); 
+            
+            if (matHangGoc == null) {
+                System.out.println("[LỖI] Không tìm thấy mã '" + maHang + "'. Yêu cầu qua Menu 1 tạo danh mục trước!");
+                continue; 
+            }
+
+            int slNhap = TienIch.nhapSoNguyenDuong("- Nhập số lượng: ");
+            
+            int dangChua = dsHangHoa.getTongSoLuongTonToanHeThong();
+            if (dangChua + slNhap > SUC_CHUA_TOI_DA) {
+                System.out.println("[LỖI] Kho bị quá tải! Chỉ còn trống: " + (SUC_CHUA_TOI_DA - dangChua));
+                continue; 
+            }
+            
+            ChiTietPhieuNhap ctpn = new ChiTietPhieuNhap(matHangGoc, slNhap, matHangGoc.getGiaNhap());
+            pn.themChiTiet(ctpn);
+
+            dsHangHoa.tangSoLuongTon(maHang, slNhap);
+            System.out.println(">>> Đã thêm " + slNhap + " sản phẩm '" + matHangGoc.getTen() + "' vào giỏ hàng nhập và Kệ Hàng!");
+        }
+        
+        if (pn.getSoLuongCT() > 0) {
+            if (soLuongPN < dsPN.length) {
+                dsPN[soLuongPN] = pn;
+                soLuongPN++;
+                System.out.println("\n>>> HOÀN TẤT LẬP PHIẾU VÀ ĐÃ LƯU VÀO LỊCH SỬ KHO!");
+            }
+        } else {
+            System.out.println("\n>>> Phiếu nhập rỗng (Không có mặt hàng nào hợp lệ), đã tự động hủy phiếu.");
+        }
+    }
+
+    // ================= CÁC HÀM SỬA/XÓA =================
     public void sua() {
-        System.out.println("Chức năng sửa Phiếu Nhập đang cập nhật.");
+        String maSua = TienIch.nhapChuoi("Nhập mã phiếu cần sửa: ");
+        sua(maSua);
+    }
+
+    @Override
+    public void sua(String ma) {
+        System.out.println("Tính năng sửa phiếu nhập đang cập nhật.");
     }
 
     public void xoa() {
-        String maCanXoa = TienIch.nhapChuoi("Nhập mã phiếu cần xóa: ");
-        int viTri = TienIch.timKiemViTri(dsPN, soLuongPN, maCanXoa);
+        if (soLuongPN == 0) {
+            System.out.println("Không có phiếu nhập nào để xóa.");
+            return;
+        }
+        String maXoa = TienIch.nhapChuoi("Nhập mã phiếu cần xóa: ");
+        xoa(maXoa);
+    }
+
+    @Override
+    public void xoa(String ma) {
+        int viTri = TienIch.timKiemViTri(dsPN, soLuongPN, ma);
         if (viTri == -1) {
-            System.out.println("Không tìm thấy phiếu mã: " + maCanXoa);
+            System.out.println("Không tìm thấy phiếu mã: " + ma);
             return;
         }
         for (int i = viTri; i < soLuongPN - 1; i++) {
@@ -100,26 +127,16 @@ public class Kho implements IQuanLy, IFileIO {
         }
         dsPN[soLuongPN - 1] = null;
         soLuongPN--;
-        System.out.println("Đã xóa phiếu nhập!");
+        System.out.println(">>> Đã xóa phiếu nhập mã: " + ma);
     }
 
+    @Override
     public void ghiFile(String duongDan) {
         System.out.println("Ghi danh sách Phiếu Nhập ra file.");
     }
 
+    @Override
     public void docFile(String duongDan) {
         System.out.println("Đọc danh sách Phiếu Nhập từ file.");
-    }
-
-    @Override
-    public void sua(String ma) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'sua'");
-    }
-
-    @Override
-    public void xoa(String ma) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'xoa'");
     }
 }
