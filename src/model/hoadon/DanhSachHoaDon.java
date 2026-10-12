@@ -114,14 +114,26 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO {
     // ================= CÁC HÀM ĐỌC GHI FILE =================
     @Override
     public void ghiFile(String duongDan) {
-        System.out.println("Tính năng ghi file Hóa đơn đang cập nhật.");
+        try (PrintWriter pw = new PrintWriter(new FileWriter(duongDan))) {
+            for (int i = 0; i < soLuong; i++) {
+                HoaDon hd = ds[i];
+                pw.println(hd.getMaHD() + ";" + hd.getNgayLap() + ";" + hd.getKhachHang().getMaKH());
+                pw.println(hd.getSoLuongChiTiet());
+                for (int j = 0; j < hd.getSoLuongChiTiet(); j++) {
+                    ChiTietHoaDon ct = hd.getChiTiet()[j];
+                    pw.println(ct.getMathang().getMa() + ";" + ct.getsoLuong() + ";" + ct.getDonGia());
+                }
+            }
+            System.out.println("Đã ghi dữ liệu hóa đơn ra file " + duongDan);
+        } catch (IOException e) {
+            System.out.println("Lỗi khi ghi file: " + e.getMessage());
+        }
     }
 
-    @Override
+  @Override
     public void docFile(String duongDan) {
-        System.out.println("Hóa đơn cần Kệ hàng và Khách hàng để đọc file. Vui lòng dùng hàm docFile nạp chồng!");
+        docFile(duongDan, this.dskh, this.dsmh);
     }
-
     // HÀM ĐỌC FILE CHÍNH ĐỂ MÓC NỐI DỮ LIỆU
     public void docFile(String duongDan, DanhSachKhachHang dskh, DanhSachMatHang dsmh) {
         try (BufferedReader br = new BufferedReader(new FileReader(duongDan))) {
