@@ -97,6 +97,7 @@ public class Main {
             else if (chon == luaChonToiDa) {
                 System.out.println("\n[HỆ THỐNG] Đang lưu toàn bộ dữ liệu xuống ổ cứng...");
                 dsKhachHang.ghiFile("data/khachhang.txt");
+                dsHoaDon.ghiFile("data/hoadon.txt"); // <-- Đã bổ sung lưu Hóa đơn
                 System.out.println("[HỆ THỐNG] Lưu thành công. Tạm biệt " + userHienTai.getMaNguoi() + "!");
                 tiepTuc = false;
             } 
@@ -124,10 +125,6 @@ public class Main {
             }
         }
     }
-
-    // ================= CÁC SUB-MENU DƯỚI NÀY GIỮ NGUYÊN =================
-    // Sếp không cần copy dán lại khúc dưới này nếu nó đã có sẵn ở file Main.java cũ nhé!
-    // Tuy nhiên, để cho chắc ăn, tôi vẫn gộp đầy đủ bên dưới cho sếp copy đè 1 lần.
 
     // ================= SUB-MENU 1: MẶT HÀNG =================
     private static void menuHangHoa() {
@@ -211,7 +208,7 @@ public class Main {
         }
     }
 
-   // ================= SUB-MENU 4: NHÂN SỰ =================
+    // ================= SUB-MENU 4: NHÂN SỰ =================
     private static void menuNhanSu() {
         boolean tiepTuc = true;
         while (tiepTuc) {
@@ -266,6 +263,7 @@ public class Main {
             }
         }
     }
+    
     // ================= SUB-MENU 5: KHÁCH HÀNG =================
     private static void menuKhachHang() {
         boolean tiepTuc = true;
