@@ -34,8 +34,21 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO {
     // Truyền dsHangHoa vào để kiểm tra lúc mua
     public void them(DanhSachMatHang dsHangHoa) {
         System.out.println("\n--- BẮT ĐẦU LẬP HÓA ĐƠN ---");
-        String maHD = TienIch.nhapChuoi("Nhập mã hóa đơn mới (VD: HD01): ");
-        
+        String maHD;
+        boolean biTrung;
+        do {
+            biTrung = false;
+            maHD = TienIch.nhapChuoi("Nhập mã hóa đơn mới (VD: HD01): ");
+            // Quét qua danh sách hóa đơn hiện có để check trùng
+            for (int i = 0; i < soLuong; i++) {
+                if (ds[i].getMaHD().equalsIgnoreCase(maHD)) {
+                    System.out.println("[LỖI] Mã hóa đơn '" + maHD + "' đã tồn tại trong hệ thống!");
+                    System.out.println("Vui lòng nhập một mã khác.");
+                    biTrung = true;
+                    break;
+                }
+            }
+        } while (biTrung);
         // Tạm tạo Khách vãng lai để test nhanh
         KhachHang khachLe = new KhachHang("KH00", "Khách Vãng Lai", "0000000000");
         
