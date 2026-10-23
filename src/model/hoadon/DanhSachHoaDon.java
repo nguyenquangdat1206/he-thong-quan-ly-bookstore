@@ -1,117 +1,191 @@
-package model.hoadon;
-
-import model.interfaces.IQuanLy;
-import model.interfaces.IFileIO;
-import model.khachhang.DanhSachKhachHang;
-import model.khachhang.KhachHang;
-import model.mathang.DanhSachMatHang;
-import model.mathang.MatHang;
-import model.utils.TienIch;
+package hoadon;
 import java.io.*;
+import java.time.LocalDate;
 
-public class DanhSachHoaDon implements IQuanLy, IFileIO {
+import mathang.*;
+import interfaces.*;
+import tienich.*;
+import nhanvien.NhanVienBanHang;
+
+
+import khachhang.DanhSachKhachHang;
+import khachhang.KhachHang;
+public class DanhSachHoaDon implements IQuanLy, IFileIO{
+    //Thuộc tính
     private HoaDon[] ds;
     private int soLuong;
-
-    public DanhSachHoaDon() {
+    private DanhSachMatHang dsmh;
+    private DanhSachKhachHang dskh;
+    //constructor
+    public DanhSachHoaDon(DanhSachMatHang dsmh, DanhSachKhachHang dskh){
         ds = new HoaDon[1000];
         soLuong = 0;
+        this.dsmh = dsmh;
+        this.dskh = dskh;
     }
-
+    //tạo thêm danh sách nếu bị đầy
+    private void tangKichThuocHoaDon(){
+        HoaDon[] temp = new HoaDon[ds.length + 100];
+        for(int i=0; i<ds.length; i++){
+            temp[i] = ds[i];
+        }
+        ds = temp;
+    }
+    //nhap
+    @Override
+    public void nhap() {
+        System.out.println("Hóa đơn không nhập trực tiếp từ danh sách. "
+                + "Hãy dùng taoHoaDon(...) để lập hóa đơn.");
+    }
+    //xuat
     @Override
     public void xuat() {
         if (soLuong == 0) {
-            System.out.println("Danh sách hóa đơn trống.");
+            System.out.println("Chưa có hóa đơn nào.");
             return;
         }
-        System.out.println("\n================ LỊCH SỬ HÓA ĐƠN ================");
         for (int i = 0; i < soLuong; i++) {
             ds[i].xuat();
-            System.out.println("-------------------------------------------------");
+            System.out.println("------------------------");
         }
     }
+    //them
+    @Override
+    public void them() {
+        System.out.println("Hóa đơn cần khách hàng, nhân viên và mặt hàng, "
+                + "hãy dùng taoHoaDon(...) để lập hóa đơn.");
+    }
 
-    // Truyền dsHangHoa vào để kiểm tra lúc mua
-    public void them(DanhSachMatHang dsHangHoa) {
-        System.out.println("\n--- BẮT ĐẦU LẬP HÓA ĐƠN ---");
-        String maHD;
-        boolean biTrung;
-        do {
-            biTrung = false;
-            maHD = TienIch.nhapChuoi("Nhập mã hóa đơn mới (VD: HD01): ");
-            // Quét qua danh sách hóa đơn hiện có để check trùng
-            for (int i = 0; i < soLuong; i++) {
-                if (ds[i].getMaHD().equalsIgnoreCase(maHD)) {
-                    System.out.println("[LỖI] Mã hóa đơn '" + maHD + "' đã tồn tại trong hệ thống!");
-                    System.out.println("Vui lòng nhập một mã khác.");
-                    biTrung = true;
-                    break;
-                }
-            }
-        } while (biTrung);
-        // Tạm tạo Khách vãng lai để test nhanh
-        KhachHang khachLe = new KhachHang("KH00", "Khách Vãng Lai", "0000000000");
-        
-        HoaDon hd = new HoaDon(maHD, java.time.LocalDate.now(), khachLe);
-        
-        int soMon = TienIch.nhapSoNguyenDuong("Khách muốn mua bao nhiêu loại mặt hàng? ");
-        if (soMon == 0) return;
-
-        for (int i = 0; i < soMon; i++) {
-            System.out.println("\n> Nhập món thứ " + (i + 1) + ":");
-            String maHang = TienIch.nhapChuoi("- Nhập MÃ mặt hàng cần mua: ");
-            
-            // Tìm món hàng trên Kệ
-            MatHang mh = dsHangHoa.timKiemMatHang(maHang);
-            if (mh == null) {
-                System.out.println("[LỖI] Kệ hàng không có mã sản phẩm này!");
-                continue;
-            }
-
-            int slMua = TienIch.nhapSoNguyenDuong("- Nhập số lượng mua: ");
-            
-            // KIỂM TRA XEM CÓ ĐỦ HÀNG ĐỂ BÁN KHÔNG
-            if (mh.getSoLuongTon() < slMua) {
-                System.out.println("[CẢNH BÁO] Cửa hàng không đủ hàng! Trên kệ chỉ còn: " + mh.getSoLuongTon() + " sản phẩm.");
-                System.out.println("=> Đã hủy món hàng này khỏi giỏ hàng.");
-                continue;
-            }
-
-            // Thêm vào giỏ hàng
-            ChiTietHoaDon ct = new ChiTietHoaDon(slMua, mh);
-            hd.themChiTiet(ct);
-            System.out.println(">>> Đã thêm " + slMua + " " + mh.getTen() + " vào Hóa Đơn.");
+    public int timViTri(String maHD){
+        for(int i=0; i<soLuong; i++){
+            if(ds[i].getMaHD().equalsIgnoreCase(maHD))
+                return i;
         }
+        return -1;
+    }
 
-        if (hd.getSoLuongChiTiet() == 0) {
-            System.out.println("\n>>> Hóa đơn rỗng, tự động hủy!");
+    public HoaDon timKiem(String maHD){
+        int vt = timViTri(maHD);
+        return vt == -1 ? null : ds[vt];
+    }
+    //them (hàm riêng)
+    public boolean them(HoaDon hd) {
+        if(hd == null || timKiem(hd.getMaHD()) != null/* ktra có tồn tại ma HD hoặc có bị trùng maHD không*/) return false;
+        if(soLuong == ds.length) tangKichThuocHoaDon();
+        ds[soLuong++] = hd;
+        return true;
+    }
+    //sua
+    @Override
+    public void sua() {
+        String maHD = TienIch.nhapChuoi("Nhập mã hóa đơn cần sửa: ");
+        HoaDon hd = timKiem(maHD);
+        if (hd == null) {
+            System.out.println("Không tồn tại hóa đơn " + maHD);
             return;
         }
-
-        // BẮT ĐẦU THANH TOÁN
-        System.out.println("\n=== THANH TOÁN HÓA ĐƠN " + maHD + " ===");
-        System.out.println("Tổng tiền cần thanh toán: " + hd.tinhThanhTien() + " đ");
-        
-        double tienKhach = TienIch.nhapGiaTien("Nhập số tiền khách đưa (Nhập 0 để hủy thanh toán): ");
-        if (tienKhach > 0) {
-            ThanhToanTienMat tm = new ThanhToanTienMat(tienKhach);
-            hd.setHinhThucThanhToan(tm);
-            
-            // Nếu thanh toán thành công, lưu hóa đơn vào lịch sử
-            if (hd.thanhToan(dsHangHoa)) {
-                if (soLuong >= ds.length) {
-                    HoaDon[] temp = new HoaDon[ds.length * 2];
-                    for(int i = 0; i < soLuong; i++) temp[i] = ds[i];
-                    ds = temp;
-                }
-                ds[soLuong++] = hd;
-            }
-        } else {
-            System.out.println("Khách hàng hủy mua. Hóa đơn đã bị xóa.");
+        if (hd.isDaThanhToan()) {
+            System.out.println("Hóa đơn đã thanh toán, không thể sửa.");
+            return;
         }
+        int chon;
+        do {
+            System.out.println("\n--- Sửa hóa đơn " + maHD + " ---");
+            hd.inChiTiet();
+            System.out.println("1. Sửa số lượng một dòng");
+            System.out.println("2. Xóa một dòng");
+            System.out.println("0. Thoát");
+            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            if (chon != 1 && chon != 2) continue;
+            int stt = TienIch.nhapSoNguyenDuong("Dòng: ");
+            try {
+                if (chon == 1) {
+                    hd.suaSoLuongChiTiet(stt - 1, TienIch.nhapSoNguyenDuong("Số lượng: "));
+                }
+                else {
+                    hd.xoaChiTiet(stt - 1);
+                }
+                System.out.println("Đã cập nhật. Tổng tiền mới: " + hd.tinhThanhTien());
+            }
+            catch (IllegalArgumentException | IllegalStateException e) {
+                System.out.println("Lỗi: " + e.getMessage());
+
+            }
+        }
+        while (chon != 0) ;
+    }
+    //xoa
+    public void xoa (){
+        String maHD = TienIch.nhapChuoi("Nhập mã hóa đơn cần xóa: ");
+        int vt = timViTri(maHD);
+        if (vt == -1) {
+            System.out.println("Không tìm thấy hóa đơn: " + maHD);
+            return;
+        }
+        if (ds[vt].isDaThanhToan()) {
+            System.out.println("Hóa đơn đã thanh toán, không thể xóa!");
+            return;
+        }
+        for (int i = vt; i < soLuong; i++) {
+            ds[i] = ds[i + 1];
+        }
+        ds[soLuong - 1] = null;
+        soLuong--;
+        return;
+    }
+    //get & set
+    public HoaDon[] getDs(){return ds;}
+    public int getSoLuong(){return soLuong;}
+    //==================== Hàm nghiệp vụ tạo hóa đơn ====================
+    //Trả về hóa đơn vừa tạo hoặc null nếu tạo không thành công
+    public HoaDon taoHoaDon(String maHD, KhachHang kh, NhanVienBanHang nv){
+        if(timKiem(maHD) != null){
+            System.out.println("Mã hóa đơn đã tồn tại");
+            return null;
+        }
+        HoaDon hd = new HoaDon(maHD,TienIch.nhapNgay("Nhập ngày lập: "),kh,nv);  //tạo 1 hóa đơn mới
+        String tiep;
+        do {
+            System.out.println("Nhập mã mặt hàng cần mua");
+            String maHang = TienIch.nhapChuoi("Nhập mã mặt hàng: ");
+            MatHang mh = this.dsmh.timKiem_hang(maHang);
+            if(mh == null){
+                System.out.println("Không tìm thấy mặt hàng");
+            }
+            else{
+                System.out.println("Nhập số lượng của mặt hàng cần mua: ");
+                int sl = TienIch.nhapSoNguyenDuong("Nhập số lượng: ");
+                if(sl <= 0){
+                    System.out.println("Số lượng phải lơn hơn 0!");
+                }
+                else {
+                    themVaoHoaDon(hd, mh, sl);
+                }
+            }
+            tiep = TienIch.nhapChuoi("Tiếp tục thêm hàng (c/k): ");
+        }
+        while(tiep.equalsIgnoreCase("c"));
+        if(hd.getSoLuongChiTiet() == 0){
+            System.out.println("Hóa đơn chưa có mặt hàng");
+            return null;
+        }
+        them(hd);
+        System.out.println("Tạo hóa đơn thành công! Tổng tiền " + hd.tinhThanhTien());
+        return hd;
+    }
+    //Mặt hàng đã có trong hóa đơn thì cộng dồn số lượng, chưa có thì thêm dòng mới
+    private void themVaoHoaDon(HoaDon hd, MatHang mh, int sl){
+        for(int i=0; i<hd.getSoLuongChiTiet(); i++){
+            ChiTietHoaDon ct  = hd.getChiTiet()[i];
+            if(ct.getMathang().getMa().equalsIgnoreCase(mh.getMa())){
+                hd.suaSoLuongChiTiet(i,ct.getsoLuong()+sl);
+                return;
+            }
+        }
+        hd.themChiTiet(new ChiTietHoaDon(sl,mh));
     }
 
-    // ================= CÁC HÀM ĐỌC GHI FILE =================
+    // Ghi dữ liệu hóa đơn ra file
     @Override
     public void ghiFile(String duongDan) {
         try (PrintWriter pw = new PrintWriter(new FileWriter(duongDan))) {
@@ -130,11 +204,13 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO {
         }
     }
 
-  @Override
+    // Bắt buộc phải có hàm này để không bị lỗi Interface IFileIO
+    @Override
     public void docFile(String duongDan) {
-        docFile(duongDan, this.dskh, this.dsmh);
+        docFile(duongDan,this.dskh, this.dsmh);
     }
-    // HÀM ĐỌC FILE CHÍNH ĐỂ MÓC NỐI DỮ LIỆU
+
+    // Hàm thực sự làm nhiệm vụ đọc file (Nạp chồng phương thức)
     public void docFile(String duongDan, DanhSachKhachHang dskh, DanhSachMatHang dsmh) {
         try (BufferedReader br = new BufferedReader(new FileReader(duongDan))) {
             String line;
@@ -144,62 +220,46 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO {
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
 
-                // Dòng 1: Mã HĐ ; Ngày ; Mã KH
                 String[] info = line.split(";");
-                String maHD = info[0].trim();
-                java.time.LocalDate ngayLap = java.time.LocalDate.parse(info[1].trim());
-                KhachHang kh = dskh.timkiem_khachhang(info[2].trim());
+                String maHD = info[0];
+                LocalDate ngayLap = LocalDate.parse(info[1]);
+                KhachHang kh = dskh.timkiem_khachhang(info[2]);
 
                 if (kh == null) {
-                    System.out.println("Bỏ qua hóa đơn " + maHD + " do không tìm thấy khách hàng.");
+                    System.out.println("Bỏ qua hóa đơn " + maHD + " do không tìm thấy dữ liệu khách hàng.");
                     continue;
                 }
 
-                HoaDon hd = new HoaDon(maHD, ngayLap, kh); 
-                hd.setHinhThucThanhToan(new ThanhToanTienMat(0)); // Giả lập đã thanh toán khi load từ lịch sử
-
-                // Dòng 2: Số lượng chi tiết
+                HoaDon hd = new HoaDon(maHD, ngayLap, kh, null);
                 int soLuongCT = Integer.parseInt(br.readLine().trim());
 
-                // Dòng 3...: Mã MH ; SL ; Đơn giá
                 for (int j = 0; j < soLuongCT; j++) {
                     String[] ctData = br.readLine().split(";");
-                    MatHang mh = dsmh.timKiemMatHang(ctData[0].trim());
-                    int slMua = Integer.parseInt(ctData[1].trim());
+                    MatHang mh = dsmh.timKiem_hang(ctData[0]);
+                    int slMua = Integer.parseInt(ctData[1]);
 
                     if (mh != null) {
                         ChiTietHoaDon ct = new ChiTietHoaDon(slMua, mh);
                         hd.themChiTiet(ct);
-                        // Lưu ý: Đọc từ lịch sử thì không trừ số lượng trên kệ nữa
                     }
                 }
 
-                if (hd.getSoLuongChiTiet() == 0) continue;
-
-                if (soLuong >= ds.length) {
-                    HoaDon[] temp = new HoaDon[ds.length * 2];
-                    for(int i=0; i<soLuong; i++) temp[i] = ds[i];
-                    ds = temp;
+                if (hd.getSoLuongChiTiet() == 0) {
+                    System.out.println("Bỏ qua hóa đơn " + maHD + " do toàn bộ mặt hàng không còn tồn tại.");
+                    continue;
                 }
+
+                if (soLuong == ds.length) tangKichThuocHoaDon();
                 ds[soLuong++] = hd;
             }
+            System.out.println("Đã tải dữ liệu từ file " + duongDan);
         } catch (FileNotFoundException e) {
             System.out.println("Chưa tìm thấy file " + duongDan);
         } catch (Exception e) {
-            System.out.println("Lỗi đọc file hóa đơn: " + e.getMessage());
+            System.out.println("Lỗi khi đọc file: " + e.getMessage());
         }
     }
-
-    // Các hàm IQuanLy mặc định (không dùng tới vì đã dùng overloading)
-    public void nhap() {}
-    public void sua() {}
-    public void sua(String ma) {}
-    public void xoa() {}
-    public void xoa(String ma) {}
-
-    @Override
-    public void them() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'them'");
-    }
 }
+
+
+

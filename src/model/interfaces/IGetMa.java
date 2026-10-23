@@ -1,4 +1,4 @@
-package model.interfaces;
+package interfaces;
 
 public interface IGetMa {
     String getMa();

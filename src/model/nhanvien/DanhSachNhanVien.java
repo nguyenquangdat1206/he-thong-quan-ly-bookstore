@@ -1,15 +1,14 @@
-package model.nhansu;
+package nhanvien;
 
-import model.interfaces.IThaoTacThucThe;
 import java.util.Scanner;
 
-public class DanhSachNhanVien implements IThaoTacThucThe {
+public class DanhSachNhanVien {
     private NhanVien[] danhSach;
     private int soLuong;
     private Scanner sc = new Scanner(System.in);
 
     public DanhSachNhanVien() {
-        danhSach = new NhanVien[2];
+        danhSach = new NhanVien[10];
         soLuong = 0;
     }
 
@@ -29,7 +28,6 @@ public class DanhSachNhanVien implements IThaoTacThucThe {
         soLuong++;
     }
 
-    // --- TÍNH NĂNG ĐĂNG NHẬP (Dành cho Nhân viên) ---
     public NhanVien dangNhap(String maNguoi, String matKhau) {
         for (int i = 0; i < soLuong; i++) {
             if (danhSach[i].getMaNguoi().equals(maNguoi) && danhSach[i].getMatKhau().equals(matKhau)) {
@@ -39,12 +37,6 @@ public class DanhSachNhanVien implements IThaoTacThucThe {
         return null;
     }
 
-    @Override
-    public void them() {
-        System.out.println("Chức năng cấp tài khoản nhân viên sẽ dành riêng cho Admin.");
-    }
-
-    @Override
     public void xoa(String ma) {
         int viTri = timKiemViTri(ma);
         if (viTri == -1) {
@@ -59,8 +51,6 @@ public class DanhSachNhanVien implements IThaoTacThucThe {
         System.out.println("Đã xóa nhân viên!");
     }
 
-    // --- ĐÃ NÂNG CẤP TÍNH NĂNG SỬA TOÀN BỘ THÔNG TIN (BỔ SUNG CA LÀM & LƯƠNG) ---
-    @Override
     public void sua(String ma) {
         int viTri = timKiemViTri(ma);
         if (viTri != -1) {
@@ -74,13 +64,12 @@ public class DanhSachNhanVien implements IThaoTacThucThe {
                 System.out.println("5. Sửa Lương cơ bản");
                 System.out.println("0. Hoàn tất & Thoát");
                 System.out.print("Chọn thông tin cần sửa (0-5): ");
-                
+
                 String choiceStr = sc.nextLine();
                 int choice = -1;
                 try {
                     choice = Integer.parseInt(choiceStr);
                 } catch (NumberFormatException e) {
-                    // Xử lý nếu người dùng không nhập số
                 }
 
                 switch (choice) {
@@ -120,7 +109,7 @@ public class DanhSachNhanVien implements IThaoTacThucThe {
                         System.out.print("Nhập mức lương mới (VNĐ): ");
                         String luongStr = sc.nextLine();
                         try {
-                            int luongMoi = Integer.parseInt(luongStr);
+                            double luongMoi = Double.parseDouble(luongStr);
                             danhSach[viTri].setLuongCoBan(luongMoi);
                             System.out.println("-> Cập nhật Lương thành công!");
                         } catch (NumberFormatException e) {
@@ -132,7 +121,7 @@ public class DanhSachNhanVien implements IThaoTacThucThe {
                         System.out.println("-> Đã lưu các thay đổi cho nhân viên " + ma);
                         break;
                     default:
-                        System.out.println("[LỖI] Lựa chọn không hợp lệ. Vui lòng nhập từ 0 đến 5.");
+                        System.out.println("[LỖI] Lựa chọn không hợp lệ.");
                         break;
                 }
             }
@@ -140,7 +129,7 @@ public class DanhSachNhanVien implements IThaoTacThucThe {
             System.out.println("[LỖI] Không tìm thấy nhân viên nào có mã: " + ma);
         }
     }
-    @Override
+
     public void timKiem(String ma) {
         int viTri = timKiemViTri(ma);
         if (viTri != -1) {
@@ -150,7 +139,6 @@ public class DanhSachNhanVien implements IThaoTacThucThe {
         }
     }
 
-    @Override
     public void xuat() {
         System.out.println("=== DANH SÁCH NHÂN VIÊN ===");
         for (int i = 0; i < soLuong; i++) {

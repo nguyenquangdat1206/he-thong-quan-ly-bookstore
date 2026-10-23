@@ -1,48 +1,81 @@
-package model.mathang;
+package mathang;
 
-import model.utils.TienIch;
+import tienich.*;
+
 
 public class DungCuHocTap extends MatHang {
+    private final double thue = 12;
+    private final double loinhuan = 18;
     private String loaidungcu;
     private String nhaSX;
 
-    public DungCuHocTap() {
+
+    public DungCuHocTap(){
         super();
-        setThue(12);
-        setLoinhuan(18);
-        this.loaidungcu = "";
+        this.loaidungcu ="";
         this.nhaSX = "";
     }
 
-    public DungCuHocTap(String ma, String ten, double giaNhap, int soLuongTon, String nhaSX, String loaidungcu) {
-        super(ma, ten, giaNhap, soLuongTon, 18, 12); // loinhuan: 18, thue: 12
+    public DungCuHocTap(String ma, String ten, double giaNhap, int soLuong, String nhaSX, String loaidungcu) {
+        super(ma, ten, giaNhap, soLuong);
         this.nhaSX = nhaSX;
         this.loaidungcu = loaidungcu;
     }
 
-    public String getNhaSX() { return nhaSX; }
-    public void setNhaSX(String nhaSX) { this.nhaSX = nhaSX; }
+    public String getnhaSX() { return nhaSX; }
+    public void setnhaSX(String nhaSX) { this.nhaSX = nhaSX; }
 
-    public String getLoaidungcu() { return loaidungcu; }
-    public void setLoaidungcu(String loaidungcu) { this.loaidungcu = loaidungcu; }
+    public String getLoaidungcu(){return loaidungcu;}
+    public void setLoaidungcu(String loaidungcu){ this.loaidungcu = loaidungcu;}
 
     @Override
+    public double tinhGiaBan(){
+        return getGiaNhap() * (1 + loinhuan/100)*(1+thue/100);
+    }
+
+    @Override
+    // Nhap
     public void nhap() {
+
         setMa(TienIch.nhapChuoi("Nhập mã: "));
+
         setTen(TienIch.nhapChuoi("Nhập tên: "));
-        setGiaNhap(TienIch.nhapGiaTien("Giá nhập hàng: "));
-        setSoLuongTon(TienIch.nhapSoNguyenDuong("Nhập số lượng: "));
-        
-        setThue(12);
-        setLoinhuan(18);
 
         loaidungcu = TienIch.nhapChuoi("Loại dụng cụ: ");
+
         nhaSX = TienIch.nhapChuoi("Nhà sản xuất: ");
+
+        setGiaNhap(TienIch.nhapGiaTien("Giá nhập hàng: "));
+
+        setSoLuong(TienIch.nhapSoNguyenDuong("Nhập số lượng: "));
+
     }
 
     @Override
+    // Xuat
     public void xuat() {
-        super.xuat();
-        System.out.println("Loại dụng cụ: " + loaidungcu + " | Nhà sản xuất: " + nhaSX);
+        System.out.println("Mã: " + getMa());
+
+        System.out.println("Tên: " + getTen());
+
+        System.out.println("Loại dụng cụ" +loaidungcu);
+
+        System.out.println("Nhà sản xuất: " + nhaSX);
+
+        System.out.println("Số lượng: " + getSoLuong());
+
+        System.out.println("Giá bán: " + tinhGiaBan());
     }
+
+    @Override 
+    public String getDanhMuc(){
+        return "Dụng cụ học tập";
+    }
+
+
+        @Override 
+    public String toString(){
+        return super.toString()+";"+getLoaidungcu()+";"+getnhaSX();
+    }
+
 }

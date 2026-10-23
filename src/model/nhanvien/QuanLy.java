@@ -1,4 +1,4 @@
-package model.nhansu;
+package nhanvien;
 
 public class QuanLy extends NhanVien {
 

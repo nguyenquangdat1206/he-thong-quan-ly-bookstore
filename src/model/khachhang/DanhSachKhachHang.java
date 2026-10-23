@@ -1,20 +1,17 @@
-package model.khachhang;
-
-import model.interfaces.IQuanLy;
-import model.interfaces.IFileIO;
-import model.utils.TienIch;
+package khachhang;
 import java.io.*;
 
-public class DanhSachKhachHang implements IQuanLy, IFileIO {
+import interfaces.*;
+import tienich.*;
+
+public class DanhSachKhachHang implements IQuanLy,IFileIO{
     private int soLuong;
     private KhachHang[] ds;
-    
     //khởi tạo danh sách
     public DanhSachKhachHang(){
         ds = new KhachHang[1000];
         soLuong = 0;
     }
-    
     //tạo thêm danh sách nếu bị đầy
     private void tangKichThuoc(){
         KhachHang[] temp = new KhachHang[ds.length + 100];
@@ -23,7 +20,6 @@ public class DanhSachKhachHang implements IQuanLy, IFileIO {
         }
         ds = temp;
     }
-    
     //nhập
     @Override
     public void nhap(){
@@ -41,20 +37,14 @@ public class DanhSachKhachHang implements IQuanLy, IFileIO {
             soLuong++;
         }
     }
-    
     //xuat
     @Override
     public void xuat() {
-        if (soLuong == 0) {
-            System.out.println("Danh sách Khách hàng hiện đang trống.");
-            return;
-        }
         for(int i=0; i<soLuong; i++){
             System.out.println("\n--------THÔNG TIN KHÁCH HÀNG THỨ " + (i + 1) + "--------");
             ds[i].xuat();
         }
     }
-    
     //thêm
     @Override
     public void them() {
@@ -71,17 +61,14 @@ public class DanhSachKhachHang implements IQuanLy, IFileIO {
                     break;
                 }
             }
-        } while(!hopLe);
+        }
+        while(!hopLe);
         ds[soLuong++] = kh;
         System.out.println("Thêm khách hàng thành công!");
     }
-    
-    //xóa (ĐÃ XÓA CHỮ @Override)
+    //xóa
+    @Override
     public void xoa() {
-        if (soLuong == 0) {
-            System.out.println("Danh sách trống!");
-            return;
-        }
         String ma = TienIch.nhapChuoi("Nhập mã khách hàng cần xóa: ");
         xoa(ma);
     }
@@ -104,13 +91,9 @@ public class DanhSachKhachHang implements IQuanLy, IFileIO {
             System.out.println("Không tồn tại khách hàng có mã " + ma);
         }
     }
-    
-    //sửa (ĐÃ XÓA CHỮ @Override)
+    //sửa
+    @Override
     public void sua() {
-        if (soLuong == 0) {
-            System.out.println("Danh sách trống!");
-            return;
-        }
         String ma = TienIch.nhapChuoi("Nhập mã khách hàng cần sửa: ");
         sua(ma);
     }
@@ -129,10 +112,10 @@ public class DanhSachKhachHang implements IQuanLy, IFileIO {
                     choice = TienIch.nhapSoNguyenDuong("Chọn: ");
                     switch (choice) {
                         case 1:
-                            ds[i].setTenKH(TienIch.nhapChuoi("Nhập tên mới: "));
+                            ds[i].setTenKH(TienIch.nhapChuoi("Nhập tên mới "));
                             break;
                         case 2:
-                            ds[i].setSoDienThoai(TienIch.nhapChuoi("Nhập SĐT mới: "));
+                            ds[i].setSoDienThoai(TienIch.nhapChuoi("Nhập SĐT mới "));
                             break;
                         case 0:
                             System.out.println("Thoát sửa khách hàng.");
@@ -141,7 +124,8 @@ public class DanhSachKhachHang implements IQuanLy, IFileIO {
                             System.out.println("Lựa chọn không hợp lệ.");
                             break;
                     }
-                } while (choice != 0);
+                }
+                while (choice != 0);
                 System.out.println("Đã sửa thông tin khách hàng thành công!");
                 break;
             }
@@ -150,7 +134,6 @@ public class DanhSachKhachHang implements IQuanLy, IFileIO {
             System.out.println("Không tồn tại khách hàng có mã " + ma);
         }
     }
-    
     //tim kiem
     public KhachHang timkiem_khachhang(String ma){
         for(int i=0; i<soLuong; i++) {
@@ -158,7 +141,6 @@ public class DanhSachKhachHang implements IQuanLy, IFileIO {
         }
         return null;
     }
-    
     // Ghi dữ liệu ra file
     @Override
     public void ghiFile(String duongDan) {
@@ -171,7 +153,6 @@ public class DanhSachKhachHang implements IQuanLy, IFileIO {
             System.out.println("Lỗi khi ghi file: " + e.getMessage());
         }
     }
-    
     // Đọc dữ liệu từ file
     @Override
     public void docFile(String duongDan) {
@@ -196,4 +177,5 @@ public class DanhSachKhachHang implements IQuanLy, IFileIO {
             System.out.println("Lỗi khi đọc file: " + e.getMessage());
         }
     }
+
 }

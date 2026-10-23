@@ -1,48 +1,77 @@
-package model.mathang;
+package mathang;
 
-import model.utils.TienIch;
+import tienich.*;
 
-public class DoChoi extends MatHang {
+public class DoChoi extends MatHang{
+    private final double thue = 20;
+    private final double loinhuan = 30;
+
     private String nhaSX;
     private int dotuoi;
 
-    public DoChoi() {
+
+    public DoChoi(){
         super();
-        setThue(20);
-        setLoinhuan(30);
-        this.nhaSX = "";
+        this.nhaSX ="";
         this.dotuoi = 0;
     }
 
-    public DoChoi(String ma, String ten, double giaNhap, int soLuongTon, String nhaSX, int dotuoi) {
-        super(ma, ten, giaNhap, soLuongTon, 30, 20); // loinhuan: 30, thue: 20
+    public DoChoi(String ma, String ten, double giaNhap, int soLuong, String nhaSX, int dotuoi) {
+        super(ma, ten, giaNhap, soLuong);
         this.nhaSX = nhaSX;
         this.dotuoi = dotuoi;
     }
 
-    public String getNhaSX() { return nhaSX; }
-    public void setNhaSX(String nhaSX) { this.nhaSX = nhaSX; }
+    public String getnhaSX() { return nhaSX; }
+    public void setnhaSX(String nhaSX) { this.nhaSX = nhaSX; }
 
-    public int getDotuoi() { return dotuoi; }
-    public void setDotuoi(int dotuoi) { this.dotuoi = dotuoi; }
+    public int getdotuoi() {return dotuoi;}
 
     @Override
-    public void nhap() {
-        setMa(TienIch.nhapChuoi("Nhập mã: "));
-        setTen(TienIch.nhapChuoi("Nhập tên: "));
-        setGiaNhap(TienIch.nhapGiaTien("Giá nhập hàng: "));
-        setSoLuongTon(TienIch.nhapSoNguyenDuong("Nhập số lượng: "));
-        
-        setThue(20);
-        setLoinhuan(30);
-
-        nhaSX = TienIch.nhapChuoi("Nhà sản xuất: ");
-        dotuoi = TienIch.nhapSoNguyenDuong("Nhập độ tuổi: ");
+    public double tinhGiaBan(){
+        return getGiaNhap() * (1 + loinhuan/100)*(1+thue/100);
     }
 
     @Override
+    // Nhap
+    public void nhap() {
+
+        setMa(TienIch.nhapChuoi("Nhập mã: "));
+
+        setTen(TienIch.nhapChuoi("Nhập tên: "));
+
+        nhaSX = TienIch.nhapChuoi("Nhà sản xuất: ");
+
+        dotuoi = TienIch.nhapSoNguyenDuong("Nhập độ tuổi: ");
+
+        setGiaNhap(TienIch.nhapGiaTien("Giá nhập hàng: "));
+
+        setSoLuong(TienIch.nhapSoNguyenDuong("Nhập số lượng: "));
+    }
+
+    @Override
+    // Xuat
     public void xuat() {
-        super.xuat(); 
-        System.out.println("Nhà sản xuất: " + nhaSX + " | Độ tuổi: " + dotuoi);
+        System.out.println("Mã: " + getMa());
+
+        System.out.println("Tên: " + getTen());
+
+        System.out.println("Nhà sản xuất: " + nhaSX);
+
+        System.out.println("Độ tuổi: " + dotuoi);
+
+        System.out.println("Số lượng: " + getSoLuong());
+
+        System.out.println("Giá bán: " + tinhGiaBan());
+    }
+
+    @Override 
+    public String getDanhMuc(){
+        return "Đồ chơi";
+    }
+
+    @Override 
+    public String toString(){
+        return super.toString()+";"+getdotuoi()+";"+getnhaSX();
     }
 }

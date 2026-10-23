@@ -1,4 +1,4 @@
-package model.interfaces;
+package interfaces;
 
 public interface IThaoTacThucThe {
     // Các phương thức này mặc định là public và abstract

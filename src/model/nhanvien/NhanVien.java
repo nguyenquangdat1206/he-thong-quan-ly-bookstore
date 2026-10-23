@@ -1,4 +1,4 @@
-package model.nhansu;
+package nhanvien;
 
 public abstract class NhanVien extends Nguoi {
     private String caLamViec;

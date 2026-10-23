@@ -1,4 +1,4 @@
-package model.interfaces;
+package interfaces;
 
 public interface IFileIO {
     void docFile(String duongDan);

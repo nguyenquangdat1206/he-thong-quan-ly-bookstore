@@ -1,4 +1,5 @@
-package model.nhansu;
+package nhanvien;
+
 
 public class NhanVienBanHang extends NhanVien {
 

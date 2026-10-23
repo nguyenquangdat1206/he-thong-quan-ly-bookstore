@@ -1,4 +1,5 @@
-package model.nhansu;
+package nhanvien;
+
 
 public abstract class Nguoi {
     private String maNguoi;

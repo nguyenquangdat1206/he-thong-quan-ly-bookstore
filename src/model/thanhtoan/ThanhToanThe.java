@@ -1,6 +1,4 @@
-package model.hoadon;
-import model.interfaces.IThanhToan;
-
+package thanhtoan;
 public class ThanhToanThe implements IThanhToan{
     private String maGiaoDich;
     private String nganHang;

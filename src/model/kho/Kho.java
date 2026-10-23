@@ -1,142 +1,300 @@
-package model.kho;
+package kho;
 
-import model.interfaces.IFileIO;
-import model.interfaces.IQuanLy;
-import model.mathang.DanhSachMatHang;
-import model.mathang.MatHang;
-import model.utils.TienIch;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
-public class Kho implements IQuanLy, IFileIO {
-    private PhieuNhap[] dsPN;
-    private int soLuongPN;
-    private static final int SUC_CHUA_TOI_DA = 10000;
+import phieunhap.*;
+import mathang.*;
+import interfaces.IFileIO;
+import interfaces.IQuanLy;
+import tienich.*;
 
-    public Kho() {
-        dsPN = new PhieuNhap[1000];
-        soLuongPN = 0;
+
+public class Kho implements IFileIO, IQuanLy  {
+    private static final int sucChuaToiDa = 10000;
+    private HangTonKho[] dsTonKho;
+    private int soLuongMatHang;
+    
+//số lượng ở đây là số lượng mặt hàng tồn trong kho, kh tính chi tiết từng mặt hàng có bn cái
+
+    public Kho(){
+        dsTonKho=new HangTonKho[1000];
+        soLuongMatHang=0;
+    }
+    
+//getter
+    public int getSuChuaToiDa() {return sucChuaToiDa;}
+    public HangTonKho[] getDanhSachTon(){
+        return dsTonKho;
     }
 
-    public int getSucChuaToiDa() {
-        return SUC_CHUA_TOI_DA;
+    public int getSoLuongTon() {return soLuongMatHang;}
+
+//lấy tổng số lượng của các mặt hàng vdu: sách toán có 4 quyển, sách văn có 3 quyển, tiểu thuyết x có y quyển -> 3+4+y
+    public int getTongSoLuongTon() {
+        int sum=0;
+        for(int i=0;i<soLuongMatHang;i++)
+            sum+=dsTonKho[i].getSoLuong();
+        return sum;
+    }
+//kho còn trống
+    public int getConTrong(){
+        return sucChuaToiDa-getTongSoLuongTon();
+    }
+    
+    public void kiemTraSucChua(){
+        System.out.println("--- THÔNG TIN KHO ---");
+        System.out.println("Tổng sức chứa: " + sucChuaToiDa);
+        System.out.println("Đang chứa: " + getTongSoLuongTon());
+        System.out.println("Không gian còn trống: " + getConTrong());
+
+    }
+//tự động tăng kích thước mảng
+    public void tangKichThuocMang(){
+        HangTonKho[] mangMoi= new HangTonKho[dsTonKho.length *2];
+        for(int i=0;i<soLuongMatHang;i++){
+            mangMoi[i]=dsTonKho[i];
+        }
+        dsTonKho=mangMoi;
     }
 
-    @Override
-    public void nhap() {
-        System.out.println("Sử dụng tính năng Lập phiếu nhập ở Menu để thao tác.");
+//tăng tồn kho: 
+    public boolean tangTonKho(MatHang mh, int soLuong){
+        if(mh==null || soLuong<0) return false;
+        if(soLuong>getConTrong()){
+            System.out.println("Kho không đủ chỗ!");
+            return false;
+        }
+        int vtMH = TienIch.timKiemViTri(dsTonKho, soLuongMatHang, mh.getMa());
+        if(vtMH==-1){
+            if(soLuongMatHang==dsTonKho.length) tangKichThuocMang();
+            dsTonKho[soLuongMatHang]=new HangTonKho(mh, soLuong);
+            soLuongMatHang++;
+        }
+        else dsTonKho[vtMH].tangSoLuong(soLuong);
+        return true;
     }
 
-    @Override
-    public void xuat() {
-        if (soLuongPN == 0) {
-            System.out.println("Danh sách phiếu nhập đang trống!");
+
+//nhập hàng từ phiếu: 
+    public boolean nhapHangTuPhieu(PhieuNhap pn){
+        if(pn == null) return false;
+        if(pn.getTongSlNhap()>getConTrong()){
+            System.out.println("Kho không đủ chỗ trống!");
+            pn.setTrangThai(PhieuNhap.TrangThaiPN.DA_HUY);
+            return false;
+        }
+        for(int i=0; i<pn.getSoLuongNhap();i++){
+            tangTonKho(pn.getDSMH()[i], pn.getDSMH()[i].getSoLuong());
+        }
+        pn.setTrangThai(PhieuNhap.TrangThaiPN.DA_DUYET);
+        System.out.println("Đã tăng hàng tồn từ phiếu nhập: "+pn.getMa());
+        return true;
+    }
+
+//tìm hàng trong kho theo mã
+    public void timHangTon(){
+        String ma = TienIch.nhapChuoi("Nhập mã cần tìm: ");
+        int vtMH = TienIch.timKiemViTri(dsTonKho, soLuongMatHang, ma);
+        if(vtMH==-1){
+            System.out.println("Mã hàng này không tồn tại trong kho!");
             return;
         }
-        System.out.println("\n================ LỊCH SỬ PHIẾU NHẬP ================");
-        for (int i = 0; i < soLuongPN; i++) {
-            if (dsPN[i] != null) {
-                dsPN[i].xuat(); // Gọi hàm xuat của PhieuNhap
+        String thongtin= dsTonKho[vtMH].toString();
+        System.out.println(thongtin);
+    }
+
+    @Override
+    public void them(){ //thêm 1 hàng vào kho
+        HangTonKho htMoi = new HangTonKho();
+        htMoi.taoHangTonMoi();
+        if(htMoi.getMatHang()==null){
+            System.out.println("Tạo hàng tồn thất bại!");
+            return;
+        }
+        boolean checkNhapMH = tangTonKho(htMoi.getMatHang(), htMoi.getSoLuong());
+        if(checkNhapMH){
+            System.out.println("Đã thêm vào kho thành công! ");
+        }
+    }
+    @Override
+    public void nhap(){ //nhập nhiều hàng vào kho
+        int slNhap = TienIch.nhapSoNguyenDuong("Nhập số hàng muốn nhập vào kho: ");
+        for(int i=0;i<slNhap;i++){
+            System.out.println("Hàng thứ "+(i+1));
+            them();
+        }
+    }
+    @Override
+    public void xoa(){ //xóa 1 hàng khỏi kho
+        if(soLuongMatHang==0){
+            System.out.println("Kho đang trống!");
+            return;
+        }
+        String ma = TienIch.nhapChuoi("Nhập mã hàng cần xóa khỏi kho: ");
+        int vt = TienIch.timKiemViTri(dsTonKho, soLuongMatHang, ma);
+        if(vt==-1){
+            System.out.println("Không tìm thấy mã " + ma);
+            return;
+        }
+        for(int i=vt;i<soLuongMatHang-1;i++){
+            dsTonKho[i]=dsTonKho[i+1];
+        }
+        dsTonKho[soLuongMatHang-1]=null;
+        soLuongMatHang--;
+        System.out.println("Đã xóa mã " + ma + " khỏi kho.");
+    }
+
+
+
+
+    @Override 
+    public void sua(){
+        if(soLuongMatHang==0){
+            System.out.println("Kho đang trống!");
+            return;
+        }
+        String ma = TienIch.nhapChuoi("Nhập mã hàng cần sửa số lượng tồn: ");
+        int vtMH = TienIch.timKiemViTri(dsTonKho, soLuongMatHang, ma);
+        if(vtMH==-1){
+            System.out.println("Không tìm thấy mã " + ma);
+            return;
+        }
+        int slMoi = TienIch.nhapSoNguyenDuong("Nhập số lượng tồn mới: ");
+        int chenh = slMoi - dsTonKho[vtMH].getSoLuong();
+        if(chenh>0){
+            if(chenh>getConTrong()){
+                System.out.println("Kho không đủ chỗ!");
+                return;
             }
+            dsTonKho[vtMH].tangSoLuong(chenh);
+        } else if(chenh<0){
+            dsTonKho[vtMH].giamSoLuong(-chenh);
+        }
+        System.out.println("Đã cập nhật số lượng tồn mã " + ma);
+    }
+    @Override 
+    public void xuat(){
+        if(soLuongMatHang==0){
+            System.out.println("Kho trống!");
+            return;
+        }
+        System.out.println("=====KHO ĐANG CHỨA=====");
+        System.out.printf("|%-20s|%-20s|%-15s|%-20s|%-20s|%n","Mã","Tên","Giá Nhập", "Số Lượng", "Giá Bán");
+        for(int i=0;i<soLuongMatHang;i++){
+            dsTonKho[i].xuat();
         }
     }
 
     @Override
-    public void them() {
-        // Bỏ trống do sử dụng Overloading bên dưới
+    public void ghiFile(String duongDan){
+        try(PrintWriter pw = new PrintWriter(new FileWriter(duongDan))){
+            for(int i = 0; i < soLuongMatHang; i++){
+                pw.println(dsTonKho[i].getMatHang().toString());
+            }
+            System.out.println("Đã ghi " + soLuongMatHang + " dòng tồn kho vào file: " + duongDan);
+        } catch(IOException e){
+            System.out.println("LỖI ghi file: " + e.getMessage());
+        }
     }
-
-    // ================= HÀM LẬP PHIẾU NHẬP CHÍNH =================
-    public void them(DanhSachMatHang dsHangHoa) {
-        System.out.println("\n--- BẮT ĐẦU LẬP PHIẾU NHẬP KHO ---");
+ 
+    @Override
+    public void docFile(String duongDan){
         
-        PhieuNhap pn = new PhieuNhap();
-        pn.nhap();
+        try(BufferedReader br=new BufferedReader(new FileReader(duongDan))){
 
-        int soMon = TienIch.nhapSoNguyenDuong("Phiếu này nhập bao nhiêu loại mặt hàng? ");
-        if (soMon == 0) {
-            System.out.println("Đã hủy lập phiếu nhập!");
-            return;
-        }
+            String dong;
+            while((dong=br.readLine()) != null){
+                if(dong.trim().isEmpty()) continue;
+                String[] phan= dong.split(";");
+                String danhmuc=phan[0].trim();
+                String ma = phan[1].trim();
+                String ten= phan[2].trim();
+                double gianhap= Double.parseDouble(phan[3].trim());
 
-        for (int i = 0; i < soMon; i++) {
-            System.out.println("\n> Nhập mặt hàng thứ " + (i + 1) + ":");
-            String maHang = TienIch.nhapChuoi("- Nhập MÃ mặt hàng cần nhập: ");
-            
-            // Lấy nguyên đối tượng Mặt hàng từ Kệ Hàng để truyền cho Phiếu Nhập
-            MatHang matHangGoc = dsHangHoa.timKiemMatHang(maHang); 
-            
-            if (matHangGoc == null) {
-                System.out.println("[LỖI] Không tìm thấy mã '" + maHang + "'. Yêu cầu qua Menu 1 tạo danh mục trước!");
-                continue; 
+                int soLuong;
+                try{
+                    soLuong = Integer.parseInt(phan[4].trim());
+                } catch(NumberFormatException e){
+                    System.out.println("Dòng: " + dong + " lỗi số lượng!");
+                    continue;
+                }
+                
+                int vtMH = TienIch.timKiemViTri(dsTonKho, soLuongMatHang, ma);
+                if(vtMH!=-1){
+                    dsTonKho[vtMH].tangSoLuong(soLuong);
+                }
+                else{
+                    switch(danhmuc){
+                        case "Sách":
+                            String tacGiaSach=phan[5].trim();
+                            String nhaXuatBanSach=phan[6].trim();
+                            String theLoaiSach=phan[7].trim();
+                            Sach themSach = new Sach(ma, ten, gianhap, soLuong ,tacGiaSach, nhaXuatBanSach, theLoaiSach);
+                            if(tangTonKho(themSach, soLuong)){
+                                System.out.println("Thêm thành công Sách "+ ten);
+                            }     
+                            break;                       
+                        case "Tiểu thuyết":
+                            String tacGiaTieuThuyet=phan[5].trim();
+                            String nhaXuatBanTieuThuyet=phan[6].trim();
+                            String theLoaiTieuThuyet=phan[7].trim();
+                            TieuThuyet themTieuThuyet = new TieuThuyet(ma, ten, gianhap, soLuong ,tacGiaTieuThuyet, nhaXuatBanTieuThuyet, theLoaiTieuThuyet);
+                            if(tangTonKho(themTieuThuyet, soLuong)){
+                                System.out.println("Thêm thành công Tiểu thuyết "+ ten);
+                            }
+                            break;
+                        case "Sách giáo khoa":
+                            String monHoc = phan[5].trim();
+                            String nhaXuatBan= phan[6].trim();
+                            SachGiaoKhoa themSGK = new SachGiaoKhoa(ma, ten, gianhap, soLuong, monHoc, nhaXuatBan);
+                            if(tangTonKho(themSGK, soLuong)){
+                                System.out.println("Thêm thành công SGK "+ ten);
+                            }
+                            break;
+                        case "Truyện":
+                            String tacGiaTruyen=phan[5].trim();
+                            String nhaXuatBanTruyen=phan[6].trim();
+                            String theLoaiTruyen=phan[7].trim(); 
+                            Truyen themTruyen = new Truyen(ma, ten, gianhap, soLuong ,tacGiaTruyen, nhaXuatBanTruyen, theLoaiTruyen);
+                            if(tangTonKho(themTruyen, soLuong)){
+                                System.out.println("Thêm thành công Truyện "+ ten);
+                            }     
+                            break;   
+                        case "Văn phòng phẩm":
+                            String loaiVPP=phan[5].trim();
+                            String nhaSXVPP=phan[6].trim();
+                            VanPhongPham themVPP = new VanPhongPham(ma, ten, gianhap, soLuong, nhaSXVPP, loaiVPP);
+                            if(tangTonKho(themVPP, soLuong)){
+                                System.out.println("Thêm thành công Văn phòng phẩm "+ ten);
+                            }
+                            break;
+                        case "Báo tạp chí":
+                            String theLoaiBao=phan[5].trim();
+                            String nhaXuatBanBao=phan[6].trim();
+                            BaoTapChi themBao = new BaoTapChi(ma, ten, gianhap, soLuong, nhaXuatBanBao, theLoaiBao);
+                            if(tangTonKho(themBao, soLuong)){
+                                System.out.println("Thêm thành công Báo tạp chí "+ ten);
+                            }
+                            break;
+                        default:
+                            String nhaSX = phan[5].trim();
+                            SPKhac themKhac = new SPKhac(ma, ten, gianhap, soLuong, nhaSX);
+                            if(tangTonKho(themKhac, soLuong)){
+                                System.out.println("Thêm thành công Khác "+ten);
+                            }
+                            break;
+                    }
+                }
+
             }
-
-            int slNhap = TienIch.nhapSoNguyenDuong("- Nhập số lượng: ");
-            
-            int dangChua = dsHangHoa.getTongSoLuongTonToanHeThong();
-            if (dangChua + slNhap > SUC_CHUA_TOI_DA) {
-                System.out.println("[LỖI] Kho bị quá tải! Chỉ còn trống: " + (SUC_CHUA_TOI_DA - dangChua));
-                continue; 
-            }
-            
-            ChiTietPhieuNhap ctpn = new ChiTietPhieuNhap(matHangGoc, slNhap, matHangGoc.getGiaNhap());
-            pn.themChiTiet(ctpn);
-
-            dsHangHoa.tangSoLuongTon(maHang, slNhap);
-            System.out.println(">>> Đã thêm " + slNhap + " sản phẩm '" + matHangGoc.getTen() + "' vào giỏ hàng nhập và Kệ Hàng!");
+            System.out.println("ĐỌC XONG");
+        } catch(IOException e){
+            System.out.println("LỖI đọc file: " + e.getMessage());
         }
-        
-        if (pn.getSoLuongCT() > 0) {
-            if (soLuongPN < dsPN.length) {
-                dsPN[soLuongPN] = pn;
-                soLuongPN++;
-                System.out.println("\n>>> HOÀN TẤT LẬP PHIẾU VÀ ĐÃ LƯU VÀO LỊCH SỬ KHO!");
-            }
-        } else {
-            System.out.println("\n>>> Phiếu nhập rỗng (Không có mặt hàng nào hợp lệ), đã tự động hủy phiếu.");
-        }
-    }
-
-    // ================= CÁC HÀM SỬA/XÓA =================
-    public void sua() {
-        String maSua = TienIch.nhapChuoi("Nhập mã phiếu cần sửa: ");
-        sua(maSua);
-    }
-
-    @Override
-    public void sua(String ma) {
-        System.out.println("Tính năng sửa phiếu nhập đang cập nhật.");
-    }
-
-    public void xoa() {
-        if (soLuongPN == 0) {
-            System.out.println("Không có phiếu nhập nào để xóa.");
-            return;
-        }
-        String maXoa = TienIch.nhapChuoi("Nhập mã phiếu cần xóa: ");
-        xoa(maXoa);
-    }
-
-    @Override
-    public void xoa(String ma) {
-        int viTri = TienIch.timKiemViTri(dsPN, soLuongPN, ma);
-        if (viTri == -1) {
-            System.out.println("Không tìm thấy phiếu mã: " + ma);
-            return;
-        }
-        for (int i = viTri; i < soLuongPN - 1; i++) {
-            dsPN[i] = dsPN[i + 1];
-        }
-        dsPN[soLuongPN - 1] = null;
-        soLuongPN--;
-        System.out.println(">>> Đã xóa phiếu nhập mã: " + ma);
-    }
-
-    @Override
-    public void ghiFile(String duongDan) {
-        System.out.println("Ghi danh sách Phiếu Nhập ra file.");
-    }
-
-    @Override
-    public void docFile(String duongDan) {
-        System.out.println("Đọc danh sách Phiếu Nhập từ file.");
     }
 }
+
