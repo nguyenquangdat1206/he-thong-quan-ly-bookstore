@@ -1,0 +1,10 @@
+Sách;S001;Nhà giả kim;60000;15;Paulo Coelho;NXB Văn học;Tâm lý
+Sách giáo khoa;SGK01;Toán 10;25000;50;Toán;NXB Giáo dục
+Tiểu thuyết;TT001;Dế Mèn phiêu lưu ký;45000;20;Tô Hoài;NXB Kim Đồng;Thiếu nhi
+Truyện;TR001;Doraemon tập 1;20000;100;Fujiko F. Fujio;NXB Kim Đồng;Truyện tranh
+Văn phòng phẩm;VPP001;Vở Campus 96 trang;9000;200;Vở;Campus
+Văn phòng phẩm;VPP002;Bút bi Thiên Long;3000;300;Bút;Thiên Long
+Báo tạp chí;BTC001;Tạp chí Khoa học phổ thông;30000;40;Khoa học;NXB Khoa học và Kỹ thuật
+Khác;K001;Túi vải canvas;40000;25;Handmade
+Khác;K002;Sticker hoạt hình;15000;80;Hồng Hà
+Khác;K003;Lego City;350000;10;Lego
