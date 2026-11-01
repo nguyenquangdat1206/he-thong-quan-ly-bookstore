@@ -52,6 +52,7 @@ public class HangTonKho implements IGetMa{
     public HangTonKho taoHangTonMoi(){
         System.out.println("1. Sách  2. SGK  3. Tiểu thuyết  4. Truyện");
         System.out.println("5. Văn phòng phẩm  6. Báo tạp chí  7. Sản phẩm khác");
+        System.out.println("8. Đồ chơi  9. Dụng cụ học tập  10. Trang trí  11. Vở");
         int loai = TienIch.nhapSoNguyenDuong("Nhập loại mặt hàng muốn nhập vào kho: ");
         HangTonKho htk;
         MatHang mh;
@@ -63,6 +64,10 @@ public class HangTonKho implements IGetMa{
             case 5: mh = new VanPhongPham(); break;
             case 6: mh = new BaoTapChi(); break;
             case 7: mh = new SPKhac(); break;
+            case 8: mh = new DoChoi(); break;
+            case 9: mh = new DungCuHocTap(); break;
+            case 10: mh = new TrangTri(); break;
+            case 11: mh = new Vo(); break;
             default: System.out.println("Chọn kh hợp lệ"); return null;
         }
         mh.nhap();

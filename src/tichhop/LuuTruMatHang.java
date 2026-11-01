@@ -60,6 +60,11 @@ public final class LuuTruMatHang {
             // Định dạng TV2: thể loại báo trước, nhà xuất bản sau.
             case "Báo tạp chí": return a.length==7 ? new BaoTapChi(ma,ten,gia,sl,a[6],a[5]) : null;
             case "Khác": return a.length==6 ? new SPKhac(ma,ten,gia,sl,a[5]) : null;
+            // Khôi phục bốn danh mục gốc từ Git: đúng thứ tự trong toString() từng loại.
+            case "Đồ chơi": return a.length==7 ? new DoChoi(ma,ten,gia,sl,a[6],Integer.parseInt(a[5].trim())) : null;
+            case "Dụng cụ học tập": return a.length==7 ? new DungCuHocTap(ma,ten,gia,sl,a[6],a[5]) : null;
+            case "Trang trí": return a.length==6 ? new TrangTri(ma,ten,gia,sl,a[5]) : null;
+            case "Vở": return a.length==7 ? new Vo(ma,ten,gia,sl,Integer.parseInt(a[5].trim()),a[6]) : null;
             default: return null;
         }
     }

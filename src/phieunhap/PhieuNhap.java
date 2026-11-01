@@ -73,6 +73,7 @@ public class PhieuNhap implements IGetMa, IQuanLy{
     public MatHang nhapMH(){
         System.out.println("1. Sách  2. SGK  3. Tiểu thuyết  4. Truyện");
         System.out.println("5. Văn phòng phẩm  6. Báo tạp chí  7. Sản phẩm khác");
+        System.out.println("8. Đồ chơi  9. Dụng cụ học tập  10. Trang trí  11. Vở");
         int loai = TienIch.nhapSoNguyenDuong("Nhập loại mặt hàng ghi vào phiếu nhập: ");
         MatHang mhMoi;
         switch(loai){
@@ -83,6 +84,10 @@ public class PhieuNhap implements IGetMa, IQuanLy{
             case 5: mhMoi = new VanPhongPham(); break;
             case 6: mhMoi = new BaoTapChi(); break;
             case 7: mhMoi = new SPKhac(); break;
+            case 8: mhMoi = new DoChoi(); break;
+            case 9: mhMoi = new DungCuHocTap(); break;
+            case 10: mhMoi = new TrangTri(); break;
+            case 11: mhMoi = new Vo(); break;
             default: System.out.println("Chọn kh hợp lệ"); return null;
         }
         mhMoi.nhap();

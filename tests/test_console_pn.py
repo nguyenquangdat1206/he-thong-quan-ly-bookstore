@@ -29,15 +29,16 @@ count=0
 for name,inputs,expected,forbidden in scenarios:
  with tempfile.TemporaryDirectory(prefix='oop_pn_test_') as temp:
   dest=Path(temp)
-  for sub in ['kho','khachhang','phieunhap','hoadon']:
-   shutil.copytree(ROOT/sub,dest/sub)
-  shutil.copy2(ROOT/'nhanvien.txt',dest/'nhanvien.txt')
+  (dest/'data').mkdir(parents=True,exist_ok=True)
+  for filename,sub in [('kho_input.txt','kho'),('khachhang.txt','khachhang'),('phieunhap_input.txt','phieunhap'),('hoadon.txt','hoadon')]:
+   shutil.copy2(ROOT/'tests'/'fixtures'/sub/filename,dest/'data'/filename)
+  shutil.copy2(ROOT/'tests'/'fixtures'/'nhanvien_demo.txt',dest/'data'/'nhanvien.txt')
   run=subprocess.run(['java','-Dfile.encoding=UTF-8','-Dstdout.encoding=UTF-8','-Dstderr.encoding=UTF-8','-cp',str(ROOT/'build'),'Main'],
     input='\n'.join(inputs)+'\n',text=True,encoding='utf8',capture_output=True,cwd=dest,timeout=20)
   out=run.stdout+'\n'+run.stderr
   errors=[f'exit {run.returncode}' if run.returncode!=0 else ''] + [f'missing {p}' for p in expected if p not in out] + [f'unexpected {p}' for p in forbidden if p in out]
   errors=[x for x in errors if x]
-  if name=='admin writes and reloads PN' and (not (dest/'phieunhap/phieunhap_output.txt').exists() or len((dest/'phieunhap/phieunhap_output.txt').read_text(encoding='utf8').splitlines()) != 10):
+  if name=='admin writes and reloads PN' and (not (dest/'data/phieunhap_output.txt').exists() or len((dest/'data/phieunhap_output.txt').read_text(encoding='utf8').splitlines()) != 10):
    errors.append('expected 10 lines in output')
   if errors:
    print('FAIL',name,':',errors,'\n',out[-2200:]);sys.exit(1)

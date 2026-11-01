@@ -4,8 +4,8 @@ import tienich.*;
  
 public class QuanLyKho {
  
-    private static final String FILE_NHAP_MAC_DINH = "kho_input.txt";
-    private static final String FILE_XUAT_MAC_DINH = "kho_output.txt";
+    private static final String FILE_NHAP_MAC_DINH = "data/kho_input.txt";
+    private static final String FILE_XUAT_MAC_DINH = "data/kho_output.txt";
  
     private static void hienMenu(){
         System.out.println();

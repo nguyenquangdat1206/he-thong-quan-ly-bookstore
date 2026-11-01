@@ -12,7 +12,7 @@ import tichhop.LuuTruMatHang;
 
 /** TV5: lắp ghép menu với các module nguyên gốc của TV2,3,4. */
 public class Main {
-    static final String FILE_NV = "nhanvien.txt";
+    static final String FILE_NV = "data/nhanvien.txt";
     static final String ANSI = "\u001B[36m", RESET = "\u001B[0m";
     static Kho kho = new Kho();
     static DanhSachMatHang dsmh = new DanhSachMatHang();
@@ -23,6 +23,7 @@ public class Main {
     static DanhSachNhanVien dsnv = new DanhSachNhanVien();
     static NhanVien dangDangNhap;
     static NhanVienBanHang nvBanHang;
+    static boolean coTheGhiNhanVien = true;
 
     static String hoiFile(String macDinh) {
         System.out.print("Đường dẫn file (Enter hoặc . để dùng '" + macDinh + "'): ");
@@ -59,8 +60,8 @@ public class Main {
                 case 5: kho.xoa(); break;
                 case 6: kho.timHangTon(); break;
                 case 7: kho.kiemTraSucChua(); break;
-                case 8: kho.docFile(hoiFile("kho/kho_input.txt")); break;
-                case 9: kho.ghiFile(hoiFile("kho/kho_output.txt")); break;
+                case 8: kho.docFile(hoiFile("data/kho_input.txt")); break;
+                case 9: kho.ghiFile(hoiFile("data/kho_output.txt")); break;
                 case 0: break;
                 default: System.out.println("Lựa chọn không hợp lệ!");
             }
@@ -92,8 +93,8 @@ public class Main {
                 case 5: dspn.xoa(); break;
                 case 6: dspn.nhapKho(kho); break;
                 case 7: kho.xuat(); break;
-                case 8: dspn.docFile(hoiFile("phieunhap/phieunhap_input.txt")); break;
-                case 9: dspn.ghiFile(hoiFile("phieunhap/phieunhap_output.txt")); break;
+                case 8: dspn.docFile(hoiFile("data/phieunhap_input.txt")); break;
+                case 9: dspn.ghiFile(hoiFile("data/phieunhap_output.txt")); break;
                 case 10: dspn.getDanhSachNCC().xuat(); break;
                 case 0: break;
                 default: System.out.println("Lựa chọn không hợp lệ!");
@@ -135,8 +136,8 @@ public class Main {
                 case 7: dsmh.sua(); break;
                 case 8: dsmh.timkiem(); break;
                 case 9: dsmh.timkiem_nangcao(); break;
-                case 10: LuuTruMatHang.docFile(dsmh, hoiFile("mathang.txt")); break;
-                case 11: LuuTruMatHang.ghiFile(dsmh, hoiFile("mathang.txt")); break;
+                case 10: LuuTruMatHang.docFile(dsmh, hoiFile("data/mathang.txt")); break;
+                case 11: LuuTruMatHang.ghiFile(dsmh, hoiFile("data/mathang_output.txt")); break;
                 case 0: break;
                 default: System.out.println("Lựa chọn không hợp lệ!");
             }
@@ -163,8 +164,8 @@ public class Main {
                 case 3: dskh.nhap(); break;
                 case 4: dskh.sua(); break;
                 case 5: dskh.xoa(); break;
-                case 6: dskh.docFile(hoiFile("khachhang.txt")); break;
-                case 7: dskh.ghiFile(hoiFile("khachhang.txt")); break;
+                case 6: dskh.docFile(hoiFile("data/khachhang.txt")); break;
+                case 7: dskh.ghiFile(hoiFile("data/khachhang_output.txt")); break;
                 case 0: break;
                 default: System.out.println("Lựa chọn không hợp lệ!");
             }
@@ -205,8 +206,8 @@ public class Main {
                 }
                 case 3: dshd.sua(); break;
                 case 4: dshd.xoa(); break;
-                case 5: dshd.docFile(hoiFile("hoadon.txt"), dskh, dsmh); break;
-                case 6: dshd.ghiFile(hoiFile("hoadon.txt")); break;
+                case 5: dshd.docFile(hoiFile("data/hoadon.txt"), dskh, dsmh); break;
+                case 6: dshd.ghiFile(hoiFile("data/hoadon_output.txt")); break;
                 case 7: thanhToanHoaDon(); break;
                 case 0: break;
                 default: System.out.println("Lựa chọn không hợp lệ!");
@@ -307,8 +308,8 @@ public class Main {
                 case 2: dsncc.them(); break;
                 case 3: dsncc.sua(); break;
                 case 4: dsncc.xoa(); break;
-                case 5: dsncc.docFile(hoiFile("nhacungcap.txt")); break;
-                case 6: dsncc.ghiFile(hoiFile("nhacungcap.txt")); break;
+                case 5: dsncc.docFile(hoiFile("data/nhacungcap.txt")); break;
+                case 6: dsncc.ghiFile(hoiFile("data/nhacungcap_output.txt")); break;
                 case 0: break;
                 default: System.out.println("Lựa chọn không hợp lệ.");
             }
@@ -339,12 +340,22 @@ public class Main {
                     // Đọc lại file chỉ từ giao diện Admin; không khóa mất phiên do thay danh sách.
                     String f = hoiFile(FILE_NV);
                     dsnv.docFile(f);
+                    // Sau thao tác import, tránh tự ghi đè file nguồn nếu còn sai định dạng.
+                    coTheGhiNhanVien = false;
                     nvBanHang = null;
                     System.out.println("Đã đọc file; kết thúc phiên để xác thực lại với dữ liệu mới.");
                     dangDangNhap = null;
                     return;
                 }
-                case 8: dsnv.ghiFile(hoiFile(FILE_NV)); break;
+                case 8: {
+                    String duongDan = hoiFile(FILE_NV);
+                    boolean laFileGoc = java.nio.file.Path.of(duongDan).toAbsolutePath().normalize()
+                        .equals(java.nio.file.Path.of(FILE_NV).toAbsolutePath().normalize());
+                    if (laFileGoc && !coTheGhiNhanVien)
+                        System.out.println("Từ chối ghi đè file nhân viên gốc định dạng cũ; hãy chọn file đầu ra khác.");
+                    else dsnv.ghiFile(duongDan);
+                    break;
+                }
                 case 0: break;
                 default: System.out.println("Lựa chọn không hợp lệ.");
             }
@@ -424,10 +435,29 @@ public class Main {
         } while (chon != 0);
     }
     static void khoiTaoNhanVien() {
+        try { java.nio.file.Files.createDirectories(java.nio.file.Path.of("data")); }
+        catch (java.io.IOException e) { System.out.println("Không thể tạo thư mục data: " + e.getMessage()); }
         java.nio.file.Path f = java.nio.file.Path.of(FILE_NV);
-        if (java.nio.file.Files.exists(f)) dsnv.docFile(FILE_NV);
-        else {
-            System.out.println("Chưa có nhanvien.txt, khởi tạo 3 tài khoản DEMO.");
+        if (java.nio.file.Files.exists(f)) {
+            try {
+                long soDong;
+                try (java.util.stream.Stream<String> lines = java.nio.file.Files.lines(
+                        f, java.nio.charset.StandardCharsets.UTF_8)) {
+                    soDong = lines.filter(line -> !line.isBlank()).count();
+                }
+                dsnv.docFile(FILE_NV);
+                if (soDong != dsnv.getSoLuong() || dsnv.soLuongAdmin() == 0 || dsnv.laDuLieuDinhDangCu()) {
+                    coTheGhiNhanVien = false;
+                    System.out.println("CẢNH BÁO: data/nhanvien.txt là định dạng cũ hoặc chứa dòng lỗi; "
+                        + "không tự ghi đè khi thoát. Hãy kiểm tra file trước.");
+                }
+            } catch (java.io.IOException e) {
+                coTheGhiNhanVien = false;
+                System.out.println("Không kiểm tra được file nhân viên; đã khóa tự lưu để bảo vệ dữ liệu: "
+                    + e.getMessage());
+            }
+        } else {
+            System.out.println("Chưa có data/nhanvien.txt, khởi tạo 3 tài khoản DEMO.");
             dsnv.them(new QuanLy("ADMIN", "Quản trị demo", "0900000001", "admin123", "Cả ngày", 16000000));
             dsnv.them(new NhanVienBanHang("BH01", "Nhân viên bán", "0900000002", "bh123", "Sáng", 8000000));
             dsnv.them(new NhanVienNhapKho("KHO01", "Nhân viên kho", "0900000003", "kho123", "Chiều", 8500000));
@@ -445,7 +475,10 @@ public class Main {
             switch (chon) {
                 case 1: dangNhap(); break;
                 case 2: dsmh.xuat(); break;
-                case 0: dsnv.ghiFile(FILE_NV); System.out.println("Tạm biệt!"); break;
+                case 0:
+                    if (coTheGhiNhanVien) dsnv.ghiFile(FILE_NV);
+                    else System.out.println("Bỏ qua lưu nhân viên vì dữ liệu gốc chưa tương thích.");
+                    System.out.println("Tạm biệt!"); break;
                 default: System.out.println("Lựa chọn không hợp lệ!");
             }
         } while (chon != 0);

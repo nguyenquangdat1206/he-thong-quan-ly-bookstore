@@ -291,12 +291,31 @@ public class Kho implements IFileIO, IQuanLy  {
                                 System.out.println("Thêm thành công Báo tạp chí "+ ten);
                             }
                             break;
-                        default:
+                        case "Đồ chơi":
+                            if (tangTonKho(new DoChoi(ma,ten,gianhap,soLuong,phan[6].trim(),Integer.parseInt(phan[5].trim())), soLuong))
+                                System.out.println("Thêm thành công Đồ chơi " + ten);
+                            break;
+                        case "Dụng cụ học tập":
+                            if (tangTonKho(new DungCuHocTap(ma,ten,gianhap,soLuong,phan[6].trim(),phan[5].trim()), soLuong))
+                                System.out.println("Thêm thành công Dụng cụ học tập " + ten);
+                            break;
+                        case "Trang trí":
+                            if (tangTonKho(new TrangTri(ma,ten,gianhap,soLuong,phan[5].trim()), soLuong))
+                                System.out.println("Thêm thành công Trang trí " + ten);
+                            break;
+                        case "Vở":
+                            if (tangTonKho(new Vo(ma,ten,gianhap,soLuong,Integer.parseInt(phan[5].trim()),phan[6].trim()), soLuong))
+                                System.out.println("Thêm thành công Vở " + ten);
+                            break;
+                        case "Khác":
                             String nhaSX = phan[5].trim();
                             SPKhac themKhac = new SPKhac(ma, ten, gianhap, soLuong, nhaSX);
                             if(tangTonKho(themKhac, soLuong)){
                                 System.out.println("Thêm thành công Khác "+ten);
                             }
+                            break;
+                        default:
+                            System.out.println("Bỏ qua danh mục kho không hỗ trợ: " + danhmuc);
                             break;
                     }
                 }

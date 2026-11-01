@@ -82,6 +82,24 @@ public class IntegrationTests {
             expect(r.getSoLuong()==2,"invalid rows skipped");
             Files.deleteIfExists(f);
         });
+        check("TV5 - legacy Java-text staff import safely without executing code", () -> {
+            Path f = Files.createTempFile("staff-legacy-", ".txt");
+            try {
+                String legacy = "dsNhanVien.them(new QuanLy(\"admin\",\"Quản trị\",\"0900\",\"demo\",\"Sáng\",100));\n"
+                    + "dsNhanVien.them(new NhanVienBanHang(\"bh01\",\"Bán hàng\",\"0901\",\"demo2\",\"Chiều\",60));\n"
+                    + "dsNhanVien.them(new NhanVienNhapKho(\"kho01\",\"Nhập kho\",\"0902\",\"demo3\",\"Chiều\",70));\n";
+                Files.writeString(f, legacy, StandardCharsets.UTF_8);
+                DanhSachNhanVien ds = new DanhSachNhanVien();
+                ds.docFile(f.toString());
+                expect(ds.getSoLuong()==3 && ds.laDuLieuDinhDangCu(), "recognize legacy records");
+                expect(ds.dangNhap("admin","demo")!=null, "legacy admin login");
+                expect(ds.soLuongAdmin()==1, "admin privilege preserved");
+                expect(Files.readString(f).equals(legacy),"source file preserved byte for byte");
+                Files.writeString(f, legacy + "System.exit(99);\n");
+                ds.docFile(f.toString());
+                expect(ds.getSoLuong()==3, "unexpected Java code ignored, never executed");
+            } finally { Files.deleteIfExists(f); }
+        });
         check("TV1/TV5 - console role gate", () -> {
             NhanVien q = new QuanLy("A","Admin","0900","pw","Sáng",100);
             NhanVien b = new NhanVienBanHang("B","Sale","0901","pw","Sáng",100);
@@ -115,7 +133,7 @@ public class IntegrationTests {
             Files.deleteIfExists(f);
         });
         check("TV4 - sample warehouse load", () -> {
-            Kho kho = new Kho(); kho.docFile("kho/kho_input.txt");
+            Kho kho = new Kho(); kho.docFile("tests/fixtures/kho/kho_input.txt");
             expect(kho.getSoLuongTon()>=5, "at least 5 sample items");
             expect(kho.getTongSoLuongTon()>0,"positive stock");
         });

@@ -161,6 +161,10 @@ public class DanhSachMatHang implements IQuanLy {
                 System.out.println("5. Văn phòng phẩm");
                 System.out.println("6. Báo tạp chí");
                 System.out.println("7. Sản phẩm khác");
+                System.out.println("8. Đồ chơi");
+                System.out.println("9. Dụng cụ học tập");
+                System.out.println("10. Trang trí");
+                System.out.println("11. Vở");
                 int loai = TienIch.nhapSoNguyenDuong("Nhập loại mặt hàng cần thêm: ");
                 switch (loai) {
                     case 1 : mh = new Sach(); break;
@@ -170,9 +174,18 @@ public class DanhSachMatHang implements IQuanLy {
                     case 5 : mh = new VanPhongPham(); break;
                     case 6 : mh = new BaoTapChi(); break;
                     case 7 : mh = new SPKhac(); break;
-                    default : mh = new SPKhac(); break; // mặc định
+                    case 8 : mh = new DoChoi(); break;
+                    case 9 : mh = new DungCuHocTap(); break;
+                    case 10 : mh = new TrangTri(); break;
+                    case 11 : mh = new Vo(); break;
+                    default : mh = null; break;
                 };
 
+                if (mh == null) {
+                    System.out.println("Loại mặt hàng không hợp lệ, vui lòng chọn lại.");
+                    hopLe = false;
+                    continue;
+                }
                 mh.nhap();
                 hopLe = true;
 
@@ -325,6 +338,10 @@ public void timkiem_nangcao() {
     System.out.println("5. Văn phòng phẩm");
     System.out.println("6. Báo tạp chí");
     System.out.println("7. Sản phẩm khác");
+    System.out.println("8. Đồ chơi");
+    System.out.println("9. Dụng cụ học tập");
+    System.out.println("10. Trang trí");
+    System.out.println("11. Vở");
     System.out.println("Lựa chọn khác: thoát");
 
     int choice = TienIch.nhapSoNguyenDuong("Nhập loại hàng muốn tìm kiếm: ");
@@ -687,6 +704,21 @@ public void timkiem_nangcao() {
             }
             break;
 
+        // Các danh mục khôi phục: lọc theo nhà sản xuất mà không thay đổi các bộ lọc cũ.
+        case 8: case 9: case 10: case 11:
+            String nsx = TienIch.nhapChuoi("Nhập nhà sản xuất cần tìm: ");
+            boolean coHang = false;
+            for (int i = 0; i < soluong; i++) {
+                MatHang mh = ds[i];
+                String nhaSX = null;
+                if (choice == 8 && mh instanceof DoChoi) nhaSX = ((DoChoi) mh).getnhaSX();
+                if (choice == 9 && mh instanceof DungCuHocTap) nhaSX = ((DungCuHocTap) mh).getnhaSX();
+                if (choice == 10 && mh instanceof TrangTri) nhaSX = ((TrangTri) mh).getnhaSX();
+                if (choice == 11 && mh instanceof Vo) nhaSX = ((Vo) mh).getnhaSX();
+                if (nhaSX != null && nsx.equalsIgnoreCase(nhaSX)) { mh.xuat(); coHang = true; }
+            }
+            if (!coHang) System.out.println("Không tìm thấy mặt hàng phù hợp!");
+            break;
         default:
             break;
     }

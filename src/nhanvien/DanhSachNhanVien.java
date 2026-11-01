@@ -10,11 +10,36 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /** Module TV5: danh sách bằng mảng thuần, không dùng Collection. */
 public class DanhSachNhanVien implements IQuanLy, IFileIO {
     private NhanVien[] danhSach = new NhanVien[2];
     private int soLuong = 0;
+    private boolean duLieuDinhDangCu = false;
+    public boolean laDuLieuDinhDangCu() { return duLieuDinhDangCu; }
+
+    // Đọc được các dòng text mô tả khởi tạo nhân viên từ bản main cũ.
+    // Không bao giờ thực thi code Java có trong file dữ liệu.
+    private static final Pattern NHAN_VIEN_CU = Pattern.compile(
+        "^\\s*dsNhanVien\\s*\\.\\s*them\\s*\\(\\s*new\\s+(QuanLy|NhanVienBanHang|NhanVienNhapKho)\\s*\\(\\s*"
+        + "\"([^\"\\\\]*)\"\\s*,\\s*".repeat(5)
+        + "([0-9]+(?:\\.[0-9]+)?)\\s*\\)\\s*\\)\\s*;\\s*$"
+    );
+    private static String[] tachDongCu(String s) {
+        Matcher m = NHAN_VIEN_CU.matcher(s);
+        if (!m.matches()) return null;
+        String role;
+        switch (m.group(1)) {
+            case "QuanLy": role = "ADMIN"; break;
+            case "NhanVienBanHang": role = "BAN_HANG"; break;
+            case "NhanVienNhapKho": role = "NHAP_KHO"; break;
+            default: return null;
+        }
+        return new String[] {m.group(2), m.group(3), m.group(4), m.group(5),
+                             m.group(6), m.group(7), role};
+    }
 
     public int getSoLuong() { return soLuong; }
     public NhanVien[] getDanhSach() { return danhSach; }
@@ -154,11 +179,19 @@ public class DanhSachNhanVien implements IQuanLy, IFileIO {
     @Override public void docFile(String duongDan) {
         NhanVien[] moi = new NhanVien[2];
         int dem = 0, boQua = 0;
+        boolean coDongCu = false;
         try (BufferedReader br = Files.newBufferedReader(Path.of(duongDan), StandardCharsets.UTF_8)) {
             String s;
             while ((s = br.readLine()) != null) {
                 if (s.isBlank()) continue;
-                String[] a = s.split(";", -1);
+                String[] a;
+                if (s.stripLeading().startsWith("dsNhanVien")) {
+                    coDongCu = true;
+                    a = tachDongCu(s);
+                    if (a == null) { boQua++; continue; }
+                } else {
+                    a = s.split(";", -1);
+                }
                 if (a.length != 7) { boQua++; continue; }
                 NhanVien nv;
                 try {
@@ -182,6 +215,7 @@ public class DanhSachNhanVien implements IQuanLy, IFileIO {
             // Chỉ thay trạng thái khi đọc hoàn tất; đọc file lỗi không phá hỏng danh sách cũ.
             danhSach = moi;
             soLuong = dem;
+            duLieuDinhDangCu = coDongCu;
             System.out.println("Đã tải " + dem + " nhân viên (bỏ qua " + boQua + " dòng lỗi).");
         } catch (IOException e) { System.out.println("Không thể đọc " + duongDan + ": " + e.getMessage()); }
     }

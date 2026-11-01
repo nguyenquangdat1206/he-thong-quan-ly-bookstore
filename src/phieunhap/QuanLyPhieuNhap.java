@@ -1,12 +1,12 @@
 package phieunhap;
- 
+
 import kho.Kho;
 import tienich.TienIch;
- 
+
 public class QuanLyPhieuNhap {
- 
-    private static final String FILE_MAC_DINH = "phieunhap.txt";
- 
+
+    private static final String FILE_MAC_DINH = "data/phieunhap_input.txt";
+
     private static void hienMenu(){
         System.out.println();
         System.out.println("========== QUẢN LÝ PHIẾU NHẬP ==========");
@@ -22,13 +22,13 @@ public class QuanLyPhieuNhap {
         System.out.println("0. Thoát");
         System.out.println("========================================");
     }
- 
+
     private static String hoiDuongDan(String macDinh){
         String s = TienIch.nhapChuoi("Nhập đường dẫn file (gõ . để dùng mặc định '" + macDinh + "'): ");
         return s.equals(".") ? macDinh : s;
     }
- 
- 
+
+
     public static void main(String[] args){
         DanhSachPhieuNhap ds = new DanhSachPhieuNhap();
         Kho kho = new Kho();
@@ -45,7 +45,7 @@ public class QuanLyPhieuNhap {
                 case 6:  ds.nhapKho(kho); break;
                 case 7:  kho.xuat(); break;
                 case 8: ds.docFile(hoiDuongDan(FILE_MAC_DINH)); break;
-                case 9: ds.ghiFile(hoiDuongDan(FILE_MAC_DINH)); break;
+                case 9: ds.ghiFile(hoiDuongDan("data/phieunhap_output.txt")); break;
                 case 0:  System.out.println("Tạm biệt!"); break;
                 default: System.out.println("Lựa chọn không hợp lệ, nhập lại!");
             }

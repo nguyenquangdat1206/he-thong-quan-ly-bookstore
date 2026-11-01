@@ -187,7 +187,10 @@ public class DanhSachPhieuNhap implements IQuanLy, IFileIO{
     private static LocalDate phanTichNgay(String value) {
         String s = value.trim();
         try { return LocalDate.parse(s, NGAY_FILE); }
-        catch (DateTimeParseException e) { return LocalDate.parse(s); } // Tương thích bản ZIP cũ (yyyy-MM-dd)
+        catch (DateTimeParseException ignored) { }
+        try { return LocalDate.parse(s, DateTimeFormatter.ofPattern("dd/MM.uuuu").withResolverStyle(ResolverStyle.STRICT)); }
+        catch (DateTimeParseException ignored) { }
+        return LocalDate.parse(s); // Định dạng yyyy-MM-dd
     }
 
     /** Kiểm tra cấu trúc trước khi thay đổi mảng để một dòng lỗi không tạo phiếu/NCC rác. */
@@ -219,6 +222,18 @@ public class DanhSachPhieuNhap implements IQuanLy, IFileIO{
             case "Khác":
                 if (p.length != 9) throw new IllegalArgumentException("sai số cột Khác");
                 return new SPKhac(ma, ten, gia, so, p[7].trim());
+            case "Đồ chơi":
+                if (p.length != 10) throw new IllegalArgumentException("sai số cột Đồ chơi");
+                return new DoChoi(ma, ten, gia, so, p[8].trim(), Integer.parseInt(p[7].trim()));
+            case "Dụng cụ học tập":
+                if (p.length != 10) throw new IllegalArgumentException("sai số cột Dụng cụ học tập");
+                return new DungCuHocTap(ma, ten, gia, so, p[8].trim(), p[7].trim());
+            case "Trang trí":
+                if (p.length != 9) throw new IllegalArgumentException("sai số cột Trang trí");
+                return new TrangTri(ma, ten, gia, so, p[7].trim());
+            case "Vở":
+                if (p.length != 10) throw new IllegalArgumentException("sai số cột Vở");
+                return new Vo(ma, ten, gia, so, Integer.parseInt(p[7].trim()), p[8].trim());
             default: throw new IllegalArgumentException("danh mục không hỗ trợ: " + loai);
         }
     }
@@ -231,6 +246,10 @@ public class DanhSachPhieuNhap implements IQuanLy, IFileIO{
         if (mh instanceof VanPhongPham) return ((VanPhongPham) mh).getnhaSX();
         if (mh instanceof BaoTapChi) return ((BaoTapChi) mh).getNhaXuatBan();
         if (mh instanceof SPKhac) return ((SPKhac) mh).getnhaSX();
+        if (mh instanceof DoChoi) return ((DoChoi) mh).getnhaSX();
+        if (mh instanceof DungCuHocTap) return ((DungCuHocTap) mh).getnhaSX();
+        if (mh instanceof TrangTri) return ((TrangTri) mh).getnhaSX();
+        if (mh instanceof Vo) return ((Vo) mh).getnhaSX();
         throw new IllegalArgumentException("không xác định được NCC");
     }
 
