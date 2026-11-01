@@ -1,0 +1,96 @@
+PASS TV5 - add role, search, login, reject duplicate
+PASS TV5 - update salary, name, shift and password
+PASS TV5 - deletion shift, no missing, protect last admin
+Đã ghi 2 nhân viên vào /tmp/nhanvien-8267211768977142560.txt
+Đã tải 2 nhân viên (bỏ qua 0 dòng lỗi).
+Đã tải 2 nhân viên (bỏ qua 3 dòng lỗi).
+PASS TV5 - UTF8 file read-write, invalid and duplicate rows
+PASS TV1/TV5 - console role gate
+Kho không đủ chỗ!
+Đang xử lý, xin vui lòng chờ ! ...
+Đã nhập 4 sản phẩm mã S10
+Đang xử lý, xin vui lòng chờ ! ...
+Số lượng trong kho không đủ hoặc không hợp lệ!
+PASS TV2/TV4 - capacity, stock to shelf, reserve counts
+Đang xử lý, xin vui lòng chờ ! ...
+Đã nhập 10 sản phẩm mã SAVE01
+Đã ghi 1 dòng tồn kho vào file: /tmp/kho-16189786460760205369.txt
+Thêm thành công Sách Sách Java
+ĐỌC XONG
+PASS TV4 - stock file records WAREHOUSE not SHELF quantity
+Thêm thành công Sách Nhà giả kim
+Thêm thành công SGK Toán 10
+Thêm thành công Tiểu thuyết Dế Mèn phiêu lưu ký
+Thêm thành công Truyện Doraemon tập 1
+Thêm thành công Văn phòng phẩm Vở Campus 96 trang
+Thêm thành công Văn phòng phẩm Bút bi Thiên Long
+Thêm thành công Báo tạp chí Tạp chí Khoa học phổ thông
+Thêm thành công Khác Túi vải canvas
+Thêm thành công Khác Sticker hoạt hình
+Thêm thành công Khác Lego City
+ĐỌC XONG
+PASS TV4 - sample warehouse load
+Đã thêm vào giỏ hàng!
+Đã thêm vào giỏ hàng!
+Không đủ hàng! Trên kệ còn 6, trong giỏ đã có 5
+Đã cập nhật số lượng!
+Đã xóa mặt hàng khỏi giỏ!
+PASS TV3 - cart add, duplicate accumulation, invalid quantity
+Đã thêm vào giỏ hàng!
+Đã thêm vào giỏ hàng!
+Đã thêm vào giỏ hàng!
+Đã xóa mặt hàng khỏi giỏ!
+Đã xóa mặt hàng khỏi giỏ!
+Đã xóa mặt hàng khỏi giỏ!
+PASS TV3 - cart delete first/middle/last
+Đang xử lý, xin vui lòng chờ ! ...
+Đã nhập 5 sản phẩm mã SKU
+Đã tải 1 khách hàng từ file /tmp/customer-17580452018111193493.txt
+Đã thêm vào giỏ hàng!
+Đã thêm vào giỏ hàng!
+Mã hóa đơn đã tồn tại!
+Số tiền khách đưa không đủ! Cần 90000, đưa 1
+Thanh toán tiền mặt thành công. Tiền thối lại 910000
+Thanh toán thành công. Đã cập nhật lại số lượng trên kệ hàng 
+Hóa đơn này đã được thanh toán!
+Đã ghi dữ liệu hóa đơn ra file /tmp/invoice-5172837649347515148.txt
+Đã tải dữ liệu từ file /tmp/invoice-5172837649347515148.txt
+PASS TV3 - checkout, duplicate order, insufficient/sufficient cash, stock deduction
+Nhập mã mặt hàng xóa khỏi phiếu: 
+PASS TV4 - purchase note removes middle correctly
+Đã tăng hàng tồn từ phiếu nhập: trống
+Phiếu không ở trạng thái chờ duyệt; không nhập kho lần nữa!
+PASS TV4 - receipt to warehouse and no double processing check
+Đọc file thành công!
+Ghi file thành công!
+PASS TV4 - supplier file read-write
+1. Sách  2. SGK  3. Tiểu thuyết  4. Truyện
+5. Văn phòng phẩm  6. Báo tạp chí  7. Sản phẩm khác
+Nhập loại mặt hàng muốn nhập vào kho: 
+Nhập mã: 
+Nhập tên: 
+Nhập thể loại: 
+Nhập tác giả: 
+Nhà xuất bản: 
+Giá nhập hàng: 
+Nhập số lượng: 
+Đang nhập hàng nên tự đông chỉnh số lượng trong mặt hàng về 0 
+Nhập số lượng nhập vào kho: 
+Đã thêm vào kho thành công! 
+Nhập mã hàng cần xóa khỏi kho: 
+Đã xóa mã B khỏi kho.
+PASS TV4 - interactive add warehouse item and delete middle
+Đã lưu 7 mặt hàng vào /tmp/mathang-14572792216548116430.txt
+Đã tải 7 mặt hàng (bỏ qua 0 dòng lỗi/trùng mã).
+Đã tải 0 mặt hàng (bỏ qua 7 dòng lỗi/trùng mã).
+PASS TV2/TV5 - all seven product types TXT roundtrip, duplicate prevention
+
+TEST RESULT: 16 PASS, 0 FAIL
+PASS guest cannot modify
+PASS wrong password rejected
+PASS admin HR and payroll
+PASS sales limited menu
+PASS stock limited menu
+PASS invalid options
+PASS complete sale in admin role
+CONSOLE RESULT: 7 PASS / 0 FAIL

@@ -1,688 +1,486 @@
-import java.io.File;
-import mathang.DanhSachMatHang;
-import kho.Kho;
-import phieunhap.DanhSachPhieuNhap;
-import hoadon.DanhSachHoaDon;
-import hoadon.HoaDon;
-import khachhang.DanhSachKhachHang;
-import khachhang.KhachHang;
+import hoadon.*;
+import khachhang.*;
+import kho.*;
+import mathang.*;
 import nhanvien.*;
-import thanhtoan.IThanhToan;
-import thanhtoan.ThanhToanThe;
+import phieunhap.*;
+import nhacungcap.*;
+import giohang.*;
+import thanhtoan.*;
 import tienich.TienIch;
+import tichhop.LuuTruMatHang;
 
+/** TV5: lắp ghép menu với các module nguyên gốc của TV2,3,4. */
 public class Main {
-    // 1. KHỞI TẠO CÁC ĐỐI TƯỢNG QUẢN LÝ TOÀN CỤC
-    static Kho khoHang = new Kho();
-    static DanhSachPhieuNhap dsPhieuNhap = new DanhSachPhieuNhap();
-    static DanhSachMatHang dsHangHoa = new DanhSachMatHang();
-    static DanhSachKhachHang dsKhachHang = new DanhSachKhachHang();
-    static DanhSachHoaDon dsHoaDon = new DanhSachHoaDon(dsHangHoa, dsKhachHang);
-    static DanhSachNhanVien dsNhanVien = new DanhSachNhanVien();
+    static final String FILE_NV = "data/nhanvien.txt";
+    static final String ANSI = "\u001B[36m", RESET = "\u001B[0m";
+    static Kho kho = new Kho();
+    static DanhSachMatHang dsmh = new DanhSachMatHang();
+    static DanhSachKhachHang dskh = new DanhSachKhachHang();
+    static DanhSachNCC dsncc = new DanhSachNCC();
+    static DanhSachPhieuNhap dspn = new DanhSachPhieuNhap(dsncc);
+    static DanhSachHoaDon dshd = new DanhSachHoaDon(dsmh, dskh);
+    static DanhSachNhanVien dsnv = new DanhSachNhanVien();
+    static NhanVien dangDangNhap;
+    static NhanVienBanHang nvBanHang;
+    static boolean coTheGhiNhanVien = true;
 
-    // 2. BIẾN LƯU PHIÊN ĐĂNG NHẬP
-    static NhanVien userHienTai = null;
-
-    // Đường dẫn file mặc định
-    static final String FILE_KHO = timDuongDan("kho_input.txt");
-    static final String FILE_MAT_HANG = timDuongDan("mathang.txt");
-    static final String FILE_PHIEU_NHAP = timDuongDan("phieunhap_input.txt");
-    static final String FILE_KHACH_HANG = timDuongDan("khachhang.txt");
-    static final String FILE_HOA_DON = timDuongDan("hoadon.txt");
-    static final String FILE_NHAN_VIEN = timDuongDan("nhanvien.txt");
-
-    public static void main(String[] args) {
-        System.out.println("==================================================");
-        System.out.println("   CHƯƠNG TRÌNH QUẢN LÝ CỬA HÀNG VĂN PHÒNG PHẨM");
-        System.out.println("==================================================");
-
-        // ================= NẠP DỮ LIỆU TỰ ĐỘNG =================
-        System.out.println("\n[HỆ THỐNG] 1. Đang tải dữ liệu Kho từ " + FILE_KHO + " & " + FILE_MAT_HANG + "...");
-        khoHang.docFile(FILE_KHO);
-        if (new File(FILE_MAT_HANG).exists()) {
-            khoHang.docFile(FILE_MAT_HANG);
-        }
-
-        System.out.println("\n[HỆ THỐNG] 2. Đang xuất hàng loạt (20%) từ Kho lên Kệ cửa hàng...");
-        dsHangHoa.nhapHangLoat(khoHang);
-
-        System.out.println("\n[HỆ THỐNG] 3. Đang tải dữ liệu Phiếu nhập từ " + FILE_PHIEU_NHAP + "...");
-        dsPhieuNhap.docFile(FILE_PHIEU_NHAP);
-
-        System.out.println("\n[HỆ THỐNG] 4. Đang tải dữ liệu Khách hàng từ " + FILE_KHACH_HANG + "...");
-        dsKhachHang.docFile(FILE_KHACH_HANG);
-        damBaoKhachHangMacDinh(); // Đảm bảo có KH00, KH01 để đọc hoadon.txt không bị lỗi
-
-        System.out.println("\n[HỆ THỐNG] 5. Đang tải dữ liệu Hóa đơn từ " + FILE_HOA_DON + "...");
-        dsHoaDon.docFile(FILE_HOA_DON);
-
-        System.out.println("==================================================\n");
-
-        // KHỞI TẠO TÀI KHOẢN NHÂN VIÊN MẪU
-        khoiTaoNhanVienMau();
-
-        // ================= VÒNG LẶP HỆ THỐNG & ĐĂNG NHẬP =================
-        boolean chayChuongTrinh = true;
-        while (chayChuongTrinh) {
-            while (userHienTai == null) {
-                System.out.println("\n--- VUI LÒNG ĐĂNG NHẬP (Gõ 'exit' ở tài khoản để tắt máy) ---");
-                String tk = TienIch.nhapChuoi("Tài khoản (Mã NV): ");
-                if (tk.equalsIgnoreCase("exit")) {
-                    System.out.println("Đã đóng chương trình.");
-                    return;
-                }
-                String mk = TienIch.nhapChuoi("Mật khẩu: ");
-
-                userHienTai = dsNhanVien.dangNhap(tk, mk);
-
-                if (userHienTai == null) {
-                    System.out.println("[LỖI] Sai tài khoản hoặc mật khẩu! (Gợi ý: admin/123, bh01/123, kho01/123)");
-                }
-            }
-
-            System.out.println("\n>>> ĐĂNG NHẬP THÀNH CÔNG!");
-            System.out.println("Xin chào: " + userHienTai.getHoTen() + " | Quyền: " + userHienTai.getQuyen());
-            dungManHinh();
-
-            // ================= MENU CHÍNH ĐỘNG THEO ROLE =================
-            boolean trongPhienLamViec = true;
-            while (trongPhienLamViec) {
-                String quyen = userHienTai.getQuyen();
-                int stt = 1;
-
-                System.out.println("\n=================== MENU CHÍNH (" + quyen + ") ===================");
-                System.out.println((stt++) + ". Quản lý Mặt Hàng (Kệ cửa hàng)");
-
-                if (quyen.equals("ADMIN") || quyen.equals("NHAP_KHO")) {
-                    System.out.println((stt++) + ". Quản lý Kho Hàng");
-                    System.out.println((stt++) + ". Quản lý Phiếu Nhập Kho");
-                }
-                if (quyen.equals("ADMIN") || quyen.equals("BAN_HANG")) {
-                    System.out.println((stt++) + ". Quản lý Bán Hàng & Hóa Đơn");
-                    System.out.println((stt++) + ". Quản lý Khách Hàng");
-                }
-                if (quyen.equals("ADMIN")) {
-                    System.out.println((stt++) + ". Quản lý Nhân Sự");
-                }
-
-                int nutDangXuat = stt++;
-                int nutThoatHan = stt;
-                System.out.println(nutDangXuat + ". Lưu dữ liệu & Đăng xuất (Đổi tài khoản)");
-                System.out.println(nutThoatHan + ". Lưu dữ liệu & Thoát chương trình");
-                System.out.println("==============================================================");
-
-                int chon = nhapSoTuKhoang("Nhập lựa chọn (1 - " + nutThoatHan + "): ", 1, nutThoatHan);
-
-                if (chon == 1) {
-                    menuMatHang();
-                } else if (chon == nutDangXuat) {
-                    luuToanBoDuLieu();
-                    System.out.println("Đã đăng xuất tài khoản: " + userHienTai.getMaNguoi());
-                    userHienTai = null;
-                    trongPhienLamViec = false;
-                } else if (chon == nutThoatHan) {
-                    luuToanBoDuLieu();
-                    System.out.println("Tạm biệt " + userHienTai.getHoTen() + "! Hẹn gặp lại.");
-                    userHienTai = null;
-                    trongPhienLamViec = false;
-                    chayChuongTrinh = false;
-                } else {
-                    if (quyen.equals("ADMIN")) {
-                        switch (chon) {
-                            case 2: menuKho(); break;
-                            case 3: menuPhieuNhap(); break;
-                            case 4: menuHoaDon(); break;
-                            case 5: menuKhachHang(); break;
-                            case 6: menuNhanSu(); break;
-                        }
-                    } else if (quyen.equals("BAN_HANG")) {
-                        switch (chon) {
-                            case 2: menuHoaDon(); break;
-                            case 3: menuKhachHang(); break;
-                        }
-                    } else if (quyen.equals("NHAP_KHO")) {
-                        switch (chon) {
-                            case 2: menuKho(); break;
-                            case 3: menuPhieuNhap(); break;
-                        }
-                    }
-                }
-            }
-        }
+    static String hoiFile(String macDinh) {
+        System.out.print("Đường dẫn file (Enter hoặc . để dùng '" + macDinh + "'): ");
+        String s = TienIch.sc.nextLine().trim();
+        return (s.isEmpty() || s.equals(".")) ? macDinh : s;
     }
-
-    // ================= SUB-MENU 1: QUẢN LÝ MẶT HÀNG TRÊN KỆ =================
-    private static void menuMatHang() {
-        boolean tiepTuc = true;
-        String quyen = userHienTai.getQuyen();
-
-        while (tiepTuc) {
-            System.out.println("\n========== MODULE: QUẢN LÝ MẶT HÀNG (KỆ BÁN) ==========");
-            System.out.println("1. Xem số lượng loại mặt hàng đang bày bán");
-            System.out.println("2. Xuất danh sách mặt hàng trên kệ");
-            System.out.println("3. Tìm kiếm mặt hàng theo mã");
-            System.out.println("4. Bộ lọc tìm kiếm nâng cao (Theo danh mục)");
-            if (quyen.equals("ADMIN") || quyen.equals("NHAP_KHO")) {
-                System.out.println("5. Nhập hàng loạt mặt hàng từ Kho lên kệ (20%)");
-                System.out.println("6. Nhập một mặt hàng cụ thể từ Kho lên kệ");
-            }
-            if (quyen.equals("ADMIN")) {
-                System.out.println("7. Thêm mới mặt hàng trực tiếp lên kệ");
-                System.out.println("8. Sửa thông tin mặt hàng trên kệ");
-                System.out.println("9. Xóa mặt hàng khỏi kệ");
-            }
-            System.out.println("0. Trở về Menu Chính");
-            System.out.println("=======================================================");
-
-            int chon = TienIch.nhapSoNguyenDuong("Nhập lựa chọn: ");
-
-            switch (chon) {
-                case 1:
-                    System.out.println("Số lượng đầu mục mặt hàng đang bày bán trên kệ: " + dsHangHoa.getSoMH());
-                    dungManHinh();
-                    break;
-                case 2:
-                    dsHangHoa.xuat();
-                    dungManHinh();
-                    break;
-                case 3:
-                    dsHangHoa.timkiem();
-                    dungManHinh();
-                    break;
-                case 4:
-                    dsHangHoa.timkiem_nangcao();
-                    dungManHinh();
-                    break;
-                case 5:
-                    if (quyen.equals("BAN_HANG")) {
-                        System.out.println("[CẢNH BÁO] Nhân viên Bán hàng không có quyền rút hàng từ Kho!");
-                    } else {
-                        dsHangHoa.nhapHangLoat(khoHang);
-                    }
-                    dungManHinh();
-                    break;
-                case 6:
-                    if (quyen.equals("BAN_HANG")) {
-                        System.out.println("[CẢNH BÁO] Nhân viên Bán hàng không có quyền rút hàng từ Kho!");
-                    } else {
-                        String maCanLay = TienIch.nhapChuoi("Nhập mã hàng cần lấy từ Kho: ");
-                        int soLuongLay = TienIch.nhapSoNguyenDuong("Nhập số lượng cần lấy: ");
-                        dsHangHoa.nhapTuKho(khoHang, maCanLay, soLuongLay);
-                    }
-                    dungManHinh();
-                    break;
-                case 7:
-                    if (!quyen.equals("ADMIN")) {
-                        System.out.println("[CẢNH BÁO] Chỉ Quản lý (ADMIN) mới có quyền này!");
-                    } else {
-                        dsHangHoa.them();
-                    }
-                    dungManHinh();
-                    break;
-                case 8:
-                    if (!quyen.equals("ADMIN")) {
-                        System.out.println("[CẢNH BÁO] Chỉ Quản lý (ADMIN) mới có quyền này!");
-                    } else {
-                        dsHangHoa.sua();
-                    }
-                    dungManHinh();
-                    break;
-                case 9:
-                    if (!quyen.equals("ADMIN")) {
-                        System.out.println("[CẢNH BÁO] Chỉ Quản lý (ADMIN) mới có quyền này!");
-                    } else {
-                        dsHangHoa.xoa();
-                    }
-                    dungManHinh();
-                    break;
-                case 0:
-                    tiepTuc = false;
-                    break;
-                default:
-                    System.out.println("Lựa chọn không hợp lệ!");
-                    break;
-            }
-        }
+    static void menuChinh() {
+        System.out.println("\n" + ANSI + "======== QUẢN LÝ NHÀ SÁCH - TV5 MERGE ========" + RESET);
+        System.out.println("1. Đăng nhập nhân viên");
+        System.out.println("2. Xem danh sách mặt hàng (khách vãng lai)");
+        System.out.println("0. Thoát");
     }
-
-    // ================= SUB-MENU 2: QUẢN LÝ KHO HÀNG =================
-    private static void menuKho() {
-        boolean tiepTuc = true;
-        while (tiepTuc) {
-            System.out.println("\n========== MODULE: QUẢN LÝ KHO ==========");
-            System.out.println("1. Xem hàng tồn trong kho");
+    // ====== Kho ======
+    static void menuKho() {
+        int chon;
+        do {
+            System.out.println("\n---------- KHO ----------");
+            System.out.println("1. Xem hàng tồn");
             System.out.println("2. Thêm 1 mặt hàng vào kho");
             System.out.println("3. Nhập nhiều mặt hàng vào kho");
             System.out.println("4. Sửa số lượng tồn");
             System.out.println("5. Xóa mặt hàng khỏi kho");
-            System.out.println("6. Tra cứu chi tiết theo mã");
-            System.out.println("7. Kiểm tra sức chứa của kho");
+            System.out.println("6. Tra cứu theo mã");
+            System.out.println("7. Kiểm tra sức chứa");
             System.out.println("8. Đọc kho từ file");
             System.out.println("9. Ghi kho ra file");
-            System.out.println("0. Trở về Menu Chính");
-            System.out.println("=========================================");
-
-            int chon = TienIch.nhapSoNguyenDuong("Chọn chức năng: ");
+            System.out.println("0. Quay lại");
+            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
             switch (chon) {
-                case 1: khoHang.xuat(); dungManHinh(); break;
-                case 2: khoHang.them(); dungManHinh(); break;
-                case 3: khoHang.nhap(); dungManHinh(); break;
-                case 4: khoHang.sua(); dungManHinh(); break;
-                case 5: khoHang.xoa(); dungManHinh(); break;
-                case 6: khoHang.timHangTon(); dungManHinh(); break;
-                case 7: khoHang.kiemTraSucChua(); dungManHinh(); break;
-                case 8: khoHang.docFile(hoiDuongDan(FILE_KHO)); dungManHinh(); break;
-                case 9: khoHang.ghiFile(hoiDuongDan("kho_output.txt")); dungManHinh(); break;
-                case 0: tiepTuc = false; break;
-                default: System.out.println("Lựa chọn không hợp lệ!"); break;
+                case 1: kho.xuat(); break;
+                case 2: kho.them(); break;
+                case 3: kho.nhap(); break;
+                case 4: kho.sua(); break;
+                case 5: kho.xoa(); break;
+                case 6: kho.timHangTon(); break;
+                case 7: kho.kiemTraSucChua(); break;
+                case 8: kho.docFile(hoiFile("data/kho_input.txt")); break;
+                case 9: kho.ghiFile(hoiFile("data/kho_output.txt")); break;
+                case 0: break;
+                default: System.out.println("Lựa chọn không hợp lệ!");
             }
-        }
+        } while (chon != 0);
     }
-
-    // ================= SUB-MENU 3: QUẢN LÝ PHIẾU NHẬP =================
-    private static void menuPhieuNhap() {
-        boolean tiepTuc = true;
-        while (tiepTuc) {
-            System.out.println("\n========== MODULE: QUẢN LÝ PHIẾU NHẬP ==========");
+ 
+    // ====== Phiếu nhập ======
+    static void menuPhieuNhap() {
+        int chon;
+        do {
+            System.out.println("\n---------- PHIẾU NHẬP ----------");
             System.out.println("1. Xem danh sách phiếu nhập");
             System.out.println("2. Thêm 1 phiếu nhập");
             System.out.println("3. Thêm nhiều phiếu nhập");
             System.out.println("4. Sửa phiếu nhập");
             System.out.println("5. Xóa phiếu nhập");
-            System.out.println("6. Duyệt & Nhập hàng từ phiếu vào Kho");
-            System.out.println("7. Xem hàng tồn trong Kho");
+            System.out.println("6. Nhập hàng của phiếu vào kho");
+            System.out.println("7. Xem hàng tồn trong kho");
             System.out.println("8. Đọc phiếu nhập từ file");
             System.out.println("9. Ghi phiếu nhập ra file");
-            System.out.println("0. Trở về Menu Chính");
-            System.out.println("================================================");
-
-            int chon = TienIch.nhapSoNguyenDuong("Chọn chức năng: ");
+            System.out.println("10. Xem danh sách nhà cung cấp trong lần nhập này");
+            System.out.println("0. Quay lại");
+            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
             switch (chon) {
-                case 1: dsPhieuNhap.xuat(); dungManHinh(); break;
-                case 2: dsPhieuNhap.them(); dungManHinh(); break;
-                case 3: dsPhieuNhap.nhap(); dungManHinh(); break;
-                case 4: dsPhieuNhap.sua(); dungManHinh(); break;
-                case 5: dsPhieuNhap.xoa(); dungManHinh(); break;
-                case 6: dsPhieuNhap.nhapKho(khoHang); dungManHinh(); break;
-                case 7: khoHang.xuat(); dungManHinh(); break;
-                case 8: dsPhieuNhap.docFile(hoiDuongDan(FILE_PHIEU_NHAP)); dungManHinh(); break;
-                case 9: dsPhieuNhap.ghiFile(hoiDuongDan("phieunhap_output.txt")); dungManHinh(); break;
-                case 0: tiepTuc = false; break;
-                default: System.out.println("Lựa chọn không hợp lệ!"); break;
+                case 1: dspn.xuat(); break;
+                case 2: dspn.them(); break;
+                case 3: dspn.nhap(); break;
+                case 4: dspn.sua(); break;
+                case 5: dspn.xoa(); break;
+                case 6: dspn.nhapKho(kho); break;
+                case 7: kho.xuat(); break;
+                case 8: dspn.docFile(hoiFile("data/phieunhap_input.txt")); break;
+                case 9: dspn.ghiFile(hoiFile("data/phieunhap_output.txt")); break;
+                case 10: dspn.getDanhSachNCC().xuat(); break;
+                case 0: break;
+                default: System.out.println("Lựa chọn không hợp lệ!");
             }
-        }
+        } while (chon != 0);
     }
-
-    // ================= SUB-MENU 4: BÁN HÀNG & HÓA ĐƠN =================
-    private static void menuHoaDon() {
-        boolean tiepTuc = true;
-        while (tiepTuc) {
-            System.out.println("\n========== MODULE: BÁN HÀNG & HÓA ĐƠN ==========");
-            System.out.println("1. Lập Hóa Đơn Bán Hàng mới");
-            System.out.println("2. Thanh toán Hóa Đơn");
-            System.out.println("3. Sửa Hóa Đơn (Chưa thanh toán)");
-            System.out.println("4. Xóa Hóa Đơn (Chưa thanh toán)");
-            System.out.println("5. Tìm kiếm Hóa Đơn theo mã");
-            System.out.println("6. Xem toàn bộ danh sách Hóa Đơn");
-            System.out.println("7. Thống kê tổng doanh thu");
-            System.out.println("0. Trở về Menu Chính");
-            System.out.println("================================================");
-
-            int chon = TienIch.nhapSoNguyenDuong("Chọn chức năng: ");
+ 
+    // ====== Mặt hàng ======
+    static void menuMatHang() {
+        int chon;
+        do {
+            System.out.println("\n---------- MẶT HÀNG (CỬA HÀNG) ----------");
+            System.out.println("1. Xem số lượng mặt hàng đang bày bán");
+            System.out.println("2. Nhập hàng loạt từ kho lên");
+            System.out.println("3. Nhập 1 mặt hàng cụ thể từ kho lên");
+            System.out.println("4. Xuất danh sách mặt hàng");
+            System.out.println("5. Thêm mặt hàng");
+            System.out.println("6. Xóa mặt hàng");
+            System.out.println("7. Sửa mặt hàng");
+            System.out.println("8. Tìm kiếm theo mã");
+            System.out.println("9. Bộ lọc nâng cao");
+            System.out.println("10. Đọc mặt hàng từ file");
+            System.out.println("11. Ghi mặt hàng ra file");
+            System.out.println("0. Quay lại");
+            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
             switch (chon) {
-                case 1:
-                    lapHoaDonMoi();
-                    dungManHinh();
+                case 1: System.out.println("Số mặt hàng: " + dsmh.getSoMH()); break;
+                case 2: dsmh.nhapHangLoat(kho); break;
+                case 3: {
+                    // dsmh.nhap() dùng field kho chưa được khởi tạo nên gọi nhapTuKho trực tiếp
+                    String ma = TienIch.nhapChuoi("Nhập mã hàng cần lấy từ kho: ");
+                    int sl = TienIch.nhapSoNguyenDuong("Nhập số lượng cần lấy: ");
+                    dsmh.nhapTuKho(kho, ma, sl);
                     break;
-                case 2:
-                    String maHDThanhToan = TienIch.nhapChuoi("Nhập mã hóa đơn cần thanh toán: ");
-                    HoaDon hdTT = dsHoaDon.timKiem(maHDThanhToan);
-                    if (hdTT == null) {
-                        System.out.println("Không tìm thấy hóa đơn có mã: " + maHDThanhToan);
-                    } else {
-                        thucHienThanhToan(hdTT);
-                    }
-                    dungManHinh();
-                    break;
-                case 3:
-                    dsHoaDon.sua();
-                    dungManHinh();
-                    break;
-                case 4:
-                    dsHoaDon.xoa();
-                    dungManHinh();
-                    break;
-                case 5:
-                    String maTim = TienIch.nhapChuoi("Nhập mã hóa đơn cần tìm: ");
-                    HoaDon hdTim = dsHoaDon.timKiem(maTim);
-                    if (hdTim != null) {
-                        hdTim.xuat();
-                    } else {
-                        System.out.println("Không tìm thấy hóa đơn có mã: " + maTim);
-                    }
-                    dungManHinh();
-                    break;
-                case 6:
-                    dsHoaDon.xuat();
-                    dungManHinh();
-                    break;
-                case 7:
-                    thongKeDoanhThu();
-                    dungManHinh();
-                    break;
-                case 0:
-                    tiepTuc = false;
-                    break;
-                default:
-                    System.out.println("Lựa chọn không hợp lệ!");
-                    break;
-            }
-        }
-    }
-
-    private static void lapHoaDonMoi() {
-        String maHD;
-        while (true) {
-            maHD = TienIch.nhapChuoi("Nhập mã hóa đơn mới (VD: HD03): ");
-            if (dsHoaDon.timKiem(maHD) != null) {
-                System.out.println("Mã hóa đơn đã tồn tại! Vui lòng nhập mã khác.");
-            } else {
-                break;
-            }
-        }
-
-        String maKH = TienIch.nhapChuoi("Nhập mã khách hàng mua (Nhập 'KH00' nếu là khách lẻ): ");
-        KhachHang kh = dsKhachHang.timkiem_khachhang(maKH);
-        if (kh == null) {
-            if (maKH.equalsIgnoreCase("KH00")) {
-                kh = new KhachHang("KH00", "Khách Vãng Lai", "0000000000");
-                dsKhachHang.
-                        timkiem_khachhang("KH00");
-            } else {
-                System.out.println("Khách hàng chưa có trong hệ thống. Vui lòng nhập thông tin khách mới:");
-                dsKhachHang.them();
-                kh = dsKhachHang.timkiem_khachhang(maKH);
-                if (kh == null) {
-                    kh = new KhachHang(maKH, "Khách Hàng Mới", "0000000000");
                 }
+                case 4: dsmh.xuat(); break;
+                case 5: dsmh.them(); break;
+                case 6: dsmh.xoa(); break;
+                case 7: dsmh.sua(); break;
+                case 8: dsmh.timkiem(); break;
+                case 9: dsmh.timkiem_nangcao(); break;
+                case 10: LuuTruMatHang.docFile(dsmh, hoiFile("data/mathang.txt")); break;
+                case 11: LuuTruMatHang.ghiFile(dsmh, hoiFile("data/mathang_output.txt")); break;
+                case 0: break;
+                default: System.out.println("Lựa chọn không hợp lệ!");
+            }
+        } while (chon != 0);
+    }
+ 
+    // ====== Khách hàng ======
+    static void menuKhachHang() {
+        int chon;
+        do {
+            System.out.println("\n---------- KHÁCH HÀNG ----------");
+            System.out.println("1. Xem danh sách");
+            System.out.println("2. Thêm khách hàng");
+            System.out.println("3. Nhập nhiều khách hàng");
+            System.out.println("4. Sửa khách hàng");
+            System.out.println("5. Xóa khách hàng");
+            System.out.println("6. Đọc từ file");
+            System.out.println("7. Ghi ra file");
+            System.out.println("0. Quay lại");
+            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            switch (chon) {
+                case 1: dskh.xuat(); break;
+                case 2: dskh.them(); break;
+                case 3: dskh.nhap(); break;
+                case 4: dskh.sua(); break;
+                case 5: dskh.xoa(); break;
+                case 6: dskh.docFile(hoiFile("data/khachhang.txt")); break;
+                case 7: dskh.ghiFile(hoiFile("data/khachhang_output.txt")); break;
+                case 0: break;
+                default: System.out.println("Lựa chọn không hợp lệ!");
+            }
+        } while (chon != 0);
+    }
+ 
+    // ====== Hóa đơn ======
+    static void menuHoaDon() {
+        int chon;
+        do {
+            System.out.println("\n---------- HÓA ĐƠN ----------");
+            System.out.println("1. Xem danh sách hóa đơn");
+            System.out.println("2. Lập hóa đơn mới");
+            System.out.println("3. Sửa hóa đơn");
+            System.out.println("4. Xóa hóa đơn");
+            System.out.println("5. Đọc từ file");
+            System.out.println("6. Ghi ra file");
+            System.out.println("7. Thanh toán hóa đơn chưa thanh toán");
+            System.out.println("0. Quay lại");
+            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            switch (chon) {
+                case 1: dshd.xuat(); break;
+                case 2: {
+                    String maKH = TienIch.nhapChuoi("Nhập mã khách hàng: ");
+                    KhachHang kh = dskh.timkiem_khachhang(maKH);
+                    if (kh == null) {
+                        System.out.println("Không tìm thấy khách hàng! Hãy thêm khách hàng trước.");
+                        break;
+                    }
+                    String maHD = TienIch.nhapChuoi("Nhập mã hóa đơn: ");
+                    NhanVienBanHang nhanVienLap = layNguoiBanHang();
+                    if (nhanVienLap == null) {
+                        System.out.println("Cần tạo tài khoản bán hàng trước khi lập hóa đơn.");
+                        break;
+                    }
+                    dshd.taoHoaDon(maHD, kh, nhanVienLap);
+                    break;
+                }
+                case 3: dshd.sua(); break;
+                case 4: dshd.xoa(); break;
+                case 5: dshd.docFile(hoiFile("data/hoadon.txt"), dskh, dsmh); break;
+                case 6: dshd.ghiFile(hoiFile("data/hoadon_output.txt")); break;
+                case 7: thanhToanHoaDon(); break;
+                case 0: break;
+                default: System.out.println("Lựa chọn không hợp lệ!");
+            }
+        } while (chon != 0);
+    }
+ 
+
+    /** Áp dụng phân quyền tại cửa chọn chức năng; chỉ nhân viên đã xác thực mới vào các menu ghi dữ liệu. */
+    static boolean duocPhep(NhanVien nv, String quyen) {
+        return nv != null && ("ADMIN".equals(nv.getQuyen()) || quyen.equals(nv.getQuyen()));
+    }
+    static void dangNhap() {
+        String ma = TienIch.nhapChuoi("Mã nhân viên: ");
+        String mk = TienIch.nhapChuoi("Mật khẩu: ");
+        NhanVien nv = dsnv.dangNhap(ma, mk);
+        if (nv == null) { System.out.println("Sai mã hoặc mật khẩu."); return; }
+        dangDangNhap = nv;
+        System.out.println("Đăng nhập thành công: " + nv.getHoTen() + " | Quyền " + nv.getQuyen());
+        if ("BAN_HANG".equals(nv.getQuyen())) nvBanHang = (NhanVienBanHang) nv;
+        if ("ADMIN".equals(nv.getQuyen()) && nvBanHang == null) {
+            for (int i = 0; i < dsnv.getSoLuong(); i++) {
+                NhanVien n = dsnv.getDanhSach()[i];
+                if (n instanceof NhanVienBanHang) { nvBanHang = (NhanVienBanHang) n; break; }
             }
         }
-
-        NhanVienBanHang nvLap;
-        if (userHienTai instanceof NhanVienBanHang) {
-            nvLap = (NhanVienBanHang) userHienTai;
-        } else {
-            nvLap = new NhanVienBanHang(
-                    userHienTai.getMaNguoi(),
-                    userHienTai.getHoTen(),
-                    userHienTai.getSoDienThoai(),
-                    userHienTai.getMatKhau(),
-                    userHienTai.getCaLamViec(),
-                    userHienTai.getLuongCoBan()
-            );
-        }
-
-        HoaDon hdMoi = dsHoaDon.taoHoaDon(maHD, kh, nvLap);
-
-        if (hdMoi != null) {
-            String hoiTT = TienIch.nhapChuoi("Bạn có muốn thanh toán hóa đơn này ngay không? (c/k): ");
-            if (hoiTT.equalsIgnoreCase("c")) {
-                thucHienThanhToan(hdMoi);
-            } else {
-                System.out.println("Hóa đơn đã được lưu ở trạng thái Chờ thanh toán (Có thể Sửa/Xóa).");
+        try {
+            if ("ADMIN".equals(nv.getQuyen())) menuAdmin();
+            else if ("BAN_HANG".equals(nv.getQuyen())) menuBanHang();
+            else if ("NHAP_KHO".equals(nv.getQuyen())) menuNhanVienKho();
+            else System.out.println("Vai trò chưa được hỗ trợ.");
+        } finally { dangDangNhap = null; }
+    }
+    static void menuAdmin() {
+        int chon;
+        do {
+            System.out.println("\n" + ANSI + "=== ADMIN / TOÀN QUYỀN ===" + RESET);
+            System.out.println("1. Kho   2. Phiếu nhập   3. Mặt hàng   4. Khách hàng");
+            System.out.println("5. Hóa đơn   6. Nhà cung cấp   7. Nhân sự   8. Giỏ hàng");
+            System.out.println("0. Đăng xuất");
+            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            switch (chon) {
+                case 1: menuKho(); break;
+                case 2: menuPhieuNhap(); break;
+                case 3: menuMatHang(); break;
+                case 4: menuKhachHang(); break;
+                case 5: menuHoaDon(); break;
+                case 6: menuNhaCungCap(); break;
+                case 7: menuNhanSu(); break;
+                case 8: menuGioHang(); break;
+                case 0: System.out.println("Đã đăng xuất."); break;
+                default: System.out.println("Lựa chọn không hợp lệ.");
             }
+        } while (chon != 0 && dangDangNhap != null);
+    }
+    static void menuBanHang() {
+        int chon;
+        do {
+            System.out.println("\n" + ANSI + "=== NHÂN VIÊN BÁN HÀNG ===" + RESET);
+            System.out.println("1. Xem mặt hàng   2. Khách hàng   3. Hóa đơn   4. Giỏ hàng");
+            System.out.println("0. Đăng xuất");
+            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            switch (chon) {
+                case 1: dsmh.xuat(); break;
+                case 2: menuKhachHang(); break;
+                case 3: menuHoaDon(); break;
+                case 4: menuGioHang(); break;
+                case 0: System.out.println("Đã đăng xuất."); break;
+                default: System.out.println("Không được phép truy cập chức năng này.");
+            }
+        } while (chon != 0);
+    }
+    static void menuNhanVienKho() {
+        int chon;
+        do {
+            System.out.println("\n" + ANSI + "=== NHÂN VIÊN NHẬP KHO ===" + RESET);
+            System.out.println("1. Kho   2. Phiếu nhập   3. Nhà cung cấp   4. Xem mặt hàng");
+            System.out.println("0. Đăng xuất");
+            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            switch (chon) {
+                case 1: menuKho(); break;
+                case 2: menuPhieuNhap(); break;
+                case 3: menuNhaCungCap(); break;
+                case 4: dsmh.xuat(); break;
+                case 0: System.out.println("Đã đăng xuất."); break;
+                default: System.out.println("Không được phép truy cập chức năng này.");
+            }
+        } while (chon != 0);
+    }
+    static void menuNhaCungCap() {
+        int chon;
+        do {
+            System.out.println("\n--- NHÀ CUNG CẤP (TV4) ---");
+            System.out.println("1. Xem   2. Thêm   3. Sửa   4. Xóa   5. Đọc file   6. Ghi file   0. Quay lại");
+            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            switch (chon) {
+                case 1: dsncc.xuat(); break;
+                case 2: dsncc.them(); break;
+                case 3: dsncc.sua(); break;
+                case 4: dsncc.xoa(); break;
+                case 5: dsncc.docFile(hoiFile("data/nhacungcap.txt")); break;
+                case 6: dsncc.ghiFile(hoiFile("data/nhacungcap_output.txt")); break;
+                case 0: break;
+                default: System.out.println("Lựa chọn không hợp lệ.");
+            }
+        } while (chon != 0);
+    }
+    static void menuNhanSu() {
+        if (!duocPhep(dangDangNhap, "ADMIN")) { System.out.println("Từ chối: chỉ ADMIN."); return; }
+        int chon;
+        do {
+            System.out.println("\n--- QUẢN LÝ NHÂN SỰ (TV5) ---");
+            System.out.println("1. Xem   2. Thêm   3. Sửa   4. Xóa   5. Tìm theo mã");
+            System.out.println("6. Tổng lương cơ bản   7. Đọc file   8. Ghi file   0. Quay lại");
+            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            switch (chon) {
+                case 1: dsnv.xuat(); break;
+                case 2: dsnv.them(); break;
+                case 3: dsnv.sua(); break;
+                case 4: {
+                    String ma = TienIch.nhapChuoi("Mã cần xóa: ");
+                    if (dangDangNhap.getMaNguoi().equalsIgnoreCase(ma))
+                        System.out.println("Không thể xóa tài khoản đang đăng nhập.");
+                    else System.out.println(dsnv.xoa(ma) ? "Đã xóa." : "Không tìm thấy hoặc không được xóa quản lý cuối cùng.");
+                    break;
+                }
+                case 5: dsnv.timKiem(TienIch.nhapChuoi("Mã cần tìm: ")); break;
+                case 6: System.out.printf("Tổng lương cơ bản: %.0f%n", dsnv.tongLuongCoBan()); break;
+                case 7: {
+                    // Đọc lại file chỉ từ giao diện Admin; không khóa mất phiên do thay danh sách.
+                    String f = hoiFile(FILE_NV);
+                    dsnv.docFile(f);
+                    // Sau thao tác import, tránh tự ghi đè file nguồn nếu còn sai định dạng.
+                    coTheGhiNhanVien = false;
+                    nvBanHang = null;
+                    System.out.println("Đã đọc file; kết thúc phiên để xác thực lại với dữ liệu mới.");
+                    dangDangNhap = null;
+                    return;
+                }
+                case 8: {
+                    String duongDan = hoiFile(FILE_NV);
+                    boolean laFileGoc = java.nio.file.Path.of(duongDan).toAbsolutePath().normalize()
+                        .equals(java.nio.file.Path.of(FILE_NV).toAbsolutePath().normalize());
+                    if (laFileGoc && !coTheGhiNhanVien)
+                        System.out.println("Từ chối ghi đè file nhân viên gốc định dạng cũ; hãy chọn file đầu ra khác.");
+                    else dsnv.ghiFile(duongDan);
+                    break;
+                }
+                case 0: break;
+                default: System.out.println("Lựa chọn không hợp lệ.");
+            }
+        } while (chon != 0);
+    }
+    static NhanVienBanHang layNguoiBanHang() {
+        if (dangDangNhap instanceof NhanVienBanHang)
+            return (NhanVienBanHang) dangDangNhap;
+        for (int i=0; i<dsnv.getSoLuong(); i++)
+            if (dsnv.getDanhSach()[i] instanceof NhanVienBanHang)
+                return (NhanVienBanHang) dsnv.getDanhSach()[i];
+        return null;
+    }
+    static void thanhToanHoaDon() {
+        String ma = TienIch.nhapChuoi("Mã hóa đơn thanh toán: ");
+        HoaDon hd = dshd.timKiem(ma);
+        if (hd == null) { System.out.println("Không tồn tại hóa đơn."); return; }
+        if (hd.isDaThanhToan()) { System.out.println("Đã thanh toán trước đó."); return; }
+        System.out.printf("Số tiền cần thanh toán: %.0f%n", hd.tinhThanhTien());
+        int cach = TienIch.nhapSoNguyenDuong("1. Tiền mặt / 2. Thẻ / 0. Hủy: ");
+        if (cach == 1) {
+            double tien = nhapSoTienKhongAm("Khách đưa: ");
+            hd.setHinhThucThanhToan(new ThanhToanTienMat(tien));
+        } else if (cach == 2) {
+            String maGD = TienIch.nhapChuoi("Mã giao dịch: ");
+            String nganHang = TienIch.nhapChuoi("Ngân hàng: ");
+            hd.setHinhThucThanhToan(new ThanhToanThe(maGD, nganHang));
+        } else return;
+        hd.thanhToan();
+    }
+    static double nhapSoTienKhongAm(String thongBao) {
+        while (true) {
+            String s = TienIch.nhapChuoi(thongBao);
+            try { double x = Double.parseDouble(s); if (Double.isFinite(x) && x >= 0) return x; }
+            catch (NumberFormatException ignored) { }
+            System.out.println("Số tiền không hợp lệ.");
         }
     }
-
-    private static void thucHienThanhToan(HoaDon hd) {
-        if (hd.isDaThanhToan()) {
-            System.out.println("Hóa đơn này đã được thanh toán trước đó!");
+    /** Bổ sung lối vào giỏ hàng có sẵn của TV3; thanh toán vẫn do TV3 thực hiện. */
+    static void menuGioHang() {
+        NhanVienBanHang nhanVienLap = layNguoiBanHang();
+        if (nhanVienLap == null) {
+            System.out.println("Cần tạo ít nhất một tài khoản bán hàng trước khi lập hóa đơn.");
             return;
         }
-        System.out.println("\n--- THANH TOÁN HÓA ĐƠN " + hd.getMaHD() + " ---");
-        System.out.println("Tổng tiền cần thanh toán: " + hd.tinhThanhTien());
-        System.out.println("1. Thanh toán Tiền mặt");
-        System.out.println("2. Thanh toán Thẻ ngân hàng");
-        System.out.println("0. Hủy (Chưa thanh toán)");
-
-        int loaiTT = nhapSoTuKhoang("Chọn hình thức thanh toán (0-2): ", 0, 2);
-        if (loaiTT == 1) {
-            double tienKhachDua = TienIch.nhapGiaTien("Nhập số tiền khách đưa: ");
-            IThanhToan ttTienMat = new IThanhToan() {
-                @Override
-                public boolean xuLyThanhToan(double soTien) {
-                    if (tienKhachDua < soTien) {
-                        System.out.println("Số tiền khách đưa không đủ! Cần " + soTien + ", đưa " + tienKhachDua);
-                        return false;
-                    }
-                    double tienThua = tienKhachDua - soTien;
-                    System.out.println("Thanh toán tiền mặt thành công. Tiền thối lại " + tienThua);
-                    return true;
+        String maKH = TienIch.nhapChuoi("Mã khách hàng: ");
+        KhachHang kh = dskh.timkiem_khachhang(maKH);
+        if (kh == null) { System.out.println("Không tìm thấy khách hàng."); return; }
+        GioHang gh = new GioHang(kh);
+        int chon;
+        do {
+            System.out.println("\n--- GIỎ HÀNG (TV3) ---");
+            System.out.println("1. Thêm hàng   2. Xem   3. Đổi số lượng   4. Xóa hàng   5. Tạo hóa đơn từ giỏ   0. Quay lại");
+            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            switch (chon) {
+                case 1: {
+                    MatHang mh = dsmh.timKiem_hang(TienIch.nhapChuoi("Mã mặt hàng: "));
+                    int sl = TienIch.nhapSoNguyenDuong("Số lượng: ");
+                    gh.themVaoGio(mh, sl); break;
                 }
-            };
-            hd.setHinhThucThanhToan(ttTienMat);
-            hd.thanhToan();
-        } else if (loaiTT == 2) {
-            String nganHang = TienIch.nhapChuoi("Nhập tên ngân hàng: ");
-            String maGD = TienIch.nhapChuoi("Nhập mã giao dịch: ");
-            ThanhToanThe ttThe = new ThanhToanThe(maGD, nganHang);
-            hd.setHinhThucThanhToan(ttThe);
-            hd.thanhToan();
+                case 2: gh.xemGioHang(); break;
+                case 3: {
+                    String ma = TienIch.nhapChuoi("Mã mặt hàng: ");
+                    int sl = TienIch.nhapSoNguyenDuong("Số lượng mới: ");
+                    gh.capNhatSoLuong(ma, sl); break;
+                }
+                case 4: gh.xoaKhoiGio(TienIch.nhapChuoi("Mã mặt hàng: ")); break;
+                case 5: {
+                    String ma = TienIch.nhapChuoi("Mã hóa đơn: ");
+                    HoaDon hd = gh.xacNhanMua(dshd, ma, nhanVienLap);
+                    if (hd != null) System.out.println("Đã tạo hóa đơn; cần thanh toán tại menu Hóa đơn, mục 7.");
+                    break;
+                }
+                case 0: if (!gh.isRong()) System.out.println("Giỏ chưa chốt được bỏ khi rời menu."); break;
+                default: System.out.println("Không hợp lệ.");
+            }
+        } while (chon != 0);
+    }
+    static void khoiTaoNhanVien() {
+        try { java.nio.file.Files.createDirectories(java.nio.file.Path.of("data")); }
+        catch (java.io.IOException e) { System.out.println("Không thể tạo thư mục data: " + e.getMessage()); }
+        java.nio.file.Path f = java.nio.file.Path.of(FILE_NV);
+        if (java.nio.file.Files.exists(f)) {
+            try {
+                long soDong;
+                try (java.util.stream.Stream<String> lines = java.nio.file.Files.lines(
+                        f, java.nio.charset.StandardCharsets.UTF_8)) {
+                    soDong = lines.filter(line -> !line.isBlank()).count();
+                }
+                dsnv.docFile(FILE_NV);
+                if (soDong != dsnv.getSoLuong() || dsnv.soLuongAdmin() == 0 || dsnv.laDuLieuDinhDangCu()) {
+                    coTheGhiNhanVien = false;
+                    System.out.println("CẢNH BÁO: data/nhanvien.txt là định dạng cũ hoặc chứa dòng lỗi; "
+                        + "không tự ghi đè khi thoát. Hãy kiểm tra file trước.");
+                }
+            } catch (java.io.IOException e) {
+                coTheGhiNhanVien = false;
+                System.out.println("Không kiểm tra được file nhân viên; đã khóa tự lưu để bảo vệ dữ liệu: "
+                    + e.getMessage());
+            }
         } else {
-            System.out.println("Đã tạm hoãn thanh toán.");
+            System.out.println("Chưa có data/nhanvien.txt, khởi tạo 3 tài khoản DEMO.");
+            dsnv.them(new QuanLy("ADMIN", "Quản trị demo", "0900000001", "admin123", "Cả ngày", 16000000));
+            dsnv.them(new NhanVienBanHang("BH01", "Nhân viên bán", "0900000002", "bh123", "Sáng", 8000000));
+            dsnv.them(new NhanVienNhapKho("KHO01", "Nhân viên kho", "0900000003", "kho123", "Chiều", 8500000));
+            dsnv.ghiFile(FILE_NV);
         }
+        if (dsnv.soLuongAdmin() == 0)
+            System.out.println("CẢNH BÁO: Không có tài khoản ADMIN trong file nhân viên!");
     }
-
-    private static void thongKeDoanhThu() {
-        double tongDaTT = 0;
-        double tongChuaTT = 0;
-        int soHDDaTT = 0;
-        int soHDChuaTT = 0;
-
-        for (int i = 0; i < dsHoaDon.getSoLuong(); i++) {
-            HoaDon hd = dsHoaDon.getDs()[i];
-            if (hd.isDaThanhToan()) {
-                tongDaTT += hd.tinhThanhTien();
-                soHDDaTT++;
-            } else {
-                tongChuaTT += hd.tinhThanhTien();
-                soHDChuaTT++;
-            }
-        }
-        System.out.println("\n========== THỐNG KÊ DOANH THU ==========");
-        System.out.println("- Tổng số hóa đơn trong hệ thống : " + dsHoaDon.getSoLuong());
-        System.out.println("- Hóa đơn đã thanh toán trong ca : " + soHDDaTT + " HĐ | Doanh thu: " + tongDaTT);
-        System.out.println("- Hóa đơn lưu lịch sử / chờ thu  : " + soHDChuaTT + " HĐ | Giá trị  : " + tongChuaTT);
-        System.out.println("- TỔNG GIÁ TRỊ TOÀN BỘ HÓA ĐƠN   : " + (tongDaTT + tongChuaTT));
-        System.out.println("========================================");
-    }
-
-    // ================= SUB-MENU 5: QUẢN LÝ KHÁCH HÀNG =================
-    private static void menuKhachHang() {
-        boolean tiepTuc = true;
-        while (tiepTuc) {
-            System.out.println("\n========== MODULE: QUẢN LÝ KHÁCH HÀNG ==========");
-            System.out.println("1. Thêm 1 khách hàng mới (Kiểm tra trùng mã)");
-            System.out.println("2. Nhập nhiều khách hàng");
-            System.out.println("3. Xem danh sách khách hàng");
-            System.out.println("4. Sửa thông tin khách hàng");
-            System.out.println("5. Xóa khách hàng");
-            System.out.println("6. Tìm kiếm khách hàng theo mã");
-            System.out.println("0. Trở về Menu Chính");
-            System.out.println("================================================");
-
-            int chon = TienIch.nhapSoNguyenDuong("Chọn chức năng: ");
+    public static void main(String[] args) {
+        khoiTaoNhanVien();
+        int chon;
+        do {
+            menuChinh();
+            chon = TienIch.nhapSoNguyenDuong("Chọn chức năng: ");
             switch (chon) {
-                case 1: dsKhachHang.them(); dungManHinh(); break;
-                case 2: dsKhachHang.nhap(); dungManHinh(); break;
-                case 3: dsKhachHang.xuat(); dungManHinh(); break;
-                case 4: dsKhachHang.sua(); dungManHinh(); break;
-                case 5: dsKhachHang.xoa(); dungManHinh(); break;
-                case 6:
-                    String maKH = TienIch.nhapChuoi("Nhập mã khách hàng cần tìm: ");
-                    KhachHang kh = dsKhachHang.timkiem_khachhang(maKH);
-                    if (kh != null) {
-                        kh.xuat();
-                    } else {
-                        System.out.println("Không tìm thấy khách hàng có mã: " + maKH);
-                    }
-                    dungManHinh();
-                    break;
-                case 0: tiepTuc = false; break;
-                default: System.out.println("Lựa chọn không hợp lệ!"); break;
-            }
-        }
-    }
-
-    // ================= SUB-MENU 6: QUẢN LÝ NHÂN SỰ =================
-    private static void menuNhanSu() {
-        boolean tiepTuc = true;
-        while (tiepTuc) {
-            System.out.println("\n========== MODULE: QUẢN LÝ NHÂN SỰ ==========");
-            System.out.println("1. Thêm nhân viên mới (Cấp tài khoản)");
-            System.out.println("2. Xem danh sách nhân viên");
-            System.out.println("3. Sửa thông tin nhân viên");
-            System.out.println("4. Xóa nhân viên");
-            System.out.println("5. Tìm kiếm nhân viên theo mã");
-            System.out.println("0. Trở về Menu Chính");
-            System.out.println("=============================================");
-
-            int chon = TienIch.nhapSoNguyenDuong("Chọn chức năng: ");
-            switch (chon) {
-                case 1:
-                    System.out.println("\n--- TIẾN HÀNH CẤP TÀI KHOẢN MỚI ---");
-                    System.out.println("1. Cấp quyền Quản Lý (ADMIN)");
-                    System.out.println("2. Cấp quyền Bán Hàng (BAN_HANG)");
-                    System.out.println("3. Cấp quyền Nhập Kho (NHAP_KHO)");
-                    int loaiNV = nhapSoTuKhoang("Chọn chức vụ (1-3): ", 1, 3);
-
-                    String ma;
-                    while (true) {
-                        ma = TienIch.nhapChuoi("Nhập mã NV (Tên đăng nhập): ");
-                        if (dsNhanVien.timKiemViTri(ma) != -1) {
-                            System.out.println("Mã nhân viên đã tồn tại! Vui lòng nhập mã khác.");
-                        } else {
-                            break;
-                        }
-                    }
-                    String ten = TienIch.nhapChuoi("Nhập họ và tên: ");
-                    String sdt = TienIch.nhapChuoi("Nhập số điện thoại: ");
-                    String mk = TienIch.nhapChuoi("Nhập mật khẩu: ");
-                    String ca = TienIch.nhapChuoi("Nhập ca làm việc (Sáng/Chiều/Tối): ");
-                    double luong = TienIch.nhapGiaTien("Nhập mức lương cơ bản: ");
-
-                    if (loaiNV == 1) {
-                        dsNhanVien.them(new QuanLy(ma, ten, sdt, mk, ca, luong));
-                    } else if (loaiNV == 2) {
-                        dsNhanVien.them(new NhanVienBanHang(ma, ten, sdt, mk, ca, luong));
-                    } else {
-                        dsNhanVien.them(new NhanVienNhapKho(ma, ten, sdt, mk, ca, luong));
-                    }
-                    System.out.println(">>> Đã cấp tài khoản thành công cho nhân viên: " + ten);
-                    dungManHinh();
-                    break;
-                case 2:
-                    dsNhanVien.xuat();
-                    dungManHinh();
-                    break;
-                case 3:
-                    String maSua = TienIch.nhapChuoi("Nhập mã NV cần sửa: ");
-                    dsNhanVien.sua(maSua);
-                    dungManHinh();
-                    break;
-                case 4:
-                    String maXoa = TienIch.nhapChuoi("Nhập mã NV cần xóa: ");
-                    dsNhanVien.xoa(maXoa);
-                    dungManHinh();
-                    break;
-                case 5:
-                    String maTim = TienIch.nhapChuoi("Nhập mã NV cần tìm: ");
-                    dsNhanVien.timKiem(maTim);
-                    dungManHinh();
-                    break;
+                case 1: dangNhap(); break;
+                case 2: dsmh.xuat(); break;
                 case 0:
-                    tiepTuc = false;
-                    break;
-                default:
-                    System.out.println("Lựa chọn không hợp lệ!");
-                    break;
+                    if (coTheGhiNhanVien) dsnv.ghiFile(FILE_NV);
+                    else System.out.println("Bỏ qua lưu nhân viên vì dữ liệu gốc chưa tương thích.");
+                    System.out.println("Tạm biệt!"); break;
+                default: System.out.println("Lựa chọn không hợp lệ!");
             }
-        }
-    }
-
-    // ================= CÁC HÀM HỖ TRỢ HỆ THỐNG =================
-    private static String timDuongDan(String tenFile) {
-        String[] cacThuMuc = { "data/" + tenFile, tenFile, "src/data/" + tenFile, "src/" + tenFile };
-        for (String path : cacThuMuc) {
-            if (new File(path).exists()) {
-                return path;
-            }
-        }
-        return "data/" + tenFile;
-    }
-
-    // Đảm bảo KH00 và KH01 luôn tồn tại để đọc file hoadon.txt không bị lỗi
-    private static void damBaoKhachHangMacDinh() {
-        boolean canCapNhatFile = false;
-        if (dsKhachHang.timkiem_khachhang("KH00") == null) {
-            canCapNhatFile = true;
-        }
-        if (dsKhachHang.timkiem_khachhang("KH01") == null) {
-            canCapNhatFile = true;
-        }
-        if (canCapNhatFile) {
-            try (java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.FileWriter(FILE_KHACH_HANG, true))) {
-                if (dsKhachHang.timkiem_khachhang("KH00") == null) {
-                    pw.println("KH00;Khách Vãng Lai;0000000000");
-                }
-                if (dsKhachHang.timkiem_khachhang("KH01") == null) {
-                    pw.println("KH01;Trần Thị B;0912345678");
-                }
-            } catch (Exception e) {
-                // Bỏ qua nếu chưa tạo được file
-            }
-            dsKhachHang.docFile(FILE_KHACH_HANG);
-        }
-    }
-
-    private static void khoiTaoNhanVienMau() {
-        if (dsNhanVien.timKiemViTri("admin") == -1) {
-            dsNhanVien.them(new QuanLy("admin", "Nguyễn Quang Đạt", "0900000000", "123", "Sáng", 20000000));
-        }
-        if (dsNhanVien.timKiemViTri("bh01") == -1) {
-            dsNhanVien.them(new NhanVienBanHang("bh01", "Lê Bán Hàng", "0911111111", "123", "Chiều", 10000000));
-        }
-        if (dsNhanVien.timKiemViTri("kho01") == -1) {
-            dsNhanVien.them(new NhanVienNhapKho("kho01", "Trần Thủ Kho", "0922222222", "123", "Tối", 12000000));
-        }
-    }
-
-    private static void luuToanBoDuLieu() {
-        System.out.println("\n[HỆ THỐNG] Đang lưu dữ liệu xuống ổ cứng...");
-        khoHang.ghiFile("kho_output.txt");
-        dsPhieuNhap.ghiFile("phieunhap_output.txt");
-        dsKhachHang.ghiFile("khachhang_output.txt"); // Ghi ra file output riêng biệt
-        dsHoaDon.ghiFile("hoadon_output.txt");       // Ghi ra file output riêng biệt
-        System.out.println("[HỆ THỐNG] Hoàn tất lưu dữ liệu!");
-    }
-
-    private static String hoiDuongDan(String macDinh) {
-        String s = TienIch.nhapChuoi("Nhập đường dẫn file (gõ . để dùng mặc định '" + macDinh + "'): ");
-        return s.equals(".") ? macDinh : s;
-    }
-
-    private static int nhapSoTuKhoang(String thongBao, int min, int max) {
-        while (true) {
-            int n = TienIch.nhapSoNguyenDuong(thongBao);
-            if (n >= min && n <= max) {
-                return n;
-            }
-            System.out.println("LỖI: Vui lòng nhập số trong khoảng từ " + min + " đến " + max + "!");
-        }
-    }
-
-    private static void dungManHinh() {
-        System.out.print("\nNhấn Enter để tiếp tục...");
-        TienIch.sc.nextLine();
+        } while (chon != 0);
     }
 }
