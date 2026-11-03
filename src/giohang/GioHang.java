@@ -112,9 +112,16 @@ public class GioHang {
         }
         System.out.println("=== GIỎ HÀNG CỦA " + khachHang.getTenKH().toUpperCase() + " ===");
         for (int i = 0; i < soDong; i++) {
-            System.out.printf("%d. %s (%s) | SL: %d | Đơn giá: %.0f | Thành tiền: %.0f%n", i + 1,
-                    ds[i].getMathang().getTen(), ds[i].getMathang().getMa(),
-                    ds[i].getsoLuong(), ds[i].getDonGia(), ds[i].thanhTien());
+            // Đơn giá đã gồm thuế: tách ra giá chưa thuế + tiền thuế của 1 sản phẩm
+            double thue = ds[i].getMathang().getThue();
+            double giaChuaThue = ds[i].getDonGia() / (1 + thue / 100);
+            double tienThue = ds[i].getDonGia() - giaChuaThue;
+            System.out.printf("%d. %s (%s) | SL: %d%n", i + 1,
+                    ds[i].getMathang().getTen(), ds[i].getMathang().getMa(), ds[i].getsoLuong());
+            System.out.printf("   Giá bán: %.0f + Thuế (%.0f%%): %.0f = Đơn giá: %.0f%n",
+                    giaChuaThue, thue, tienThue, ds[i].getDonGia());
+            System.out.printf("   Thành tiền: %.0f x %d = %.0f%n",
+                    ds[i].getDonGia(), ds[i].getsoLuong(), ds[i].thanhTien());
         }
         System.out.printf(">>> TỔNG TẠM TÍNH: %.0f%n", tongTien());
     }
