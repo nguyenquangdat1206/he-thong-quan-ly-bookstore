@@ -32,11 +32,12 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
         ds = temp;
     }
     //nhap
-    @Override
+   @Override
     public void nhap() {
         System.out.println("Hóa đơn không nhập trực tiếp từ danh sách. "
-                + "Hãy dùng taoHoaDon(...) để lập hóa đơn.");
+                + "Hãy dùng menu Giỏ hàng để lập hóa đơn.");
     }
+
     //xuat
     @Override
     public void xuat() {
@@ -49,11 +50,12 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
             System.out.println("------------------------");
         }
     }
+
     //them
     @Override
     public void them() {
         System.out.println("Hóa đơn cần khách hàng, nhân viên và mặt hàng, "
-                + "hãy dùng taoHoaDon(...) để lập hóa đơn.");
+                + "hãy dùng menu Giỏ hàng để lập hóa đơn.");
     }
 
     public int timViTri(String maHD){
@@ -136,65 +138,7 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
     //get & set
     public HoaDon[] getDs(){return ds;}
     public int getSoLuong(){return soLuong;}
-    //==================== Hàm nghiệp vụ tạo hóa đơn ====================
-    //Trả về hóa đơn vừa tạo hoặc null nếu tạo không thành công
-    public HoaDon taoHoaDon(String maHD, KhachHang kh, NhanVienBanHang nv){
-        if(timKiem(maHD) != null){
-            System.out.println("Mã hóa đơn đã tồn tại");
-            return null;
-        }
-        HoaDon hd = new HoaDon(maHD,TienIch.nhapNgay("Nhập ngày lập: "),kh,nv);  //tạo 1 hóa đơn mới
-        String tiep;
-        do {
-            System.out.println("Nhập mã mặt hàng cần mua");
-            String maHang = TienIch.nhapChuoi("Nhập mã mặt hàng: ");
-            MatHang mh = this.dsmh.timKiem_hang(maHang);
-            if(mh == null){
-                System.out.println("Không tìm thấy mặt hàng");
-            }
-            else{
-                System.out.println("Nhập số lượng của mặt hàng cần mua: ");
-                int sl = TienIch.nhapSoNguyenDuong("Nhập số lượng: ");
-                if(sl <= 0){
-                    System.out.println("Số lượng phải lơn hơn 0!");
-                }
-                else {
-                    themVaoHoaDon(hd, mh, sl);
-                }
-            }
-            tiep = TienIch.nhapChuoi("Tiếp tục thêm hàng (c/k): ");
-        }
-        while(tiep.equalsIgnoreCase("c"));
-        if(hd.getSoLuongChiTiet() == 0){
-            System.out.println("Hóa đơn chưa có mặt hàng");
-            return null;
-        }
-        them(hd);
-        System.out.println("Tạo hóa đơn thành công! Tổng tiền " + hd.tinhThanhTien());
-        return hd;
-    }
-    //Mặt hàng đã có trong hóa đơn thì cộng dồn số lượng, chưa có thì thêm dòng mới
-    //Không cho tổng số lượng vượt quá số lượng còn trên kệ
-    private void themVaoHoaDon(HoaDon hd, MatHang mh, int sl){
-        for(int i=0; i<hd.getSoLuongChiTiet(); i++){
-            ChiTietHoaDon ct  = hd.getChiTiet()[i];
-            if(ct.getMathang().getMa().equalsIgnoreCase(mh.getMa())){
-                if(ct.getsoLuong() + sl > mh.getSoLuong()){
-                    System.out.println("Không đủ hàng! Trên kệ còn " + mh.getSoLuong()
-                            + ", hóa đơn đã có " + ct.getsoLuong());
-                    return;
-                }
-                hd.suaSoLuongChiTiet(i,ct.getsoLuong()+sl);
-                return;
-            }
-        }
-        if(sl > mh.getSoLuong()){
-            System.out.println("Không đủ hàng! Trên kệ chỉ còn " + mh.getSoLuong());
-            return;
-        }
-        hd.themChiTiet(new ChiTietHoaDon(sl,mh));
-    }
-
+    
     // Ghi dữ liệu hóa đơn ra file
     // Dòng đầu mỗi hóa đơn: maHD;ngayLap;maKH;maNV;tenNV;daThanhToan(1/0)
     @Override
