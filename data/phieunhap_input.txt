@@ -1,0 +1,50 @@
+PN001;27-07-2026;Sách;SCH2001;Tuổi trẻ đáng giá bao nhiêu;258000.0;10;Rosie Nguyễn;NXB Trẻ;Lãng mạn;CHO_DUYET
+PN001;27-07-2026;Sách giáo khoa;SGK2001;Địa lý 10;264000.0;15;Địa lý;NXB Trẻ;CHO_DUYET
+PN001;27-07-2026;Tiểu thuyết;TTH2001;Rừng Na Uy;180000.0;3;Haruki Murakami;NXB Trẻ;Hiện thực;CHO_DUYET
+PN001;27-07-2026;Truyện;TRU2001;Thần đồng đất Việt;182500.0;21;Lê Linh;NXB Trẻ;Hài hước;CHO_DUYET
+PN002;03-07-2026;Văn phòng phẩm;VPP2001;Bút bi xanh;41000.0;27;Thước;Thiên Long;CHO_DUYET
+PN002;03-07-2026;Báo tạp chí;BTC2001;Thanh Niên;33000.0;40;Đời sống;Thiên Long;CHO_DUYET
+PN002;03-07-2026;Khác;SPK2001;Ly giữ nhiệt;264000.0;7;Thiên Long;CHO_DUYET
+PN002;03-07-2026;Đồ chơi;DCH2001;Búp bê;155000.0;26;10;Thiên Long;CHO_DUYET
+PN003;28-01-2026;Dụng cụ học tập;DCT2001;Compa;85500.0;20;Hộp đựng;Campus;CHO_DUYET
+PN003;28-01-2026;Trang trí;TTR2001;Nến thơm;6500.0;9;Campus;CHO_DUYET
+PN003;28-01-2026;Vở;VO2001;Vở 4 ô ly;285000.0;6;120;Campus;CHO_DUYET
+PN003;28-01-2026;Sách;SCH2002;Atomic Habits;163000.0;21;James Clear;Campus;Kinh tế;CHO_DUYET
+PN003;28-01-2026;Sách giáo khoa;SGK2002;Hóa học 10;187500.0;12;Hóa học;Campus;CHO_DUYET
+PN004;14-09-2026;Tiểu thuyết;TTH2002;Tắt đèn;200000.0;23;Ngô Tất Tố;NXB Kim Đồng;Trinh thám;CHO_DUYET
+PN004;14-09-2026;Truyện;TRU2002;Doraemon tập 1;262000.0;15;Fujiko F. Fujio;NXB Kim Đồng;Phiêu lưu;CHO_DUYET
+PN004;14-09-2026;Văn phòng phẩm;VPP2002;Gôm tẩy;51500.0;26;Thước;NXB Kim Đồng;CHO_DUYET
+PN005;26-11-2026;Báo tạp chí;BTC2002;Thanh Niên;209500.0;28;Thời sự;NXB Giáo Dục;CHO_DUYET
+PN005;26-11-2026;Khác;SPK2002;Túi vải canvas;16500.0;38;NXB Giáo Dục;CHO_DUYET
+PN005;26-11-2026;Đồ chơi;DCH2002;Búp bê;48000.0;38;6;NXB Giáo Dục;CHO_DUYET
+PN005;26-11-2026;Dụng cụ học tập;DCT2002;Máy tính Casio;258000.0;16;Hộp đựng;NXB Giáo Dục;CHO_DUYET
+PN005;26-11-2026;Trang trí;TTR2002;Tranh canvas;79000.0;8;NXB Giáo Dục;CHO_DUYET
+PN006;15-10-2026;Vở;VO2002;Vở kẻ ngang 96 trang;273000.0;11;200;Campus;DA_DUYET
+PN006;15-10-2026;Sách;SCH2003;Đắc nhân tâm;20500.0;21;Dale Carnegie;Campus;Tâm lý;DA_DUYET
+PN007;18-03-2026;Sách giáo khoa;SGK2003;Toán 10;73000.0;13;Toán;NXB Giáo Dục;CHO_DUYET
+PN007;18-03-2026;Tiểu thuyết;TTH2003;Hoàng tử bé;236000.0;33;Antoine de Saint-Exupéry;NXB Giáo Dục;Phiêu lưu;CHO_DUYET
+PN007;18-03-2026;Truyện;TRU2003;Dế Mèn phiêu lưu ký;255500.0;29;Tô Hoài;NXB Giáo Dục;Cổ tích;CHO_DUYET
+PN007;18-03-2026;Văn phòng phẩm;VPP2003;Kẹp giấy;40500.0;24;Bút;NXB Giáo Dục;CHO_DUYET
+PN007;18-03-2026;Báo tạp chí;BTC2003;Forbes Việt Nam;247500.0;21;Giải trí;NXB Giáo Dục;CHO_DUYET
+PN008;24-11-2026;Khác;SPK2003;Ô gấp gọn;140500.0;19;Hồng Hà;CHO_DUYET
+PN008;24-11-2026;Đồ chơi;DCH2003;Rubik 3x3;123000.0;28;12;Hồng Hà;CHO_DUYET
+PN008;24-11-2026;Dụng cụ học tập;DCT2003;Bảng mica;44000.0;18;Hộp đựng;Hồng Hà;CHO_DUYET
+PN008;24-11-2026;Trang trí;TTR2003;Đồng hồ treo;28500.0;22;Hồng Hà;CHO_DUYET
+PN009;22-07-2026;Vở;VO2003;Sổ lò xo A5;174500.0;10;48;Campus;DA_HUY
+PN009;22-07-2026;Sách;SCH2004;Cha giàu cha nghèo;11000.0;13;Robert Kiyosaki;Campus;Lịch sử;DA_HUY
+PN009;22-07-2026;Sách giáo khoa;SGK2004;Tiếng Anh 11;36000.0;13;Tiếng Anh;Campus;DA_HUY
+PN009;22-07-2026;Tiểu thuyết;TTH2004;Bố già;116000.0;7;Mario Puzo;Campus;Lãng mạn;DA_HUY
+PN009;22-07-2026;Truyện;TRU2004;Thạch Sanh;242500.0;16;Dân gian;Campus;Phiêu lưu;DA_HUY
+PN010;08-08-2026;Văn phòng phẩm;VPP2004;Bút highlight;286000.0;24;Kẹp - ghim;Hồng Hà;DA_HUY
+PN010;08-08-2026;Báo tạp chí;BTC2004;Thế Giới Phụ Nữ;247000.0;31;Khoa học;Hồng Hà;DA_HUY
+PN010;08-08-2026;Khác;SPK2004;Túi vải canvas;239500.0;30;Hồng Hà;DA_HUY
+PN010;08-08-2026;Đồ chơi;DCH2004;Gấu bông;142500.0;11;10;Hồng Hà;DA_HUY
+PN010;08-08-2026;Dụng cụ học tập;DCT2004;Thước dây;43000.0;38;Dụng cụ đo;Hồng Hà;DA_HUY
+PN011;03-03-2026;Trang trí;TTR2004;Đèn led dây;273000.0;24;Campus;CHO_DUYET
+PN011;03-03-2026;Vở;VO2004;Vở 4 ô ly;265000.0;38;120;Campus;CHO_DUYET
+PN011;03-03-2026;Sách;SCH2005;Cha giàu cha nghèo;123000.0;8;Robert Kiyosaki;Campus;Trinh thám;CHO_DUYET
+PN012;12-05-2026;Sách giáo khoa;SGK2005;Tiếng Anh 11;253500.0;39;Tiếng Anh;NXB Giáo Dục;CHO_DUYET
+PN012;12-05-2026;Tiểu thuyết;TTH2005;Cánh đồng bất tận;6500.0;15;Nguyễn Ngọc Tư;NXB Giáo Dục;Hiện thực;CHO_DUYET
+PN012;12-05-2026;Truyện;TRU2005;Thạch Sanh;159500.0;4;Dân gian;NXB Giáo Dục;Hài hước;CHO_DUYET
+PN012;12-05-2026;Văn phòng phẩm;VPP2005;Thước kẻ 30cm;197500.0;29;Kẹp - ghim;NXB Giáo Dục;CHO_DUYET
+PN013;24-09-2026;Báo tạp chí;BTC2005;Kiến Thức Ngày Nay;5500.0;16;Thời sự;NXB Thanh Niên;DA_DUYET

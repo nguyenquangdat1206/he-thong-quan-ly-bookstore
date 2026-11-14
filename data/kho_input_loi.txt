@@ -1,0 +1,11 @@
+Sách;SCH9001;Sách hợp lệ;45000.0;10;Nguyễn Nhật Ánh;NXB Trẻ;Thiếu nhi
+Sách;001;Mã kiểu cũ;45000.0;10;Nguyễn Nhật Ánh;NXB Trẻ;Thiếu nhi
+Sách;SGK9001;Sai tiền tố cho Sách;45000.0;10;Nguyễn Nhật Ánh;NXB Trẻ;Thiếu nhi
+Báo tạp chí;btc9001;Viết thường;30000.0;5;Kinh tế;NXB Trẻ
+Báo tạp chí;BTC90011;Thừa số;30000.0;5;Kinh tế;NXB Trẻ
+Vở;VO9001;Vở hợp lệ;8000.0;20;96;Hồng Hà
+Vở;V9001;Thiếu chữ O;8000.0;20;96;Hồng Hà
+Đồ chơi;DCH9001;Đồ chơi hợp lệ;120000.0;7;6;Lego Việt Nam
+Đồ chơi;DCH9002;Số lượng không phải số;120000.0;abc;6;Lego Việt Nam
+Khác;abc;Mã chữ;15000.0;3;Deli
+Khác;SPK9001;Khác hợp lệ;15000.0;3;Deli

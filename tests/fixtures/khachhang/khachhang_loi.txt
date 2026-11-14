@@ -1,0 +1,7 @@
+KH01;Nguyễn Văn An;0901234567
+KH02;Trần Thị Bình;
+KH03;Lê Hoàng Cường;0923456789;thừa trường
+KH01;Trùng Mã Với Dòng Đầu;0999999999
+
+KH05;;0945678901
+KH06;Hoàng Thị Em;0956789012

@@ -1,0 +1,10 @@
+build/
+build-test/
+.idea/workspace.xml
+*.class
+
+# Dữ liệu sinh ra khi thao tác / test
+/data/*_output.txt
+/tests/*.log
+__pycache__/
+*.pyc
