@@ -117,6 +117,7 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
         while (chon != 0) ;
     }
     //xoa
+    @Override 
     public void xoa (){
         String maHD = TienIch.nhapChuoi("Nhập mã hóa đơn cần xóa: ");
         int vt = timViTri(maHD);
@@ -133,7 +134,7 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
         }
         ds[soLuong - 1] = null;
         soLuong--;
-        return;
+        System.out.println("Đã xóa hóa đơn " + maHD);
     }
     //get & set
     public HoaDon[] getDs(){return ds;}

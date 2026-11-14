@@ -172,33 +172,34 @@ public class Main {
         } while (chon != 0);
     }
  
-    // ====== Hóa đơn ======
+        // ====== Hóa đơn ======
     static void menuHoaDon() {
         int chon;
         do {
             System.out.println("\n---------- HÓA ĐƠN ----------");
             System.out.println("1. Xem danh sách hóa đơn");
-            System.out.println("2. Sửa hóa đơn");
-            System.out.println("3. Xóa hóa đơn");
-            System.out.println("4. Đọc từ file");
-            System.out.println("5. Ghi ra file");
-            System.out.println("6. Thanh toán hóa đơn chưa thanh toán");
+            System.out.println("2. Lập hóa đơn mới (qua giỏ hàng)");
+            System.out.println("3. Sửa hóa đơn");
+            System.out.println("4. Xóa hóa đơn");
+            System.out.println("5. Đọc từ file");
+            System.out.println("6. Ghi ra file");
+            System.out.println("7. Thanh toán hóa đơn chưa thanh toán");
             System.out.println("0. Quay lại");
             chon = TienIch.nhapSoNguyenDuong("Chọn: ");
             switch (chon) {
                 case 1: dshd.xuat(); break;
-                case 2: dshd.sua(); break;
-                case 3: dshd.xoa(); break;
-                case 4: dshd.docFile(hoiFile("data/hoadon.txt"), dskh, dsmh); break;
-                case 5: dshd.ghiFile(hoiFile("data/hoadon_output.txt")); break;
-                case 6: thanhToanHoaDon(); break;
+                case 2: menuGioHang(); break; // hóa đơn chỉ được lập từ giỏ hàng
+                case 3: dshd.sua(); break;
+                case 4: dshd.xoa(); break;
+                case 5: dshd.docFile(hoiFile("data/hoadon.txt"), dskh, dsmh); break;
+                case 6: dshd.ghiFile(hoiFile("data/hoadon_output.txt")); break;
+                case 7: thanhToanHoaDon(); break;
                 case 0: break;
                 default: System.out.println("Lựa chọn không hợp lệ!");
             }
         } while (chon != 0);
     }
  
-
     /** Áp dụng phân quyền tại cửa chọn chức năng; chỉ nhân viên đã xác thực mới vào các menu ghi dữ liệu. */
     static boolean duocPhep(NhanVien nv, String quyen) {
         return nv != null && ("ADMIN".equals(nv.getQuyen()) || quyen.equals(nv.getQuyen()));
@@ -396,6 +397,10 @@ public class Main {
             switch (chon) {
                 case 1: {
                     MatHang mh = dsmh.timKiem_hang(TienIch.nhapChuoi("Mã mặt hàng: "));
+                    if (mh == null) {
+                        System.out.println("Không tìm thấy mặt hàng trên kệ.");
+                        break;
+                    }
                     int sl = TienIch.nhapSoNguyenDuong("Số lượng: ");
                     gh.themVaoGio(mh, sl); break;
                 }
