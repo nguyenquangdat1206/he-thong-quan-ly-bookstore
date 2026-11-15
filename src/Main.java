@@ -19,8 +19,8 @@ public class Main {
     static DanhSachKhachHang dskh = new DanhSachKhachHang();
     static DanhSachNCC dsncc = new DanhSachNCC();
     static DanhSachPhieuNhap dspn = new DanhSachPhieuNhap(dsncc);
-    static DanhSachHoaDon dshd = new DanhSachHoaDon(dsmh, dskh);
     static DanhSachNhanVien dsnv = new DanhSachNhanVien();
+    static DanhSachHoaDon dshd = new DanhSachHoaDon(dsmh, dskh, dsnv);
     static NhanVien dangDangNhap;
     static NhanVienBanHang nvBanHang;
     static boolean coTheGhiNhanVien = true;
@@ -144,7 +144,7 @@ public class Main {
         } while (chon != 0);
     }
  
-    // ====== Khách hàng ======
+   // ====== Khách hàng ======
     static void menuKhachHang() {
         int chon;
         do {
@@ -156,6 +156,8 @@ public class Main {
             System.out.println("5. Xóa khách hàng");
             System.out.println("6. Đọc từ file");
             System.out.println("7. Ghi ra file");
+            System.out.println("8. Tìm kiếm khách hàng (Mã / Tên / SĐT)");
+            System.out.println("9. Thống kê Top khách hàng chi tiêu cao nhất");
             System.out.println("0. Quay lại");
             chon = TienIch.nhapSoNguyenDuong("Chọn: ");
             switch (chon) {
@@ -166,13 +168,15 @@ public class Main {
                 case 5: dskh.xoa(); break;
                 case 6: dskh.docFile(hoiFile("data/khachhang.txt")); break;
                 case 7: dskh.ghiFile(hoiFile("data/khachhang_output.txt")); break;
+                case 8: dskh.timKiem(); break;
+                case 9: dshd.thongKeTopKhachHang(); break;
                 case 0: break;
                 default: System.out.println("Lựa chọn không hợp lệ!");
             }
         } while (chon != 0);
     }
  
-        // ====== Hóa đơn ======
+    // ====== Hóa đơn ======
     static void menuHoaDon() {
         int chon;
         do {
@@ -184,6 +188,8 @@ public class Main {
             System.out.println("5. Đọc từ file");
             System.out.println("6. Ghi ra file");
             System.out.println("7. Thanh toán hóa đơn chưa thanh toán");
+            System.out.println("8. Tra cứu & lọc hóa đơn");
+            System.out.println("9. Thống kê doanh thu & mặt hàng bán chạy");
             System.out.println("0. Quay lại");
             chon = TienIch.nhapSoNguyenDuong("Chọn: ");
             switch (chon) {
@@ -194,6 +200,8 @@ public class Main {
                 case 5: dshd.docFile(hoiFile("data/hoadon.txt"), dskh, dsmh); break;
                 case 6: dshd.ghiFile(hoiFile("data/hoadon_output.txt")); break;
                 case 7: thanhToanHoaDon(); break;
+                case 8: dshd.traCuuVaLoc(); break;
+                case 9: dshd.thongKeDoanhThu(); break;
                 case 0: break;
                 default: System.out.println("Lựa chọn không hợp lệ!");
             }
