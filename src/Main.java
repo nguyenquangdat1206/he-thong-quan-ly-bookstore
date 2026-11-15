@@ -19,8 +19,8 @@ public class Main {
     static DanhSachKhachHang dskh = new DanhSachKhachHang();
     static DanhSachNCC dsncc = new DanhSachNCC();
     static DanhSachPhieuNhap dspn = new DanhSachPhieuNhap(dsncc);
-    static DanhSachHoaDon dshd = new DanhSachHoaDon(dsmh, dskh);
     static DanhSachNhanVien dsnv = new DanhSachNhanVien();
+    static DanhSachHoaDon dshd = new DanhSachHoaDon(dsmh, dskh, dsnv);
     static NhanVien dangDangNhap;
     static NhanVienBanHang nvBanHang;
     static boolean coTheGhiNhanVien = true;

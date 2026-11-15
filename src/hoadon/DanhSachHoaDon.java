@@ -7,7 +7,8 @@ import interfaces.*;
 import tienich.*;
 import nhanvien.NhanVienBanHang;
 
-
+import nhanvien.DanhSachNhanVien;
+import nhanvien.NhanVien;
 import khachhang.DanhSachKhachHang;
 import khachhang.KhachHang;
 public class DanhSachHoaDon implements IQuanLy, IFileIO{
@@ -16,12 +17,17 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
     private int soLuong;
     private DanhSachMatHang dsmh;
     private DanhSachKhachHang dskh;
+    private DanhSachNhanVien dsnv;
     //constructor
-    public DanhSachHoaDon(DanhSachMatHang dsmh, DanhSachKhachHang dskh){
+        public DanhSachHoaDon(DanhSachMatHang dsmh, DanhSachKhachHang dskh){
+        this(dsmh, dskh, null);
+    }
+    public DanhSachHoaDon(DanhSachMatHang dsmh, DanhSachKhachHang dskh, DanhSachNhanVien dsnv){
         ds = new HoaDon[1000];
         soLuong = 0;
         this.dsmh = dsmh;
         this.dskh = dskh;
+        this.dsnv = dsnv;
     }
     //tạo thêm danh sách nếu bị đầy
     private void tangKichThuocHoaDon(){
@@ -200,11 +206,19 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
                     continue;
                 }
 
-                // Nhân viên chưa có danh sách riêng nên chỉ khôi phục mã và tên đã lưu
+                // Tra nhân viên thật trong danh sách nhân viên theo mã đã lưu.
+                // Không còn trong danh sách (đã nghỉ/xóa) thì giữ lại mã và tên đã lưu để hóa đơn vẫn có người lập.
                 NhanVienBanHang nv = null;
-                if (info.length > 4 && !info[3].trim().isEmpty()) {
-                    nv = new NhanVienBanHang(info[3].trim(), info[4].trim(), "", "", "", 0);
+                if (info.length > 3 && !info[3].trim().isEmpty()) {
+                    String maNV = info[3].trim();
+                    NhanVien tim = (dsnv == null) ? null : dsnv.timTheoMa(maNV);
+                    if (tim instanceof NhanVienBanHang) {
+                        nv = (NhanVienBanHang) tim;
+                    } else if (info.length > 4) {
+                        nv = new NhanVienBanHang(maNV, info[4].trim(), "", "", "", 0);
+                    }
                 }
+                
                 boolean daThanhToan = info.length > 5 && info[5].trim().equals("1");
 
                 HoaDon hd = new HoaDon(maHD, ngayLap, kh, nv);
