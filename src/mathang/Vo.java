@@ -20,6 +20,16 @@ public class Vo extends MatHang{
         this.nhaSX = nhaSX;
     }
 
+    @Override
+    public void setMa(String ma) {
+        if (ma == null || !ma.matches("VO\\d{4}")) {
+            throw new IllegalArgumentException(
+                "Mã phải có dạng VOxxxx"
+            );
+        }
+        super.setMa(ma);
+    }
+
     public String getnhaSX() { return nhaSX; }
     public void setnhaSX(String nhaSX) { this.nhaSX = nhaSX; }
 
@@ -35,7 +45,14 @@ public class Vo extends MatHang{
     // Nhap
     public void nhap() {
 
-        setMa(TienIch.nhapChuoi("Nhập mã: "));
+        while (true) {
+            try {
+                setMa(TienIch.nhapChuoi("Nhập mã (VOxxxx): "));
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
 
         setTen(TienIch.nhapChuoi("Nhập tên: "));
 

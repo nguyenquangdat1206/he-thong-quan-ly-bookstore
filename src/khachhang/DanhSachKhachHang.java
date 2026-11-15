@@ -141,65 +141,6 @@ public class DanhSachKhachHang implements IQuanLy,IFileIO{
         }
         return null;
     }
-    //Chức năng mới: Menu tìm kiếm khách hàng theo Mã/Tên/SĐT
-    public void timKiem() {
-        if (soLuong == 0) {
-            System.out.println("Danh sách khách hàng đang trống.");
-            return;
-        }
-        System.out.println("\n--- TÌM KIẾM KHÁCH HÀNG ---");
-        System.out.println("1. Tìm theo mã khách hàng");
-        System.out.println("2. Tìm theo tên khách hàng (gần đúng)");
-        System.out.println("3. Tìm theo số điện thoại");
-        int chon = TienIch.nhapSoNguyenDuong("Chọn: ");
-        switch (chon) {
-            case 1: {
-                String ma = TienIch.nhapChuoi("Nhập mã khách hàng: ");
-                KhachHang kh = timkiem_khachhang(ma);
-                if (kh == null) System.out.println("Không tìm thấy khách hàng có mã " + ma);
-                else {
-                    System.out.println("-------- KẾT QUẢ --------");
-                    kh.xuat();
-                }
-                break;
-            }
-            case 2: {
-                String tuKhoa = TienIch.nhapChuoi("Nhập tên cần tìm: ").toLowerCase();
-                int dem = 0;
-                for (int i = 0; i < soLuong; i++) {
-                    if (ds[i].getTenKH().toLowerCase().contains(tuKhoa)) {
-                        System.out.println("-------------------------");
-                        ds[i].xuat();
-                        dem++;
-                    }
-                }
-                if (dem == 0) System.out.println("Không tìm thấy khách hàng nào có tên chứa '" + tuKhoa + "'.");
-                else System.out.println("=> Tìm thấy " + dem + " khách hàng.");
-                break;
-            }
-            case 3: {
-                String sdt = TienIch.nhapChuoi("Nhập số điện thoại cần tìm: ");
-                int dem = 0;
-                for (int i = 0; i < soLuong; i++) {
-                    if (ds[i].getSoDienThoai().contains(sdt)) {
-                        System.out.println("-------------------------");
-                        ds[i].xuat();
-                        dem++;
-                    }
-                }
-                if (dem == 0) System.out.println("Không tìm thấy khách hàng có SĐT chứa '" + sdt + "'.");
-                else System.out.println("=> Tìm thấy " + dem + " khách hàng.");
-                break;
-            }
-            default:
-                System.out.println("Lựa chọn không hợp lệ!");
-        }
-    }
-
-    // Getter, Setter
-    public int getSoLuong() { return soLuong; }
-    public KhachHang[] getDs() { return ds; }
-
     // Ghi dữ liệu ra file
     @Override
     public void ghiFile(String duongDan) {

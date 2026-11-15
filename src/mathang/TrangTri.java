@@ -18,6 +18,16 @@ public class TrangTri extends MatHang{
         this.nhaSX = nhaSX;
     }
 
+    @Override
+    public void setMa(String ma) {
+        if (ma == null || !ma.matches("TTR\\d{4}")) {
+            throw new IllegalArgumentException(
+                "Mã phải có dạng TTRxxxx"
+            );
+        }
+        super.setMa(ma);
+    }
+
     public String getnhaSX() { return nhaSX; }
     public void setnhaSX(String nhaSX) { this.nhaSX = nhaSX; }
 
@@ -29,7 +39,14 @@ public class TrangTri extends MatHang{
     @Override
     // Nhap
     public void nhap() {
-        setMa(TienIch.nhapChuoi("Nhập mã: "));
+        while (true) {
+            try {
+                setMa(TienIch.nhapChuoi("Nhập mã (TTRxxxx): "));
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
 
         setTen(TienIch.nhapChuoi("Nhập tên: "));
 

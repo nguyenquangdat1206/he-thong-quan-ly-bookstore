@@ -15,6 +15,9 @@ public class TieuThuyet extends Sach {
     }
 
     @Override
+    protected String getTienToMa() { return "TTH"; }
+
+    @Override
     public double getThue() { return thue; }
     @Override
     public double getLoinhuan() { return loinhuan; }
@@ -22,7 +25,14 @@ public class TieuThuyet extends Sach {
     @Override
     public void nhap() {
 
-        setMa(TienIch.nhapChuoi("Nhập mã: "));
+        while (true) {
+            try {
+                setMa(TienIch.nhapChuoi("Nhập mã (TTHxxxx): "));
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
 
         setTen(TienIch.nhapChuoi("Nhập tên: "));
 

@@ -23,6 +23,20 @@ public class Sach extends MatHang {
         this.theloai = theloai;
     }
 
+    // Tiền tố mã của từng loại; lớp con của Sach chỉ cần override hàm này
+    protected String getTienToMa() { return "SCH"; }
+
+    @Override
+    public void setMa(String ma) {
+        String tienTo = getTienToMa();
+        if (ma == null || !ma.matches(tienTo + "\\d{4}")) {
+            throw new IllegalArgumentException(
+                "Mã phải có dạng " + tienTo + "xxxx"
+            );
+        }
+        super.setMa(ma);
+    }
+
     public String getTheloai(){return theloai; }
     public void setTheloai(String theloai){this.theloai = theloai;}
 
@@ -38,7 +52,14 @@ public class Sach extends MatHang {
     @Override
     public void nhap() {
 
-        setMa(TienIch.nhapChuoi("Nhập mã: "));
+        while (true) {
+            try {
+                setMa(TienIch.nhapChuoi("Nhập mã (SCHxxxx): "));
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
 
         setTen(TienIch.nhapChuoi("Nhập tên: "));
 

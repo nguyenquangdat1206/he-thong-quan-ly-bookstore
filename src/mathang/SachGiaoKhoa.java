@@ -17,6 +17,9 @@ public class SachGiaoKhoa extends Sach {
         this.monhoc = monhoc;
     }
 
+    @Override
+    protected String getTienToMa() { return "SGK"; }
+
     public String getMonhoc() { return monhoc; }
     public void setMonhoc(String monhoc) { this.monhoc = monhoc; }
 
@@ -28,7 +31,14 @@ public class SachGiaoKhoa extends Sach {
     @Override
     public void nhap() {
 
-        setMa(TienIch.nhapChuoi("Nhập mã: "));
+        while (true) {
+            try {
+                setMa(TienIch.nhapChuoi("Nhập mã (SGKxxxx): "));
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
 
         setTen(TienIch.nhapChuoi("Nhập tên: "));
 

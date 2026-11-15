@@ -20,6 +20,16 @@ public class VanPhongPham extends MatHang {
         this.loaiVPP = loaiVPP;
     }
 
+    @Override
+    public void setMa(String ma) {
+        if (ma == null || !ma.matches("VPP\\d{4}")) {
+            throw new IllegalArgumentException(
+                "Mã phải có dạng VPPxxxx"
+            );
+        }
+        super.setMa(ma);
+    }
+
     public String getnhaSX() { return nhaSX; }
     public void setnhaSX(String nhaSX) { this.nhaSX = nhaSX; }
 
@@ -34,7 +44,14 @@ public class VanPhongPham extends MatHang {
     @Override
     public void nhap() {
 
-        setMa(TienIch.nhapChuoi("Nhập mã: "));
+        while (true) {
+            try {
+                setMa(TienIch.nhapChuoi("Nhập mã (VPPxxxx): "));
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
 
         setTen(TienIch.nhapChuoi("Nhập tên: "));
 

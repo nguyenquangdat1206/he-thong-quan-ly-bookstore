@@ -1,5 +1,7 @@
 package mathang;
 
+import javax.swing.plaf.synth.SynthDesktopIconUI;
+
 import tienich.*;
 
 public class BaoTapChi extends MatHang {
@@ -20,6 +22,16 @@ public class BaoTapChi extends MatHang {
         this.theloai = theloai;
     }
 
+    @Override
+    public void setMa(String ma) {
+        if (!ma.matches("BTC\\d{4}")) {
+            throw new IllegalArgumentException(
+                "Mã phải có dạng BTCxxxx"
+            );
+        }
+        super.setMa(ma);
+    }
+
     public String getNhaXuatBan() { return nhaXuatBan; }
     public void setNhaXuatBan(String nhaXuatBan) { this.nhaXuatBan = nhaXuatBan; }
 
@@ -33,8 +45,14 @@ public class BaoTapChi extends MatHang {
 
     @Override
     public void nhap() {
-
-        setMa(TienIch.nhapChuoi("Nhập mã: "));
+     while (true) {
+            try {
+                setMa(TienIch.nhapChuoi("Nhập mã (BTCxxxx): "));
+                break;
+            } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+         }
+        }
 
         setTen(TienIch.nhapChuoi("Nhập tên: "));
 
@@ -51,15 +69,10 @@ public class BaoTapChi extends MatHang {
     @Override
     public void xuat() {
         System.out.println("Mã: " + getMa());
-
         System.out.println("Tên: " + getTen());
-
         System.out.println("Thể loại: " + theloai);
-
         System.out.println("Nhà xuất bản: " + nhaXuatBan);
-
         System.out.println("Số lượng: " + getSoLuong());
-
         System.out.println("Giá bán: " + tinhGiaBan());
     }
 
