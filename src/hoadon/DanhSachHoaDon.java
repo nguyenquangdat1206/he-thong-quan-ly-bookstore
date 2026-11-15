@@ -1,6 +1,7 @@
 package hoadon;
 import java.io.*;
 import java.time.LocalDate;
+import java.nio.charset.StandardCharsets;
 
 import mathang.*;
 import interfaces.*;
@@ -145,9 +146,202 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
     //get & set
     public HoaDon[] getDs(){return ds;}
     public int getSoLuong(){return soLuong;}
+
+    //Thống kê Top khách hàng chi tiêu cao nhất
+    public void thongKeTopKhachHang() {
+        int soKH = dskh.getSoLuong();
+        if (soKH == 0 || soLuong == 0) {
+            System.out.println("Chưa có đủ dữ liệu khách hàng hoặc hóa đơn để thống kê.");
+            return;
+        }
+        KhachHang[] listKH = new KhachHang[soKH];
+        double[] chiTieu = new double[soKH];
+        int[] soDonMua = new int[soKH];
+
+        for (int i = 0; i < soKH; i++) {
+            listKH[i] = dskh.getDs()[i];
+            String ma = listKH[i].getMaKH();
+            for (int j = 0; j < soLuong; j++) {
+                if (ds[j].isDaThanhToan() && ds[j].getKhachHang().getMaKH().equalsIgnoreCase(ma)) {
+                    chiTieu[i] += ds[j].tinhThanhTien();
+                    soDonMua[i]++;
+                }
+            }
+        }
+
+        for (int i = 0; i < soKH - 1; i++) {
+            for (int j = i + 1; j < soKH; j++) {
+                if (chiTieu[j] > chiTieu[i]) {
+                    double tmpTien = chiTieu[i]; chiTieu[i] = chiTieu[j]; chiTieu[j] = tmpTien;
+                    int tmpDon = soDonMua[i]; soDonMua[i] = soDonMua[j]; soDonMua[j] = tmpDon;
+                    KhachHang tmpKH = listKH[i]; listKH[i] = listKH[j]; listKH[j] = tmpKH;
+                }
+            }
+        }
+
+        System.out.println("\n=== BẢNG XẾP HẠNG KHÁCH HÀNG CHI TIÊU CAO NHẤT ===");
+        int dem = 0;
+        for (int i = 0; i < soKH && dem < 5; i++) {
+            if (chiTieu[i] <= 0) break;
+            dem++;
+            System.out.printf("Top %d: %-20s (%s) | Số đơn đã mua: %d | Tổng chi: %.0f%n",
+                    dem, listKH[i].getTenKH(), listKH[i].getMaKH(), soDonMua[i], chiTieu[i]);
+        }
+        if (dem == 0) {
+            System.out.println("Chưa có khách hàng nào có hóa đơn đã thanh toán.");
+        }
+    }
+
+    // Tra cứu và lọc hóa đơn nâng cao
+    public void traCuuVaLoc() {
+        if (soLuong == 0) {
+            System.out.println("Danh sách hóa đơn đang trống.");
+            return;
+        }
+        System.out.println("\n--- TRA CỨU & LỌC HÓA ĐƠN ---");
+        System.out.println("1. Tìm theo mã hóa đơn");
+        System.out.println("2. Lọc hóa đơn ĐÃ thanh toán");
+        System.out.println("3. Lọc hóa đơn CHƯA thanh toán");
+        System.out.println("4. Lọc theo mã nhân viên lập");
+        System.out.println("5. Lọc theo khoảng ngày lập");
+        int chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+
+        switch (chon) {
+            case 1: {
+                String ma = TienIch.nhapChuoi("Nhập mã hóa đơn cần tìm: ");
+                HoaDon hd = timKiem(ma);
+                if (hd == null) System.out.println("Không tìm thấy hóa đơn " + ma);
+                else hd.xuat();
+                break;
+            }
+            case 2:
+            case 3: {
+                boolean canDaTT = (chon == 2);
+                int dem = 0;
+                for (int i = 0; i < soLuong; i++) {
+                    if (ds[i].isDaThanhToan() == canDaTT) {
+                        ds[i].xuat();
+                        System.out.println("------------------------");
+                        dem++;
+                    }
+                }
+                if (dem == 0) System.out.println("Không có hóa đơn nào phù hợp.");
+                else System.out.println("=> Tìm thấy " + dem + " hóa đơn.");
+                break;
+            }
+            case 4: {
+                String maNV = TienIch.nhapChuoi("Nhập mã nhân viên lập: ");
+                int dem = 0;
+                for (int i = 0; i < soLuong; i++) {
+                    NhanVienBanHang nv = ds[i].getNhanVienLap();
+                    if (nv != null && nv.getMaNguoi().equalsIgnoreCase(maNV)) {
+                        ds[i].xuat();
+                        System.out.println("------------------------");
+                        dem++;
+                    }
+                }
+                if (dem == 0) System.out.println("Không có hóa đơn nào do nhân viên '" + maNV + "' lập.");
+                else System.out.println("=> Tìm thấy " + dem + " hóa đơn.");
+                break;
+            }
+            case 5: {
+                LocalDate tuNgay = TienIch.nhapNgay("Từ ngày: ");
+                LocalDate denNgay = TienIch.nhapNgay("Đến ngày: ");
+                if (denNgay.isBefore(tuNgay)) {
+                    System.out.println("Khoảng ngày không hợp lệ (ngày kết thúc trước ngày bắt đầu).");
+                    return;
+                }
+                int dem = 0;
+                for (int i = 0; i < soLuong; i++) {
+                    LocalDate ngay = ds[i].getNgayLap();
+                    if (!ngay.isBefore(tuNgay) && !ngay.isAfter(denNgay)) {
+                        ds[i].xuat();
+                        System.out.println("------------------------");
+                        dem++;
+                    }
+                }
+                if (dem == 0) System.out.println("Không có hóa đơn nào trong khoảng ngày này.");
+                else System.out.println("=> Tìm thấy " + dem + " hóa đơn.");
+                break;
+            }
+            default:
+                System.out.println("Lựa chọn không hợp lệ!");
+        }
+    }
+
+    //Thống kê doanh thu và Top mặt hàng bán chạy
+    public void thongKeDoanhThu() {
+        if (soLuong == 0) {
+            System.out.println("Chưa có dữ liệu hóa đơn để thống kê.");
+            return;
+        }
+        int soDonDaTT = 0, soDonChuaTT = 0;
+        double doanhThuThucTe = 0, tienChoThanhToan = 0;
+
+        String[] maMH = new String[1000];
+        String[] tenMH = new String[1000];
+        int[] slBan = new int[1000];
+        double[] thuVe = new double[1000];
+        int soLoaiMH = 0;
+
+        for (int i = 0; i < soLuong; i++) {
+            HoaDon hd = ds[i];
+            double tien = hd.tinhThanhTien();
+            if (hd.isDaThanhToan()) {
+                soDonDaTT++;
+                doanhThuThucTe += tien;
+                for (int j = 0; j < hd.getSoLuongChiTiet(); j++) {
+                    ChiTietHoaDon ct = hd.getChiTiet()[j];
+                    String ma = ct.getMathang().getMa();
+                    int vt = -1;
+                    for (int k = 0; k < soLoaiMH; k++) {
+                        if (maMH[k].equalsIgnoreCase(ma)) { vt = k; break; }
+                    }
+                    if (vt == -1) {
+                        maMH[soLoaiMH] = ma;
+                        tenMH[soLoaiMH] = ct.getMathang().getTen();
+                        slBan[soLoaiMH] = ct.getsoLuong();
+                        thuVe[soLoaiMH] = ct.thanhTien();
+                        soLoaiMH++;
+                    } else {
+                        slBan[vt] += ct.getsoLuong();
+                        thuVe[vt] += ct.thanhTien();
+                    }
+                }
+            } else {
+                soDonChuaTT++;
+                tienChoThanhToan += tien;
+            }
+        }
+
+        System.out.println("\n=== THỐNG KÊ DOANH THU HÓA ĐƠN ===");
+        System.out.println("Tổng số hóa đơn:           " + soLuong);
+        System.out.println("- Đã thanh toán:           " + soDonDaTT + " đơn");
+        System.out.println("- Chưa thanh toán:         " + soDonChuaTT + " đơn");
+        System.out.printf("Doanh thu thực thu:        %.0f%n", doanhThuThucTe);
+        System.out.printf("Tổng tiền chờ thanh toán:  %.0f%n", tienChoThanhToan);
+
+        if (soLoaiMH > 0) {
+            for (int i = 0; i < soLoaiMH - 1; i++) {
+                for (int j = i + 1; j < soLoaiMH; j++) {
+                    if (slBan[j] > slBan[i]) {
+                        int tmpSL = slBan[i]; slBan[i] = slBan[j]; slBan[j] = tmpSL;
+                        double tmpThu = thuVe[i]; thuVe[i] = thuVe[j]; thuVe[j] = tmpThu;
+                        String tmpMa = maMH[i]; maMH[i] = maMH[j]; maMH[j] = tmpMa;
+                        String tmpTen = tenMH[i]; tenMH[i] = tenMH[j]; tenMH[j] = tmpTen;
+                    }
+                }
+            }
+            System.out.println("\n--- TOP MẶT HÀNG BÁN CHẠY NHẤT (ĐÃ THANH TOÁN) ---");
+            int limit = Math.min(5, soLoaiMH);
+            for (int i = 0; i < limit; i++) {
+                System.out.printf("%d. %-25s (%s) | Đã bán: %d | Doanh thu: %.0f%n",
+                        i + 1, tenMH[i], maMH[i], slBan[i], thuVe[i]);
+            }
+        }
+    }
     
     // Ghi dữ liệu hóa đơn ra file
-    // Dòng đầu mỗi hóa đơn: maHD;ngayLap;maKH;maNV;tenNV;daThanhToan(1/0)
     @Override
     public void ghiFile(String duongDan) {
         try (PrintWriter pw = new PrintWriter(new FileWriter(duongDan))) {
