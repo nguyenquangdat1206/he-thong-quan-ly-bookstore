@@ -13,7 +13,6 @@ public class DanhSachMatHang implements IQuanLy {
 
     //constructor
     public DanhSachMatHang() {
-        
         ds = new MatHang[100]; // mảng ban đầu
         soluong = 0;
     }
@@ -25,6 +24,7 @@ public class DanhSachMatHang implements IQuanLy {
                 || mh.getTen() == null || mh.getTen().isBlank()
                 || mh.getGiaNhap() <= 0 || !Double.isFinite(mh.getGiaNhap())
                 || mh.getSoLuong() < 0 || timKiem_hang(mh.getMa()) != null) return false;
+        try { mh.setMa(mh.getMa()); } catch (IllegalArgumentException e) { return false; } // sai định dạng mã
         if (soluong == ds.length) tangkichthuoc();
         ds[soluong++] = mh;
         return true;
@@ -267,10 +267,17 @@ public class DanhSachMatHang implements IQuanLy {
 
                     switch (choice) {
                         case 1:
-                            System.out.print("Nhập mã mới: ");
-                            String maMoi = TienIch.nhapMa(ds, soluong, ma); //hàm này có ktra kh trùng
-                            System.out.println("Đã chuyển đổi mã " + ds[i].getMa() + "thành " + ma);
-                            ds[i].setMa(maMoi);
+                            while (true) {
+                                String maMoi = TienIch.nhapMa(ds, soluong, "Nhập mã mới: "); //hàm này có ktra kh trùng
+                                try {
+                                    String maCu = ds[i].getMa();
+                                    ds[i].setMa(maMoi); // setMa kiểm tra đúng định dạng của loại mặt hàng
+                                    System.out.println("Đã chuyển đổi mã " + maCu + " thành " + maMoi);
+                                    break;
+                                } catch (IllegalArgumentException e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            }
                             break;
                         case 2:
                             ds[i].setTen(TienIch.nhapChuoi("Nhập tên mới: "));

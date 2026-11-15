@@ -195,6 +195,12 @@ public class DanhSachPhieuNhap implements IQuanLy, IFileIO{
 
     /** Kiểm tra cấu trúc trước khi thay đổi mảng để một dòng lỗi không tạo phiếu/NCC rác. */
     private static MatHang matHangTuDong(String[] p) {
+        MatHang mh = taoMatHangTuDong(p);
+        mh.setMa(mh.getMa()); // mã phải đúng định dạng của loại mặt hàng, sai thì ném IllegalArgumentException
+        return mh;
+    }
+
+    private static MatHang taoMatHangTuDong(String[] p) {
         String loai = p[2].trim(), ma = p[3].trim(), ten = p[4].trim();
         if (ma.isEmpty() || ten.isEmpty()) throw new IllegalArgumentException("thiếu mã hoặc tên mặt hàng");
         double gia = Double.parseDouble(p[5].trim());

@@ -1,10 +1,50 @@
-Sách;S001;Nhà giả kim;60000;15;Paulo Coelho;NXB Văn học;Tâm lý
-Sách giáo khoa;SGK01;Toán 10;25000;50;Toán;NXB Giáo dục
-Tiểu thuyết;TT001;Dế Mèn phiêu lưu ký;45000;20;Tô Hoài;NXB Kim Đồng;Thiếu nhi
-Truyện;TR001;Doraemon tập 1;20000;100;Fujiko F. Fujio;NXB Kim Đồng;Truyện tranh
-Văn phòng phẩm;VPP001;Vở Campus 96 trang;9000;200;Vở;Campus
-Văn phòng phẩm;VPP002;Bút bi Thiên Long;3000;300;Bút;Thiên Long
-Báo tạp chí;BTC001;Tạp chí Khoa học phổ thông;30000;40;Khoa học;NXB Khoa học và Kỹ thuật
-Khác;K001;Túi vải canvas;40000;25;Handmade
-Khác;K002;Sticker hoạt hình;15000;80;Hồng Hà
-Khác;K003;Lego City;350000;10;Lego
+Sách;SCH0001;Atomic Habits;29500.0;38;James Clear;NXB Giáo Dục;Lãng mạn
+Sách giáo khoa;SGK0001;Ngữ văn 11;279000.0;28;Ngữ văn;NXB Giáo Dục
+Tiểu thuyết;TTH0001;Số đỏ;264500.0;14;Vũ Trọng Phụng;NXB Thanh Niên;Lãng mạn
+Truyện;TRU0001;Thần đồng đất Việt;227000.0;49;Lê Linh;NXB Kim Đồng;Thiếu nhi
+Văn phòng phẩm;VPP0001;Bấm kim;51000.0;39;Bút;Deli
+Báo tạp chí;BTC0001;Nhịp Cầu Đầu Tư;119000.0;6;Thời sự;NXB Trẻ
+Khác;SPK0001;Túi vải canvas;30000.0;53;Toyking
+Đồ chơi;DCH0001;Rubik 3x3;153000.0;38;3;Campus
+Dụng cụ học tập;DCT0001;Thước dây;297000.0;24;Dụng cụ đo;Hồng Hà
+Trang trí;TTR0001;Nến thơm;57500.0;46;Campus
+Vở;VO0001;Sổ lò xo A5;285000.0;60;120;Hồng Hà
+Sách;SCH0002;Nhà giả kim;259000.0;10;Paulo Coelho;NXB Kim Đồng;Khoa học
+Sách giáo khoa;SGK0002;Địa lý 10;165500.0;49;Địa lý;NXB Giáo Dục
+Tiểu thuyết;TTH0002;Bố già;158000.0;59;Mario Puzo;First News;Trinh thám
+Truyện;TRU0002;Thần đồng đất Việt;46500.0;21;Lê Linh;NXB Giáo Dục;Cổ tích
+Văn phòng phẩm;VPP0002;Kẹp giấy;180500.0;38;Keo - băng dính;Crayola
+Báo tạp chí;BTC0002;Doanh Nhân Sài Gòn;65000.0;28;Khoa học;NXB Trẻ
+Khác;SPK0002;Đèn đọc sách;180000.0;15;Campus
+Đồ chơi;DCH0002;Xe điều khiển;25000.0;27;8;Toyking
+Dụng cụ học tập;DCT0002;Bộ eke;184000.0;54;Máy tính;Lego Việt Nam
+Trang trí;TTR0002;Đồng hồ treo;40000.0;19;Crayola
+Vở;VO0002;Vở ô ly 200 trang;38000.0;39;120;Crayola
+Sách;SCH0003;Đắc nhân tâm;150500.0;39;Dale Carnegie;NXB Lao Động;Phiêu lưu
+Sách giáo khoa;SGK0003;Địa lý 10;182500.0;54;Địa lý;NXB Giáo Dục
+Tiểu thuyết;TTH0003;Mắt biếc;91000.0;37;Nguyễn Nhật Ánh;First News;Trinh thám
+Truyện;TRU0003;Doraemon tập 1;116500.0;26;Fujiko F. Fujio;First News;Thiếu nhi
+Văn phòng phẩm;VPP0003;Kẹp giấy;208500.0;45;Thước;Deli
+Báo tạp chí;BTC0003;Nhịp Cầu Đầu Tư;90000.0;19;Đời sống;NXB Trẻ
+Khác;SPK0003;Balo mini;286000.0;44;Toyking
+Đồ chơi;DCH0003;Búp bê;286500.0;56;5;Toyking
+Dụng cụ học tập;DCT0003;Bảng vẽ nhỏ;199500.0;55;Hộp đựng;Lego Việt Nam
+Trang trí;TTR0003;Hoa giả;47000.0;53;Campus
+Vở;VO0003;Vở tập viết;124000.0;59;96;Deli
+Sách;SCH0004;Đắc nhân tâm;139500.0;17;Dale Carnegie;First News;Lịch sử
+Sách giáo khoa;SGK0004;Sinh học 11;7000.0;56;Sinh học;NXB Giáo Dục
+Tiểu thuyết;TTH0004;Tắt đèn;294500.0;20;Ngô Tất Tố;Nhã Nam;Trinh thám
+Truyện;TRU0004;Sơn Tinh Thủy Tinh;238500.0;57;Dân gian;NXB Giáo Dục;Thiếu nhi
+Văn phòng phẩm;VPP0004;Bấm kim;206500.0;30;Kẹp - ghim;Toyking
+Báo tạp chí;BTC0004;Forbes Việt Nam;36500.0;52;Đời sống;Nhã Nam
+Khác;SPK0004;Sổ tay da;111500.0;56;Hồng Hà
+Đồ chơi;DCH0004;Robot biến hình;179000.0;19;5;Hồng Hà
+Dụng cụ học tập;DCT0004;Compa;295000.0;17;Dụng cụ vẽ;Thiên Long
+Trang trí;TTR0004;Tranh canvas;191000.0;38;Hồng Hà
+Vở;VO0004;Vở kẻ ngang 96 trang;197500.0;36;48;Deli
+Sách;SCH0005;Sapiens;191000.0;27;Yuval Noah Harari;NXB Lao Động;Trinh thám
+Sách giáo khoa;SGK0005;Tiếng Anh 11;67500.0;51;Tiếng Anh;NXB Giáo Dục
+Tiểu thuyết;TTH0005;Số đỏ;250500.0;6;Vũ Trọng Phụng;First News;Phiêu lưu
+Truyện;TRU0005;Thạch Sanh;78500.0;6;Dân gian;NXB Lao Động;Thiếu nhi
+Văn phòng phẩm;VPP0005;Bút chì 2B;250000.0;55;Dụng cụ xóa;Điểm 10
+Báo tạp chí;BTC0005;National Geographic;110000.0;22;Giải trí;NXB Kim Đồng

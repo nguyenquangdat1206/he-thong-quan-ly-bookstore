@@ -212,6 +212,17 @@ public class Kho implements IFileIO, IQuanLy  {
         }
     }
  
+    // Dùng khi đọc file: mã phải đúng định dạng của loại mặt hàng (setMa ném lỗi nếu sai)
+    private boolean tangTonKhoTuFile(String dong, MatHang mh, int soLuong){
+        try{
+            mh.setMa(mh.getMa());
+        } catch(IllegalArgumentException e){
+            System.out.println("Bỏ qua dòng \"" + dong + "\": " + e.getMessage());
+            return false;
+        }
+        return tangTonKho(mh, soLuong);
+    }
+
     @Override
     public void docFile(String duongDan){
         
@@ -245,7 +256,7 @@ public class Kho implements IFileIO, IQuanLy  {
                             String nhaXuatBanSach=phan[6].trim();
                             String theLoaiSach=phan[7].trim();
                             Sach themSach = new Sach(ma, ten, gianhap, soLuong ,tacGiaSach, nhaXuatBanSach, theLoaiSach);
-                            if(tangTonKho(themSach, soLuong)){
+                            if(tangTonKhoTuFile(dong, themSach, soLuong)){
                                 System.out.println("Thêm thành công Sách "+ ten);
                             }     
                             break;                       
@@ -254,7 +265,7 @@ public class Kho implements IFileIO, IQuanLy  {
                             String nhaXuatBanTieuThuyet=phan[6].trim();
                             String theLoaiTieuThuyet=phan[7].trim();
                             TieuThuyet themTieuThuyet = new TieuThuyet(ma, ten, gianhap, soLuong ,tacGiaTieuThuyet, nhaXuatBanTieuThuyet, theLoaiTieuThuyet);
-                            if(tangTonKho(themTieuThuyet, soLuong)){
+                            if(tangTonKhoTuFile(dong, themTieuThuyet, soLuong)){
                                 System.out.println("Thêm thành công Tiểu thuyết "+ ten);
                             }
                             break;
@@ -262,7 +273,7 @@ public class Kho implements IFileIO, IQuanLy  {
                             String monHoc = phan[5].trim();
                             String nhaXuatBan= phan[6].trim();
                             SachGiaoKhoa themSGK = new SachGiaoKhoa(ma, ten, gianhap, soLuong, monHoc, nhaXuatBan);
-                            if(tangTonKho(themSGK, soLuong)){
+                            if(tangTonKhoTuFile(dong, themSGK, soLuong)){
                                 System.out.println("Thêm thành công SGK "+ ten);
                             }
                             break;
@@ -271,7 +282,7 @@ public class Kho implements IFileIO, IQuanLy  {
                             String nhaXuatBanTruyen=phan[6].trim();
                             String theLoaiTruyen=phan[7].trim(); 
                             Truyen themTruyen = new Truyen(ma, ten, gianhap, soLuong ,tacGiaTruyen, nhaXuatBanTruyen, theLoaiTruyen);
-                            if(tangTonKho(themTruyen, soLuong)){
+                            if(tangTonKhoTuFile(dong, themTruyen, soLuong)){
                                 System.out.println("Thêm thành công Truyện "+ ten);
                             }     
                             break;   
@@ -279,7 +290,7 @@ public class Kho implements IFileIO, IQuanLy  {
                             String loaiVPP=phan[5].trim();
                             String nhaSXVPP=phan[6].trim();
                             VanPhongPham themVPP = new VanPhongPham(ma, ten, gianhap, soLuong, nhaSXVPP, loaiVPP);
-                            if(tangTonKho(themVPP, soLuong)){
+                            if(tangTonKhoTuFile(dong, themVPP, soLuong)){
                                 System.out.println("Thêm thành công Văn phòng phẩm "+ ten);
                             }
                             break;
@@ -287,30 +298,30 @@ public class Kho implements IFileIO, IQuanLy  {
                             String theLoaiBao=phan[5].trim();
                             String nhaXuatBanBao=phan[6].trim();
                             BaoTapChi themBao = new BaoTapChi(ma, ten, gianhap, soLuong, nhaXuatBanBao, theLoaiBao);
-                            if(tangTonKho(themBao, soLuong)){
+                            if(tangTonKhoTuFile(dong, themBao, soLuong)){
                                 System.out.println("Thêm thành công Báo tạp chí "+ ten);
                             }
                             break;
                         case "Đồ chơi":
-                            if (tangTonKho(new DoChoi(ma,ten,gianhap,soLuong,phan[6].trim(),Integer.parseInt(phan[5].trim())), soLuong))
+                            if (tangTonKhoTuFile(dong, new DoChoi(ma,ten,gianhap,soLuong,phan[6].trim(),Integer.parseInt(phan[5].trim())), soLuong))
                                 System.out.println("Thêm thành công Đồ chơi " + ten);
                             break;
                         case "Dụng cụ học tập":
-                            if (tangTonKho(new DungCuHocTap(ma,ten,gianhap,soLuong,phan[6].trim(),phan[5].trim()), soLuong))
+                            if (tangTonKhoTuFile(dong, new DungCuHocTap(ma,ten,gianhap,soLuong,phan[6].trim(),phan[5].trim()), soLuong))
                                 System.out.println("Thêm thành công Dụng cụ học tập " + ten);
                             break;
                         case "Trang trí":
-                            if (tangTonKho(new TrangTri(ma,ten,gianhap,soLuong,phan[5].trim()), soLuong))
+                            if (tangTonKhoTuFile(dong, new TrangTri(ma,ten,gianhap,soLuong,phan[5].trim()), soLuong))
                                 System.out.println("Thêm thành công Trang trí " + ten);
                             break;
                         case "Vở":
-                            if (tangTonKho(new Vo(ma,ten,gianhap,soLuong,Integer.parseInt(phan[5].trim()),phan[6].trim()), soLuong))
+                            if (tangTonKhoTuFile(dong, new Vo(ma,ten,gianhap,soLuong,Integer.parseInt(phan[5].trim()),phan[6].trim()), soLuong))
                                 System.out.println("Thêm thành công Vở " + ten);
                             break;
                         case "Khác":
                             String nhaSX = phan[5].trim();
                             SPKhac themKhac = new SPKhac(ma, ten, gianhap, soLuong, nhaSX);
-                            if(tangTonKho(themKhac, soLuong)){
+                            if(tangTonKhoTuFile(dong, themKhac, soLuong)){
                                 System.out.println("Thêm thành công Khác "+ten);
                             }
                             break;

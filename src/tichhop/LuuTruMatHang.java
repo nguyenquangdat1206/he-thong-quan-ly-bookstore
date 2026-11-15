@@ -32,11 +32,20 @@ public final class LuuTruMatHang {
                 if (line.isBlank()) continue;
                 try {
                     MatHang mh = parse(line);
-                    if (mh != null && ds.themTuFile(mh)) them++;
+                    if (mh == null) { boQua++; continue; }
+                    // Mã phải đúng định dạng của loại mặt hàng (setMa ném lỗi nếu sai)
+                    try {
+                        mh.setMa(mh.getMa());
+                    } catch (IllegalArgumentException ex) {
+                        System.out.println("Bỏ qua dòng \"" + line + "\": " + ex.getMessage());
+                        boQua++;
+                        continue;
+                    }
+                    if (ds.themTuFile(mh)) them++;
                     else boQua++;
                 } catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) { boQua++; }
             }
-            System.out.println("Đã tải " + them + " mặt hàng (bỏ qua " + boQua + " dòng lỗi/trùng mã).");
+            System.out.println("Đã tải " + them + " mặt hàng (bỏ qua " + boQua + " dòng lỗi/sai định dạng mã/trùng mã).");
             return them;
         } catch (IOException ex) {
             System.out.println("Không đọc được file mặt hàng: " + ex.getMessage());
