@@ -95,8 +95,13 @@ public class PhieuNhap implements IGetMa, IQuanLy{
     }
     @Override 
     public void them(){
-        MatHang mhMoi = nhapMH();
-        if (mhMoi == null) return;
+        MatHang mhMoi;
+        while (true) {
+            mhMoi = nhapMH();
+            if (mhMoi == null) return;
+            if (TienIch.timKiemViTri(dsMH, soLuongNhap, mhMoi.getMa()) == -1) break;
+            System.out.println("Mã mặt hàng đã có trong phiếu! Vui lòng nhập lại.");
+        }
         if(soLuongNhap==dsMH.length){
             MatHang[] mangmoi = new MatHang[dsMH.length*2];
             for(int i=0;i<soLuongNhap;i++){
@@ -166,9 +171,17 @@ public class PhieuNhap implements IGetMa, IQuanLy{
 
                     switch (choice) {
                         case 1:
-                            String maMoi = TienIch.nhapMa(dsMH, soLuongNhap, "Nhập mã mới: "); //hàm này có ktra kh trùng
-                            System.out.println("Đã chuyển đổi mã " + dsMH[i].getMa() + "thành " + maMoi);
-                            dsMH[i].setMa(maMoi);
+                            while (true) {
+                                String maMoi = TienIch.nhapMa(dsMH, soLuongNhap, "Nhập mã mới: "); //hàm này có ktra kh trùng
+                                try {
+                                    String maCu = dsMH[i].getMa();
+                                    dsMH[i].setMa(maMoi); // setMa kiểm tra đúng định dạng của loại mặt hàng
+                                    System.out.println("Đã chuyển đổi mã " + maCu + " thành " + maMoi);
+                                    break;
+                                } catch (IllegalArgumentException e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            }
                             break;
                         case 2:
                             dsMH[i].setTen(TienIch.nhapChuoi("Nhập tên mới: "));

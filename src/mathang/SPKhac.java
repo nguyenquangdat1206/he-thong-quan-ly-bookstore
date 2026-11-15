@@ -17,6 +17,16 @@ public class SPKhac extends MatHang {
         this.nhaSX = nhaSX;
     }
 
+    @Override
+    public void setMa(String ma) {
+        if (ma == null || !ma.matches("SPK\\d{4}")) {
+            throw new IllegalArgumentException(
+                "Mã phải có dạng SPKxxxx"
+            );
+        }
+        super.setMa(ma);
+    }
+
     public String getnhaSX() { return nhaSX; }
     public void setnhaSX(String nhaSX) { this.nhaSX = nhaSX; }
 
@@ -28,7 +38,14 @@ public class SPKhac extends MatHang {
     @Override
     public void nhap() {
 
-        setMa(TienIch.nhapChuoi("Nhập mã: "));
+        while (true) {
+            try {
+                setMa(TienIch.nhapChuoi("Nhập mã (SPKxxxx): "));
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
 
         setTen(TienIch.nhapChuoi("Nhập tên: "));
 

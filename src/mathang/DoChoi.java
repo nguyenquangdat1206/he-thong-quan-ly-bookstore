@@ -22,6 +22,16 @@ public class DoChoi extends MatHang{
         this.dotuoi = dotuoi;
     }
 
+    @Override
+    public void setMa(String ma) {
+        if (ma == null || !ma.matches("DCH\\d{4}")) {
+            throw new IllegalArgumentException(
+                "Mã phải có dạng DCHxxxx"
+            );
+        }
+        super.setMa(ma);
+    }
+
     public String getnhaSX() { return nhaSX; }
     public void setnhaSX(String nhaSX) { this.nhaSX = nhaSX; }
 
@@ -36,7 +46,14 @@ public class DoChoi extends MatHang{
     // Nhap
     public void nhap() {
 
-        setMa(TienIch.nhapChuoi("Nhập mã: "));
+        while (true) {
+            try {
+                setMa(TienIch.nhapChuoi("Nhập mã (DCHxxxx): "));
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
 
         setTen(TienIch.nhapChuoi("Nhập tên: "));
 

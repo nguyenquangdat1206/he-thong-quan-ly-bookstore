@@ -15,6 +15,9 @@ public class Truyen extends Sach {
     }
 
     @Override
+    protected String getTienToMa() { return "TRU"; }
+
+    @Override
     public double getThue() { return thue; }
     @Override
     public double getLoinhuan() { return loinhuan; }
@@ -22,7 +25,14 @@ public class Truyen extends Sach {
     @Override
     public void nhap() {
 
-        setMa(TienIch.nhapChuoi("Nhập mã: "));
+        while (true) {
+            try {
+                setMa(TienIch.nhapChuoi("Nhập mã (TRUxxxx): "));
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
 
         setTen(TienIch.nhapChuoi("Nhập tên: "));
 

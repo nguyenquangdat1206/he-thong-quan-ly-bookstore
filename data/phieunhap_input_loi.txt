@@ -1,0 +1,11 @@
+PNL01;05-11-2026;Báo tạp chí;BTC9001;Báo hợp lệ;30000.0;5;Kinh tế;NXB Trẻ;CHO_DUYET
+PNL01;05-11-2026;Báo tạp chí;001;Mã kiểu cũ;30000.0;5;Kinh tế;NXB Trẻ;CHO_DUYET
+PNL01;05-11-2026;Báo tạp chí;BTC9001;Trùng mã trong phiếu;30000.0;5;Kinh tế;NXB Trẻ;CHO_DUYET
+PNL02;31-02-2026;Trang trí;TTR9001;Ngày không tồn tại;50000.0;2;Deli;CHO_DUYET
+PNL02;10-11-2026;Trang trí;TTR9001;Trang trí hợp lệ;50000.0;2;Deli;CHO_DUYET
+PNL02;10-11-2026;Trang trí;TTH9001;Sai tiền tố;50000.0;2;Deli;CHO_DUYET
+PNL03;12-11-2026;Vở;VO9001;Số lượng bằng 0;8000.0;0;96;Hồng Hà;CHO_DUYET
+PNL03;12-11-2026;Vở;VO9002;Trạng thái sai;8000.0;10;96;Hồng Hà;DANG_XU_LY
+PNL03;12-11-2026;Loại lạ;LL9001;Danh mục không hỗ trợ;8000.0;10;96;Hồng Hà;CHO_DUYET
+PNL04;13-11-2026;Khác;SPK9001;Thiếu cột;15000.0;3;CHO_DUYET
+PNL04;13-11-2026;Khác;SPK9002;Khác hợp lệ;15000.0;3;Deli;DA_DUYET

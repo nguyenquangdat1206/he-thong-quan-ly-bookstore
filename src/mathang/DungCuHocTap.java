@@ -22,6 +22,16 @@ public class DungCuHocTap extends MatHang {
         this.loaidungcu = loaidungcu;
     }
 
+    @Override
+    public void setMa(String ma) {
+        if (ma == null || !ma.matches("DCT\\d{4}")) {
+            throw new IllegalArgumentException(
+                "Mã phải có dạng DCTxxxx"
+            );
+        }
+        super.setMa(ma);
+    }
+
     public String getnhaSX() { return nhaSX; }
     public void setnhaSX(String nhaSX) { this.nhaSX = nhaSX; }
 
@@ -37,7 +47,14 @@ public class DungCuHocTap extends MatHang {
     // Nhap
     public void nhap() {
 
-        setMa(TienIch.nhapChuoi("Nhập mã: "));
+        while (true) {
+            try {
+                setMa(TienIch.nhapChuoi("Nhập mã (DCTxxxx): "));
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
 
         setTen(TienIch.nhapChuoi("Nhập tên: "));
 
