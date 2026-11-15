@@ -175,8 +175,6 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
     public void docFile(String duongDan, DanhSachKhachHang dskh, DanhSachMatHang dsmh) {
         try (BufferedReader br = new BufferedReader(new FileReader(duongDan))) {
             String line;
-            soLuong = 0;
-            ds = new HoaDon[1000];
 
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
@@ -198,7 +196,7 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
                     continue;
                 }
                 if (timKiem(maHD) != null) {
-                    System.out.println("Bỏ qua hóa đơn " + maHD + " do bị trùng mã trong file.");
+                    System.out.println("Bỏ qua hóa đơn " + maHD + " do bị trùng mã với hóa đơn đã có.");
                     continue;
                 }
 
