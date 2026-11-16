@@ -17,7 +17,7 @@ with tempfile.TemporaryDirectory(prefix='oop_v4_legacy_') as d:
     (data/'phieunhap_input.txt').write_text(pn_text,encoding='utf-8')
     for name,folder in [('kho_input.txt','kho'),('khachhang.txt','khachhang'),('hoadon.txt','hoadon')]:
         shutil.copyfile(ROOT/'tests'/'fixtures'/folder/name,data/name)
-    (data/'mathang.txt').write_text('Sách;S001;Sách mẫu;25000;4;Tác giả;NXB;Thiếu nhi\n',encoding='utf-8')
+    (data/'mathang.txt').write_text('Sách;SCH0001;Sách mẫu;25000;4;Tác giả;NXB;Thiếu nhi\n',encoding='utf-8')
     original={p.name:p.read_bytes() for p in data.iterdir()}
     cp=str(ROOT/'build')
     run=subprocess.run(['java','-Dfile.encoding=UTF-8','-Dstdout.encoding=UTF-8','-Dstderr.encoding=UTF-8','-cp',cp,'Main'],cwd=tmp,input='1\nadmin\ntest-only\n7\n1\n0\n0\n0\n',text=True,capture_output=True,encoding='utf-8',timeout=25)

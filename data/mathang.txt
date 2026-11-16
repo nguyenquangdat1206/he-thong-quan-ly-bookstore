@@ -1,5 +1,5 @@
-Sách; S01; Đắc Nhân Tâm; 50000; 100; Dale Carnegie; NXB Tổng Hợp; Kỹ năng sống
-Vở; V01; Vở Hồng Hà 96T; 12000; 250; 96; Ô ly
-Đồ chơi; DC01; Xe đua điều khiển; 150000; 30; 8; My Kingdom
-Dụng cụ học tập; DC02; Bút bi Thiên Long; 4000; 500; Bút viết; Thiên Long
-Khác; K01; Giấy gói quà; 5000; 200; Giấy họa tiết Vintage
+Sách;SCH3001;Đắc Nhân Tâm;50000;100;Dale Carnegie;NXB Tổng Hợp;Kỹ năng sống
+Vở;VO3001;Vở Hồng Hà 96T;12000;250;96;Ô ly
+Đồ chơi;DCH3001;Xe đua điều khiển;150000;30;8;My Kingdom
+Dụng cụ học tập;DCT3001;Bút bi Thiên Long;4000;500;Bút viết;Thiên Long
+Khác;SPK3001;Giấy gói quà;5000;200;Giấy họa tiết Vintage

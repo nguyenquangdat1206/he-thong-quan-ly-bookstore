@@ -1,3 +1,3 @@
-dsNhanVien.them(new QuanLy("admin", "ADMIN", "0900000000", "123", "Sáng", 20000));
-dsNhanVien.them(new NhanVienBanHang("bh01", "Lê Bán Hàng", "0911111111", "123", "Chiều", 10000));
-dsNhanVien.them(new NhanVienNhapKho("kho01", "Trần Thủ Kho", "0922222222", "123", "Tối", 12000));
+admin;ADMIN;0900000000;123;Sáng;20000.0;ADMIN
+bh01;Lê Bán Hàng;0911111111;123;Chiều;10000.0;BAN_HANG
+kho01;Trần Thủ Kho;0922222222;123;Tối;12000.0;NHAP_KHO

@@ -5,6 +5,7 @@ Does not print customer/staff details, passwords, or change any file.
 from pathlib import Path
 from datetime import datetime
 import argparse
+import re
 import sys
 from prepare_legacy_data import STAFF
 
@@ -21,6 +22,18 @@ expected = {
     'kho_input.txt': 'Kho (loại hàng, mã, tên, giá, số lượng, ...)',
     'mathang.txt': 'Mặt hàng (loại, mã, tên, giá, số lượng, ...)',
 }
+
+sku_prefixes = {
+    'Sách': 'SCH', 'Sách giáo khoa': 'SGK', 'Tiểu thuyết': 'TTH',
+    'Truyện': 'TRU', 'Văn phòng phẩm': 'VPP', 'Báo tạp chí': 'BTC',
+    'Khác': 'SPK', 'Đồ chơi': 'DCH', 'Dụng cụ học tập': 'DCT',
+    'Trang trí': 'TTR', 'Vở': 'VO',
+}
+
+
+def valid_sku(category, code):
+    prefix = sku_prefixes.get(category)
+    return prefix is not None and re.fullmatch(rf'{prefix}\d{{4}}', code) is not None
 
 def rows(path):
     return [line.strip() for line in path.read_text(encoding='utf-8-sig').splitlines() if line.strip()]
@@ -43,6 +56,8 @@ def validate(filename, lines):
         elif filename == 'kho_input.txt':
             if len(parts) < 6 or not is_num(parts[3]) or not parts[4].lstrip('-').isdigit():
                 issues.append(f'dòng {ix}: loại/mã/giá/số lượng không khớp')
+            elif not valid_sku(parts[0], parts[1]):
+                issues.append(f'dòng {ix}: mã mặt hàng không đúng định dạng danh mục')
         elif filename == 'phieunhap_input.txt':
             valid_date = False
             if len(parts) >= 9:
@@ -51,9 +66,13 @@ def validate(filename, lines):
                     except ValueError: pass
             if len(parts) < 9 or not valid_date or parts[-1] not in {'CHO_DUYET','DA_DUYET','DA_HUY'}:
                 issues.append(f'dòng {ix}: số cột/ngày/trạng thái chưa tương thích')
+            elif not valid_sku(parts[2], parts[3]):
+                issues.append(f'dòng {ix}: mã mặt hàng không đúng định dạng danh mục')
         elif filename == 'mathang.txt':
             if len(parts) < 6 or not is_num(parts[3]) or not parts[4].lstrip('-').isdigit():
                 issues.append(f'dòng {ix}: loại/mã/giá/số lượng không khớp')
+            elif not valid_sku(parts[0], parts[1]):
+                issues.append(f'dòng {ix}: mã mặt hàng không đúng định dạng danh mục')
     if filename == 'hoadon.txt':
         # HD header: 3 or 6 fields, then one count, followed by count rows of 3 fields.
         i=0

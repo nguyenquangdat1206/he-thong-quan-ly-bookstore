@@ -21,6 +21,7 @@ public class Truyen extends Sach {
     public double getThue() { return thue; }
     @Override
     public double getLoinhuan() { return loinhuan; }
+    @Override public double getLoiNhuan() { return loinhuan; }
 
     @Override
     public void nhap() {
@@ -44,7 +45,7 @@ public class Truyen extends Sach {
 
         setGiaNhap(TienIch.nhapGiaTien("Giá nhập hàng: "));
 
-        setSoLuong(TienIch.nhapSoNguyenDuong("Nhập số lượng: "));
+        setSoLuong(TienIch.nhapSoNguyenKhongAm("Nhập số lượng: "));
 
     }
 

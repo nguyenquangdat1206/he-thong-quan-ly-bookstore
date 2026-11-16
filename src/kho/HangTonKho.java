@@ -82,6 +82,6 @@ public class HangTonKho implements IGetMa{
         String ten = (matHang==null) ? "":matHang.getTen();
         String ma = (matHang==null) ? "":matHang.getMa();
         double giaNhap = matHang.getGiaNhap();
-        System.out.printf("|%-20s|%-20s|%-15s|%-20s|%-20s|%n", ma, ten, giaNhap, soLuong, matHang.tinhGiaBan());
+        System.out.printf("|%-20s|%-40s|%-15s|%-20s|%-20s|%n", ma, ten, giaNhap, soLuong, matHang.tinhGiaBan());
     }
 }

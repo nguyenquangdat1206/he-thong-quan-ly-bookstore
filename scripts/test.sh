@@ -7,6 +7,8 @@ javac -encoding UTF-8 -d build "${java_files[@]}"
 java -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8 -Dfile.encoding=UTF-8 -cp build IntegrationTests
 java -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8 -Dfile.encoding=UTF-8 -cp build FeatureNCCPhieuNhapTests
 java -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8 -Dfile.encoding=UTF-8 -cp build LegacyProductRegressionTests
+java -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8 -Dfile.encoding=UTF-8 -cp build DisplayLogicRegressionTests
 python3 tests/test_console.py
 python3 tests/test_console_pn.py
 python3 tests/test_legacy_runtime.py
+python3 tests/test_console_unicode.py

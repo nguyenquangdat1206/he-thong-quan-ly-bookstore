@@ -10,17 +10,17 @@ import nhanvien.NhanVienBanHang;
 
 public class GioHang {
     private KhachHang khachHang;
-    private ChiTietHoaDon[] ds;
+    private ChiTietGioHang[] ds;
     private int soDong;
 
     public GioHang(KhachHang khachHang) {
         this.khachHang = khachHang;
-        ds = new ChiTietHoaDon[5];
+        ds = new ChiTietGioHang[5];
         soDong = 0;
     }
 
     private void tangKichThuoc() {
-        ChiTietHoaDon[] temp = new ChiTietHoaDon[ds.length * 2];
+        ChiTietGioHang[] temp = new ChiTietGioHang[ds.length * 2];
         for (int i = 0; i < soDong; i++) {
             temp[i] = ds[i];
         }
@@ -30,7 +30,7 @@ public class GioHang {
     // tìm index dòng của mặt hàng cần tìm trong danh sách
     private int timViTri(String ma) {
         for (int i = 0; i < soDong; i++) {
-            if (ds[i].getMathang().getMa().equalsIgnoreCase(ma))
+            if (ds[i].getMatHang().getMa().equalsIgnoreCase(ma))
                 return i;
         }
         return -1; // chỉ số không hợp lệ, không có mặt hàng đó trong danh sách
@@ -43,16 +43,16 @@ public class GioHang {
             return;
         }
         int vt = timViTri(mh.getMa());
-        int daCo = (vt == -1) ? 0 : ds[vt].getsoLuong(); // số lượng mặt hàng có sẵn trong giỏ
+        int daCo = (vt == -1) ? 0 : ds[vt].getSoLuongMon(); // số lượng mặt hàng có sẵn trong giỏ
         if (daCo + sl > mh.getSoLuong()) {
             System.out.println("Không đủ hàng! Trên kệ còn " + mh.getSoLuong() + ", trong giỏ đã có " + daCo);
             return;
         }
         if (vt != -1) {
-            ds[vt].setsoLuong(daCo + sl);
+            ds[vt].setSoLuongMon(daCo + sl);
         } else {
             if (soDong == ds.length) tangKichThuoc();
-            ds[soDong++] = new ChiTietHoaDon(sl, mh);
+            ds[soDong++] = new ChiTietGioHang(mh, sl);
         }
         System.out.println("Đã thêm vào giỏ hàng!");
     }
@@ -80,10 +80,10 @@ public class GioHang {
         int vt = timViTri(ma);
         if (vt == -1) {
             System.out.println("Không tìm thấy mặt hàng này trong giỏ!");
-        } else if (slmoi > ds[vt].getMathang().getSoLuong()) {
-            System.out.println("Trên kệ chỉ còn " + ds[vt].getMathang().getSoLuong() + " sản phẩm!");
+        } else if (slmoi > ds[vt].getMatHang().getSoLuong()) {
+            System.out.println("Trên kệ chỉ còn " + ds[vt].getMatHang().getSoLuong() + " sản phẩm!");
         } else {
-            ds[vt].setsoLuong(slmoi);
+            ds[vt].setSoLuongMon(slmoi);
             System.out.println("Đã cập nhật số lượng!");
         }
     }
@@ -101,7 +101,7 @@ public class GioHang {
     }
 
     public void lamTrong() {
-        ds = new ChiTietHoaDon[5];
+        ds = new ChiTietGioHang[5];
         soDong = 0;
     }
 
@@ -113,15 +113,15 @@ public class GioHang {
         System.out.println("=== GIỎ HÀNG CỦA " + khachHang.getTenKH().toUpperCase() + " ===");
         for (int i = 0; i < soDong; i++) {
             // Đơn giá đã gồm thuế: tách ra giá chưa thuế + tiền thuế của 1 sản phẩm
-            double thue = ds[i].getMathang().getThue();
+            double thue = ds[i].getMatHang().getThue();
             double giaChuaThue = ds[i].getDonGia() / (1 + thue / 100);
             double tienThue = ds[i].getDonGia() - giaChuaThue;
             System.out.printf("%d. %s (%s) | SL: %d%n", i + 1,
-                    ds[i].getMathang().getTen(), ds[i].getMathang().getMa(), ds[i].getsoLuong());
+                    ds[i].getMatHang().getTen(), ds[i].getMatHang().getMa(), ds[i].getSoLuongMon());
             System.out.printf("   Giá bán: %.0f + Thuế (%.0f%%): %.0f = Đơn giá: %.0f%n",
                     giaChuaThue, thue, tienThue, ds[i].getDonGia());
             System.out.printf("   Thành tiền: %.0f x %d = %.0f%n",
-                    ds[i].getDonGia(), ds[i].getsoLuong(), ds[i].thanhTien());
+                    ds[i].getDonGia(), ds[i].getSoLuongMon(), ds[i].thanhTien());
         }
         System.out.printf(">>> TỔNG TẠM TÍNH: %.0f%n", tongTien());
     }
@@ -138,15 +138,19 @@ public class GioHang {
             return null;
         }
         for (int i = 0; i < soDong; i++) {
-            MatHang mh = ds[i].getMathang();
-            if (ds[i].getsoLuong() > mh.getSoLuong()) {
+            MatHang mh = ds[i].getMatHang();
+            if (ds[i].getSoLuongMon() > mh.getSoLuong()) {
                 System.out.println("'" + mh.getTen() + "' chỉ còn " + mh.getSoLuong() + " trên kệ, hãy chỉnh lại giỏ!");
                 return null;
             }
         }
         HoaDon hd = new HoaDon(maHD, LocalDate.now(), khachHang, nv);
-        for (int i = 0; i < soDong; i++) hd.themChiTiet(ds[i]);
-        dshd.them(hd);
+        for (int i = 0; i < soDong; i++) {
+            ChiTietGioHang ct = ds[i];
+            if (!hd.themChiTiet(new ChiTietHoaDon(ct.getSoLuongMon(), ct.getMatHang(), ct.getDonGia())))
+                return null;
+        }
+        if (!dshd.them(hd)) return null;
         lamTrong();
         return hd;
     }

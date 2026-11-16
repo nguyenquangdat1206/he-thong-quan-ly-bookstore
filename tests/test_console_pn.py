@@ -19,7 +19,7 @@ scenarios=[
   ['1','ADMIN','admin123','2','8','nonexistent_zz_OOP.txt','0','0','0'],
   ['Lỗi đọc file phiếu nhập:', 'Tạm biệt!'], []),
  ('manually add PN from menu',
-  ['1','ADMIN','admin123','2','2','PNCUSTOM','15/10/2026','Nhà Xuất Bản A','1','7','CUSTOM1','Bìa bọc','NSX A','5000','10','10','1','0','0','0'],
+  ['1','ADMIN','admin123','2','2','PNCUSTOM','15/10/2026','Nhà Xuất Bản A','1','7','SPK0101','Bìa bọc','NSX A','5000','10','10','1','0','0','0'],
   ['Thêm thành công phiếu: PNCUSTOM', 'Nhà Xuất Bản A', 'PNCUSTOM'], []),
  ('sales does not expose warehouse PN menu',
   ['1','BH01','bh123','7','0','0'],

@@ -3,7 +3,7 @@ package mathang;
 import tienich.*;
 import interfaces.IGetMa;
 
-public abstract class MatHang implements IGetMa {
+public abstract class MatHang implements IGetMa, Cloneable {
     private String ma;
     private String ten;
     private double giaNhap;
@@ -60,6 +60,15 @@ public abstract class MatHang implements IGetMa {
         this.soLuong = soLuong;
     }
 
+    /** Các thuộc tính mặt hàng hiện chỉ gồm kiểu nguyên thủy và String bất biến. */
+    public MatHang saoChep() {
+        try {
+            return (MatHang) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(e);
+        }
+    }
+
     //Tinh gia ban
     public abstract double tinhGiaBan();
 
@@ -72,7 +81,7 @@ public abstract class MatHang implements IGetMa {
 
         giaNhap = TienIch.nhapGiaTien("Giá nhập hàng: ");
 
-        soLuong = TienIch.nhapSoNguyenDuong("Nhập số lượng: ");
+        soLuong = TienIch.nhapSoNguyenKhongAm("Nhập số lượng: ");
 
     }
 

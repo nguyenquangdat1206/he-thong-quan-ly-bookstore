@@ -6,6 +6,9 @@ public class DoChoi extends MatHang{
     private final double thue = 20;
     private final double loinhuan = 30;
 
+    @Override public double getThue() { return thue; }
+    @Override public double getLoiNhuan() { return loinhuan; }
+
     private String nhaSX;
     private int dotuoi;
 
@@ -63,7 +66,7 @@ public class DoChoi extends MatHang{
 
         setGiaNhap(TienIch.nhapGiaTien("Giá nhập hàng: "));
 
-        setSoLuong(TienIch.nhapSoNguyenDuong("Nhập số lượng: "));
+        setSoLuong(TienIch.nhapSoNguyenKhongAm("Nhập số lượng: "));
     }
 
     @Override

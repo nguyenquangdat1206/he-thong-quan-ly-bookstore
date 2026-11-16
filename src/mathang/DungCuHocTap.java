@@ -6,6 +6,9 @@ import tienich.*;
 public class DungCuHocTap extends MatHang {
     private final double thue = 12;
     private final double loinhuan = 18;
+
+    @Override public double getThue() { return thue; }
+    @Override public double getLoiNhuan() { return loinhuan; }
     private String loaidungcu;
     private String nhaSX;
 
@@ -64,7 +67,7 @@ public class DungCuHocTap extends MatHang {
 
         setGiaNhap(TienIch.nhapGiaTien("Giá nhập hàng: "));
 
-        setSoLuong(TienIch.nhapSoNguyenDuong("Nhập số lượng: "));
+        setSoLuong(TienIch.nhapSoNguyenKhongAm("Nhập số lượng: "));
 
     }
 
@@ -75,7 +78,7 @@ public class DungCuHocTap extends MatHang {
 
         System.out.println("Tên: " + getTen());
 
-        System.out.println("Loại dụng cụ" +loaidungcu);
+        System.out.println("Loại dụng cụ: " + loaidungcu);
 
         System.out.println("Nhà sản xuất: " + nhaSX);
 

@@ -22,10 +22,10 @@ public class LegacyProductRegressionTests {
     static void check(boolean ok,String message){if(!ok)throw new AssertionError(message);}
     static void close(double actual,double expected){check(Math.abs(actual-expected)<0.00001,actual+" != "+expected);}
     static MatHang[] products(){return new MatHang[]{
-        new DoChoi("D1","Lego",100,3,"MakerD",8),
-        new DungCuHocTap("H1","Thuoc",100,4,"MakerH","Thước kẻ"),
-        new TrangTri("T1","Tranh",100,5,"MakerT"),
-        new Vo("V1","Vo 96",100,6,96,"MakerV")
+        new DoChoi("DCH0101","Lego",100,3,"MakerD",8),
+        new DungCuHocTap("DCT0101","Thuoc",100,4,"MakerH","Thước kẻ"),
+        new TrangTri("TTR0101","Tranh",100,5,"MakerT"),
+        new Vo("VO0101","Vo 96",100,6,96,"MakerV")
     };}
     static void useInput(String input, Test test) throws Exception {
         Scanner old=TienIch.sc;
@@ -51,10 +51,10 @@ public class LegacyProductRegressionTests {
             close(a[1].tinhGiaBan(),132.16);
             close(a[2].tinhGiaBan(),142.8);
             close(a[3].tinhGiaBan(),126.5);
-            check("Đồ chơi;D1;Lego;100.0;3;8;MakerD".equals(a[0].toString()),"toy TXT format");
-            check("Dụng cụ học tập;H1;Thuoc;100.0;4;Thước kẻ;MakerH".equals(a[1].toString()),"tool TXT format");
-            check("Trang trí;T1;Tranh;100.0;5;MakerT".equals(a[2].toString()),"decor TXT format");
-            check("Vở;V1;Vo 96;100.0;6;96;MakerV".equals(a[3].toString()),"notebook TXT format");
+            check("Đồ chơi;DCH0101;Lego;100.0;3;8;MakerD".equals(a[0].toString()),"toy TXT format");
+            check("Dụng cụ học tập;DCT0101;Thuoc;100.0;4;Thước kẻ;MakerH".equals(a[1].toString()),"tool TXT format");
+            check("Trang trí;TTR0101;Tranh;100.0;5;MakerT".equals(a[2].toString()),"decor TXT format");
+            check("Vở;VO0101;Vo 96;100.0;6;96;MakerV".equals(a[3].toString()),"notebook TXT format");
         });
         run("TXT save and reload all four restored product types", ()->{
             Path f=Files.createTempFile("oop-v5-products-", ".txt");
@@ -64,10 +64,10 @@ public class LegacyProductRegressionTests {
                 check(LuuTruMatHang.ghiFile(list,f.toString())==4,"save count");
                 DanhSachMatHang loaded=new DanhSachMatHang();
                 check(LuuTruMatHang.docFile(loaded,f.toString())==4,"load count");
-                check(loaded.timKiem_hang("D1") instanceof DoChoi,"toy reload");
-                check(loaded.timKiem_hang("H1") instanceof DungCuHocTap,"tool reload");
-                check(loaded.timKiem_hang("T1") instanceof TrangTri,"decor reload");
-                check(loaded.timKiem_hang("V1") instanceof Vo,"notebook reload");
+                check(loaded.timKiem_hang("DCH0101") instanceof DoChoi,"toy reload");
+                check(loaded.timKiem_hang("DCT0101") instanceof DungCuHocTap,"tool reload");
+                check(loaded.timKiem_hang("TTR0101") instanceof TrangTri,"decor reload");
+                check(loaded.timKiem_hang("VO0101") instanceof Vo,"notebook reload");
                 for(MatHang p:products())check(p.toString().equals(loaded.timKiem_hang(p.getMa()).toString()),"data lost: "+p.getMa());
                 check(LuuTruMatHang.docFile(loaded,f.toString())==0,"no duplicates on reread");
             }finally{Files.deleteIfExists(f);}
@@ -121,12 +121,12 @@ public class LegacyProductRegressionTests {
             }finally{Files.deleteIfExists(in);Files.deleteIfExists(out);}
         });
         run("manual inventory menu creates restored toy and notebook", ()->{
-            useInput("8\nD2\nLego2\nMaker2\n6\n100\n2\n7\n",()->{
+            useInput("8\nDCH0102\nLego2\nMaker2\n6\n100\n2\n7\n",()->{
                 HangTonKho row=new HangTonKho().taoHangTonMoi();
                 check(row.getMatHang() instanceof DoChoi,"manual toy");
                 check(row.getSoLuong()==7,"toy warehouse count");
             });
-            useInput("11\nV2\nVo 200\n200\nMaker2\n100\n2\n",()->{
+            useInput("11\nVO0102\nVo 200\n200\nMaker2\n100\n2\n",()->{
                 MatHang mh=new PhieuNhap().nhapMH();
                 check(mh instanceof Vo && ((Vo)mh).getSotrang()==200,"manual notebook");
             });

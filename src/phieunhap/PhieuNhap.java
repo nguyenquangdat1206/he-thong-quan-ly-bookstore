@@ -99,6 +99,10 @@ public class PhieuNhap implements IGetMa, IQuanLy{
         while (true) {
             mhMoi = nhapMH();
             if (mhMoi == null) return;
+            if (mhMoi.getSoLuong() <= 0) {
+                System.out.println("Số lượng mặt hàng nhập phải lớn hơn 0. Vui lòng nhập lại.");
+                continue;
+            }
             if (TienIch.timKiemViTri(dsMH, soLuongNhap, mhMoi.getMa()) == -1) break;
             System.out.println("Mã mặt hàng đã có trong phiếu! Vui lòng nhập lại.");
         }
@@ -167,7 +171,7 @@ public class PhieuNhap implements IGetMa, IQuanLy{
                     System.out.println("4. Số lượng mặt hàng");
                     System.out.println("0. Thoát chức năng");
 
-                    choice = TienIch.nhapSoNguyenDuong("Nhập: ");
+                    choice = TienIch.nhapSoNguyenKhongAm("Nhập: ");
 
                     switch (choice) {
                         case 1:
@@ -228,6 +232,7 @@ public class PhieuNhap implements IGetMa, IQuanLy{
     }
 
     public void suaNCC(DanhSachNCC dsncc){
-        dsncc.sua();
+        String tenMoi = TienIch.nhapChuoi("Tên nhà cung cấp mới: ");
+        chiTiet.setNhaCC(taoNCC(tenMoi, dsncc));
     }
 }

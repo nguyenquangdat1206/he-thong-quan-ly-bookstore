@@ -1,6 +1,6 @@
 package mathang;
 import kho.*;
-import java.util.Scanner;
+import tienich.TienIch;
 
 public class QuanLyMatHang {
     private static void HienMenu(){
@@ -15,24 +15,23 @@ public class QuanLyMatHang {
         System.out.println("7. Sửa mặt hàng");
         System.out.println("8. Tìm kiếm mặt hàng");
         System.out.println("9. Bộ lọc nâng cao");
+        System.out.println("10. Đọc kho từ data/kho_input.txt");
         System.out.println("0. Thoát");
         System.out.println("=================================");
     }
 
     public static void main(String[] args){
-        Scanner sc = new Scanner(System.in);
-        DanhSachMatHang dsmh = new DanhSachMatHang();
+        TienIch.cauHinhUnicodeConsole();
         Kho kho = new Kho(); // tạo kho riêng, không gọi menu kho
+        DanhSachMatHang dsmh = new DanhSachMatHang(kho);
 
         int choice;
         do {
             HienMenu();
-            System.out.print("Nhập lựa chọn: ");
-            choice = sc.nextInt();
-            sc.nextLine();
+            choice = TienIch.nhapSoNguyenKhongAm("Nhập lựa chọn: ");
 
             switch(choice){
-                case 1: dsmh.getSoMH(); break;
+                case 1: System.out.println("Số mặt hàng: " + dsmh.getSoMH()); break;
                 case 2: dsmh.nhapHangLoat(kho); break;
                 case 3: dsmh.nhap(); break;
                 case 4: dsmh.xuat(); break;
@@ -41,11 +40,11 @@ public class QuanLyMatHang {
                 case 7: dsmh.sua(); break;
                 case 8: dsmh.timkiem(); break;
                 case 9: dsmh.timkiem_nangcao(); break;
+                case 10: kho.docFile("data/kho_input.txt"); break;
                 case 0: System.out.println("Thoát chương trình."); break;
                 default: System.out.println("Lựa chọn không hợp lệ!");
             }
         } while(choice != 0);
 
-        sc.close();
     }
 }

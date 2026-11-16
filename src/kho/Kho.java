@@ -1,10 +1,11 @@
 package kho;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import phieunhap.*;
 import mathang.*;
@@ -88,7 +89,6 @@ public class Kho implements IFileIO, IQuanLy  {
         }
         if(pn.getTongSlNhap()>getConTrong()){
             System.out.println("Kho không đủ chỗ trống!");
-            pn.setTrangThai(PhieuNhap.TrangThaiPN.DA_HUY);
             return false;
         }
         for(int i=0; i<pn.getSoLuongNhap();i++){
@@ -107,8 +107,9 @@ public class Kho implements IFileIO, IQuanLy  {
             System.out.println("Mã hàng này không tồn tại trong kho!");
             return;
         }
-        String thongtin= dsTonKho[vtMH].toString();
-        System.out.println(thongtin);
+        System.out.printf("|%-20s|%-40s|%-15s|%-20s|%-20s|%n",
+                "Mã", "Tên", "Giá Nhập", "Số Lượng", "Giá Bán");
+        dsTonKho[vtMH].xuat();
     }
 
     @Override
@@ -170,7 +171,7 @@ public class Kho implements IFileIO, IQuanLy  {
             System.out.println("Không tìm thấy mã " + ma);
             return;
         }
-        int slMoi = TienIch.nhapSoNguyenDuong("Nhập số lượng tồn mới: ");
+        int slMoi = TienIch.nhapSoNguyenKhongAm("Nhập số lượng tồn mới: ");
         int chenh = slMoi - dsTonKho[vtMH].getSoLuong();
         if(chenh>0){
             if(chenh>getConTrong()){
@@ -198,7 +199,7 @@ public class Kho implements IFileIO, IQuanLy  {
 
     @Override
     public void ghiFile(String duongDan){
-        try(PrintWriter pw = new PrintWriter(new FileWriter(duongDan))){
+        try(PrintWriter pw = new PrintWriter(Files.newBufferedWriter(Path.of(duongDan), StandardCharsets.UTF_8))){
             for(int i = 0; i < soLuongMatHang; i++){
                 // MatHang.getSoLuong() biểu diễn số trên quầy; tồn kho nằm tại HangTonKho.
                 // Không ghi nhầm số lượng trên quầy thành số tồn của kho.
@@ -220,18 +221,29 @@ public class Kho implements IFileIO, IQuanLy  {
             System.out.println("Bỏ qua dòng \"" + dong + "\": " + e.getMessage());
             return false;
         }
+        if (mh.getTen() == null || mh.getTen().isBlank() || mh.getGiaNhap() <= 0
+                || !Double.isFinite(mh.getGiaNhap()) || soLuong < 0) {
+            System.out.println("Bỏ qua dòng \"" + dong + "\": tên, giá hoặc số lượng không hợp lệ.");
+            return false;
+        }
+        if (TienIch.timKiemViTri(dsTonKho, soLuongMatHang, mh.getMa()) >= 0) {
+            System.out.println("Bỏ qua mã kho đã có: " + mh.getMa());
+            return false;
+        }
         return tangTonKho(mh, soLuong);
     }
 
     @Override
     public void docFile(String duongDan){
         
-        try(BufferedReader br=new BufferedReader(new FileReader(duongDan))){
+        try(BufferedReader br=Files.newBufferedReader(Path.of(duongDan), StandardCharsets.UTF_8)){
 
             String dong;
             while((dong=br.readLine()) != null){
                 if(dong.trim().isEmpty()) continue;
-                String[] phan= dong.split(";");
+                try {
+                String[] phan= dong.split(";", -1);
+                if (phan.length < 5) throw new IllegalArgumentException("thiếu cột");
                 String danhmuc=phan[0].trim();
                 String ma = phan[1].trim();
                 String ten= phan[2].trim();
@@ -247,7 +259,7 @@ public class Kho implements IFileIO, IQuanLy  {
                 
                 int vtMH = TienIch.timKiemViTri(dsTonKho, soLuongMatHang, ma);
                 if(vtMH!=-1){
-                    dsTonKho[vtMH].tangSoLuong(soLuong);
+                    System.out.println("Bỏ qua mã kho đã có: " + ma);
                 }
                 else{
                     switch(danhmuc){
@@ -329,6 +341,9 @@ public class Kho implements IFileIO, IQuanLy  {
                             System.out.println("Bỏ qua danh mục kho không hỗ trợ: " + danhmuc);
                             break;
                     }
+                }
+                } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
+                    System.out.println("Bỏ qua dòng kho \"" + dong + "\": " + e.getMessage());
                 }
 
             }

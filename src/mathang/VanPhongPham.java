@@ -5,6 +5,9 @@ import tienich.*;
 public class VanPhongPham extends MatHang {
     private final double thue = 15;
     private final double loinhuan = 20;
+
+    @Override public double getThue() { return thue; }
+    @Override public double getLoiNhuan() { return loinhuan; }
     private String loaiVPP;
     private String nhaSX;
 
@@ -61,7 +64,7 @@ public class VanPhongPham extends MatHang {
 
         setGiaNhap(TienIch.nhapGiaTien("Giá nhập hàng: "));
 
-        setSoLuong(TienIch.nhapSoNguyenDuong("Nhập số lượng: "));
+        setSoLuong(TienIch.nhapSoNguyenKhongAm("Nhập số lượng: "));
 
     }
 

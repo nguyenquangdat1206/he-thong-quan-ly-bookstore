@@ -3,27 +3,44 @@ package tienich;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 import interfaces.IGetMa;
 
 public class TienIch {
-    public static Scanner sc = new Scanner(System.in);
-//nhập số lượng: số nguyên dương
-    public static int nhapSoNguyenDuong(String thongbao){
-        int num=0;
-        while(true){
-            try{
-                System.out.println(thongbao);
-                num=Integer.parseInt(sc.nextLine());
-                if(num>=0)
-                    break;
-            } 
-            catch(NumberFormatException e){
-                System.out.println("LỖI: Vui lòng nhập lại số nguyên dương!");
-           }
+    public static Scanner sc = new Scanner(System.in, StandardCharsets.UTF_8);
+
+    /** Dùng ở các điểm vào console để Java không thay chữ tiếng Việt bằng '?'. */
+    public static void cauHinhUnicodeConsole() {
+        System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, StandardCharsets.UTF_8));
+        System.setErr(new PrintStream(new FileOutputStream(FileDescriptor.err), true, StandardCharsets.UTF_8));
+        sc = new Scanner(System.in, StandardCharsets.UTF_8);
+    }
+    public static int nhapSoNguyenDuong(String thongbao) {
+        return nhapSoNguyen(thongbao, 1);
+    }
+
+    /** Dùng cho lựa chọn menu và những thao tác cho phép giá trị 0. */
+    public static int nhapSoNguyenKhongAm(String thongbao) {
+        return nhapSoNguyen(thongbao, 0);
+    }
+
+    private static int nhapSoNguyen(String thongbao, int nhoNhat) {
+        while (true) {
+            System.out.println(thongbao);
+            try {
+                int num = Integer.parseInt(sc.nextLine().trim());
+                if (num >= nhoNhat) return num;
+            } catch (NumberFormatException ignored) { }
+            System.out.println(nhoNhat == 0
+                    ? "LỖI: Vui lòng nhập số nguyên không âm!"
+                    : "LỖI: Vui lòng nhập số nguyên lớn hơn 0!");
         }
-        return num;
     }
 //nhập giá: số thực, >0
     public static double nhapGiaTien(String thongbao){
@@ -55,15 +72,23 @@ public class TienIch {
     }
 //nhập ngày: dùng DateTimeFormatter để chuyển kiểu quốc tế yyyy-MM-dd theo định dạng dd/MM/yyyy
     public static LocalDate nhapNgay(String thongbao){
+        return nhapNgay(thongbao, false);
+    }
+
+    public static LocalDate nhapNgay(String thongbao, boolean choPhepTrong){
         String input;
         while(true){
-            input=nhapChuoi(thongbao);
-            LocalDate ngay=null;
-            if(input.isEmpty()) return ngay;
+            System.out.println(thongbao);
+            input=sc.nextLine().trim();
+            if(input.isEmpty()) {
+                if (choPhepTrong) return null;
+                System.out.println("LỖI: Ngày không được để trống!");
+                continue;
+            }
             try{
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                ngay=LocalDate.parse(input,formatter);
-                return ngay;
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu")
+                    .withResolverStyle(ResolverStyle.STRICT);
+                return LocalDate.parse(input,formatter);
             }
             catch (DateTimeParseException e){
                 System.out.println("LỖI! Vui lòng nhập theo chuẩn dd/MM/yyyy");

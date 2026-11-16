@@ -5,6 +5,9 @@ import tienich.*;
 public class TrangTri extends MatHang{
     private final double thue = 20;
     private final double loinhuan = 19;
+
+    @Override public double getThue() { return thue; }
+    @Override public double getLoiNhuan() { return loinhuan; }
     private String nhaSX;
 
 
@@ -54,7 +57,7 @@ public class TrangTri extends MatHang{
 
         setGiaNhap(TienIch.nhapGiaTien("Giá nhập hàng: "));
 
-        setSoLuong(TienIch.nhapSoNguyenDuong("Nhập số lượng: "));
+        setSoLuong(TienIch.nhapSoNguyenKhongAm("Nhập số lượng: "));
 
     }
 

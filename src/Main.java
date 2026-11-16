@@ -51,7 +51,7 @@ public class Main {
             System.out.println("8. Đọc kho từ file");
             System.out.println("9. Ghi kho ra file");
             System.out.println("0. Quay lại");
-            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
             switch (chon) {
                 case 1: kho.xuat(); break;
                 case 2: kho.them(); break;
@@ -84,7 +84,7 @@ public class Main {
             System.out.println("9. Ghi phiếu nhập ra file");
             System.out.println("10. Xem danh sách nhà cung cấp trong lần nhập này");
             System.out.println("0. Quay lại");
-            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
             switch (chon) {
                 case 1: dspn.xuat(); break;
                 case 2: dspn.them(); break;
@@ -119,7 +119,7 @@ public class Main {
             System.out.println("10. Đọc mặt hàng từ file");
             System.out.println("11. Ghi mặt hàng ra file");
             System.out.println("0. Quay lại");
-            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
             switch (chon) {
                 case 1: System.out.println("Số mặt hàng: " + dsmh.getSoMH()); break;
                 case 2: dsmh.nhapHangLoat(kho); break;
@@ -159,7 +159,7 @@ public class Main {
             System.out.println("8. Tìm kiếm khách hàng (Mã / Tên / SĐT)");
             System.out.println("9. Thống kê Top khách hàng chi tiêu cao nhất");
             System.out.println("0. Quay lại");
-            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
             switch (chon) {
                 case 1: dskh.xuat(); break;
                 case 2: dskh.them(); break;
@@ -191,7 +191,7 @@ public class Main {
             System.out.println("8. Tra cứu & lọc hóa đơn");
             System.out.println("9. Thống kê doanh thu & mặt hàng bán chạy");
             System.out.println("0. Quay lại");
-            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
             switch (chon) {
                 case 1: dshd.xuat(); break;
                 case 2: menuGioHang(); break; // hóa đơn chỉ được lập từ giỏ hàng
@@ -240,7 +240,7 @@ public class Main {
             System.out.println("1. Kho   2. Phiếu nhập   3. Mặt hàng   4. Khách hàng");
             System.out.println("5. Hóa đơn   6. Nhà cung cấp   7. Nhân sự   8. Giỏ hàng");
             System.out.println("0. Đăng xuất");
-            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
             switch (chon) {
                 case 1: menuKho(); break;
                 case 2: menuPhieuNhap(); break;
@@ -261,7 +261,7 @@ public class Main {
             System.out.println("\n" + ANSI + "=== NHÂN VIÊN BÁN HÀNG ===" + RESET);
             System.out.println("1. Xem mặt hàng   2. Khách hàng   3. Hóa đơn   4. Giỏ hàng");
             System.out.println("0. Đăng xuất");
-            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
             switch (chon) {
                 case 1: dsmh.xuat(); break;
                 case 2: menuKhachHang(); break;
@@ -278,7 +278,7 @@ public class Main {
             System.out.println("\n" + ANSI + "=== NHÂN VIÊN NHẬP KHO ===" + RESET);
             System.out.println("1. Kho   2. Phiếu nhập   3. Nhà cung cấp   4. Xem mặt hàng");
             System.out.println("0. Đăng xuất");
-            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
             switch (chon) {
                 case 1: menuKho(); break;
                 case 2: menuPhieuNhap(); break;
@@ -294,7 +294,7 @@ public class Main {
         do {
             System.out.println("\n--- NHÀ CUNG CẤP (TV4) ---");
             System.out.println("1. Xem   2. Thêm   3. Sửa   4. Xóa   5. Đọc file   6. Ghi file   0. Quay lại");
-            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
             switch (chon) {
                 case 1: dsncc.xuat(); break;
                 case 2: dsncc.them(); break;
@@ -314,7 +314,7 @@ public class Main {
             System.out.println("\n--- QUẢN LÝ NHÂN SỰ (TV5) ---");
             System.out.println("1. Xem   2. Thêm   3. Sửa   4. Xóa   5. Tìm theo mã");
             System.out.println("6. Tổng lương cơ bản   7. Đọc file   8. Ghi file   0. Quay lại");
-            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
             switch (chon) {
                 case 1: dsnv.xuat(); break;
                 case 2: dsnv.them(); break;
@@ -367,7 +367,7 @@ public class Main {
         if (hd == null) { System.out.println("Không tồn tại hóa đơn."); return; }
         if (hd.isDaThanhToan()) { System.out.println("Đã thanh toán trước đó."); return; }
         System.out.printf("Số tiền cần thanh toán: %.0f%n", hd.tinhThanhTien());
-        int cach = TienIch.nhapSoNguyenDuong("1. Tiền mặt / 2. Thẻ / 0. Hủy: ");
+        int cach = TienIch.nhapSoNguyenKhongAm("1. Tiền mặt / 2. Thẻ / 0. Hủy: ");
         if (cach == 1) {
             double tien = nhapSoTienKhongAm("Khách đưa: ");
             hd.setHinhThucThanhToan(new ThanhToanTienMat(tien));
@@ -401,7 +401,7 @@ public class Main {
         do {
             System.out.println("\n--- GIỎ HÀNG (TV3) ---");
             System.out.println("1. Thêm hàng   2. Xem   3. Đổi số lượng   4. Xóa hàng   5. Tạo hóa đơn từ giỏ   0. Quay lại");
-            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
             switch (chon) {
                 case 1: {
                     MatHang mh = dsmh.timKiem_hang(TienIch.nhapChuoi("Mã mặt hàng: "));
@@ -415,7 +415,7 @@ public class Main {
                 case 2: gh.xemGioHang(); break;
                 case 3: {
                     String ma = TienIch.nhapChuoi("Mã mặt hàng: ");
-                    int sl = TienIch.nhapSoNguyenDuong("Số lượng mới: ");
+                    int sl = TienIch.nhapSoNguyenKhongAm("Số lượng mới: ");
                     gh.capNhatSoLuong(ma, sl); break;
                 }
                 case 4: gh.xoaKhoiGio(TienIch.nhapChuoi("Mã mặt hàng: ")); break;
@@ -463,11 +463,12 @@ public class Main {
             System.out.println("CẢNH BÁO: Không có tài khoản ADMIN trong file nhân viên!");
     }
     public static void main(String[] args) {
+        TienIch.cauHinhUnicodeConsole();
         khoiTaoNhanVien();
         int chon;
         do {
             menuChinh();
-            chon = TienIch.nhapSoNguyenDuong("Chọn chức năng: ");
+            chon = TienIch.nhapSoNguyenKhongAm("Chọn chức năng: ");
             switch (chon) {
                 case 1: dangNhap(); break;
                 case 2: dsmh.xuat(); break;

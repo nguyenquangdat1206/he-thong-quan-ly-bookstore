@@ -42,7 +42,7 @@ public class ChiTietHoaDon {
     public void xuat(){
 
         System.out.println("Số lượng: " + soLuong);
-        System.out.println("Mặt hàng: " + mathang);
+        System.out.println("Mặt hàng: " + mathang.getTen() + " (" + mathang.getMa() + ")");
         System.out.println("Đơn giá bán: " + donGia);
         System.out.println("Thành tiền: " + thanhTien());
     }

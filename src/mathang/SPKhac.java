@@ -5,6 +5,9 @@ import tienich.*;
 public class SPKhac extends MatHang {
     private final double thue = 15;
     private final double loinhuan = 15;
+
+    @Override public double getThue() { return thue; }
+    @Override public double getLoiNhuan() { return loinhuan; }
     private String nhaSX;
 
     public SPKhac(){
@@ -53,7 +56,7 @@ public class SPKhac extends MatHang {
 
         setGiaNhap(TienIch.nhapGiaTien("Giá nhập hàng: "));
 
-        setSoLuong(TienIch.nhapSoNguyenDuong("Nhập số lượng: "));
+        setSoLuong(TienIch.nhapSoNguyenKhongAm("Nhập số lượng: "));
 
     }
 

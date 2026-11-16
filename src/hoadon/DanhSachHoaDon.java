@@ -2,6 +2,9 @@ package hoadon;
 import java.io.*;
 import java.time.LocalDate;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.NoSuchFileException;
 
 import mathang.*;
 import interfaces.*;
@@ -104,7 +107,7 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
             System.out.println("1. Sửa số lượng một dòng");
             System.out.println("2. Xóa một dòng");
             System.out.println("0. Thoát");
-            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
             if (chon != 1 && chon != 2) continue;
             int stt = TienIch.nhapSoNguyenDuong("Dòng: ");
             try {
@@ -204,7 +207,7 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
         System.out.println("3. Lọc hóa đơn CHƯA thanh toán");
         System.out.println("4. Lọc theo mã nhân viên lập");
         System.out.println("5. Lọc theo khoảng ngày lập");
-        int chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+        int chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
 
         switch (chon) {
             case 1: {
@@ -344,7 +347,7 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
     // Ghi dữ liệu hóa đơn ra file
     @Override
     public void ghiFile(String duongDan) {
-        try (PrintWriter pw = new PrintWriter(new FileWriter(duongDan))) {
+        try (PrintWriter pw = new PrintWriter(Files.newBufferedWriter(Path.of(duongDan), StandardCharsets.UTF_8))) {
             for (int i = 0; i < soLuong; i++) {
                 HoaDon hd = ds[i];
                 NhanVienBanHang nv = hd.getNhanVienLap();
@@ -373,7 +376,7 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
     // Hàm thực sự làm nhiệm vụ đọc file (Nạp chồng phương thức)
     // Vẫn đọc được file cũ chỉ có 3 trường ở dòng đầu (khi đó coi là chưa thanh toán, không có nhân viên)
     public void docFile(String duongDan, DanhSachKhachHang dskh, DanhSachMatHang dsmh) {
-        try (BufferedReader br = new BufferedReader(new FileReader(duongDan))) {
+        try (BufferedReader br = Files.newBufferedReader(Path.of(duongDan), StandardCharsets.UTF_8)) {
             String line;
 
             while ((line = br.readLine()) != null) {
@@ -416,20 +419,27 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
                 boolean daThanhToan = info.length > 5 && info[5].trim().equals("1");
 
                 HoaDon hd = new HoaDon(maHD, ngayLap, kh, nv);
+                boolean chiTietHopLe = true;
+                int hangLichSu = 0;
                 for (int j = 0; j < soLuongCT; j++) {
                     String[] ctData = dongCT[j].split(";");
                     MatHang mh = dsmh.timKiem_hang(ctData[0]);
                     int slMua = Integer.parseInt(ctData[1].trim());
-
-                    if (mh != null) {
-                        // Giữ đúng đơn giá lúc bán nếu file có lưu
-                        double donGia = (ctData.length > 2) ? Double.parseDouble(ctData[2].trim()) : mh.tinhGiaBan();
-                        hd.themChiTiet(new ChiTietHoaDon(slMua, mh, donGia));
+                    if (mh == null && ctData.length < 3) {
+                        chiTietHopLe = false; // Không có mặt hàng và cũng không có đơn giá để khôi phục.
+                        continue;
                     }
+                    // Giữ đúng đơn giá lúc bán; hàng lịch sử có tồn trên kệ bằng 0 nên không thể bán tiếp.
+                    double donGia = (ctData.length > 2) ? Double.parseDouble(ctData[2].trim()) : mh.tinhGiaBan();
+                    if (mh == null) {
+                        mh = new MatHangLichSu(ctData[0].trim(), donGia);
+                        hangLichSu++;
+                    }
+                    if (!hd.themChiTiet(new ChiTietHoaDon(slMua, mh, donGia))) chiTietHopLe = false;
                 }
 
-                if (hd.getSoLuongChiTiet() == 0) {
-                    System.out.println("Bỏ qua hóa đơn " + maHD + " do toàn bộ mặt hàng không còn tồn tại.");
+                if (!chiTietHopLe || hd.getSoLuongChiTiet() == 0) {
+                    System.out.println("Bỏ qua hóa đơn " + maHD + " do chi tiết không hợp lệ hoặc thiếu mặt hàng.");
                     continue;
                 }
                 // Phải đánh dấu sau khi đã thêm xong chi tiết; không trừ hàng lại vì lúc thanh toán đã trừ rồi
@@ -437,9 +447,12 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
 
                 if (soLuong == ds.length) tangKichThuocHoaDon();
                 ds[soLuong++] = hd;
+                if (hangLichSu > 0)
+                    System.out.println("Hóa đơn " + maHD + " giữ " + hangLichSu
+                            + " dòng hàng lịch sử; đơn chưa thanh toán cần có hàng trên kệ trước khi thu tiền.");
             }
             System.out.println("Đã tải dữ liệu từ file " + duongDan);
-        } catch (FileNotFoundException e) {
+        } catch (NoSuchFileException e) {
             System.out.println("Chưa tìm thấy file " + duongDan);
         } catch (Exception e) {
             System.out.println("Lỗi khi đọc file: " + e.getMessage());

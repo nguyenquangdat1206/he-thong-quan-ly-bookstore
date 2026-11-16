@@ -43,11 +43,11 @@ cases = [
       '1','8','data/kho_input.txt','0',
       '3','2','0',
       '4','6','data/khachhang.txt','0',
-      '5','2','KH01','HD999','26/10/2026','S001','2','k',
+      '5','2','KH01','1','SCH0001','2','5','HD999','0',
       '7','HD999','1','999999',
       '1','6','data/hoadon_output.txt','0',
       '0','0'],
-      ['Đã nhập xong mặt hàng mã S001','Tạo hóa đơn thành công!','Thanh toán thành công','HD999','Tạm biệt!'],[]),
+      ['Đã nhập xong mặt hàng mã SCH0001','Đã tạo hóa đơn','Thanh toán thành công','HD999','Tạm biệt!'],[]),
 ]
 passed=0
 for name,inputs,expected,forbidden in cases:

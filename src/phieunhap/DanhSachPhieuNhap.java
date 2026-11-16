@@ -6,17 +6,16 @@ import nhacungcap.*;
 import phieunhap.PhieuNhap.TrangThaiPN;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 
 import interfaces.IFileIO;
 import tienich.*;
@@ -58,12 +57,13 @@ public class DanhSachPhieuNhap implements IQuanLy, IFileIO{
             return;
         }    
         System.out.println("\n======DANH SÁCH PHIẾU NHẬP======");
-        System.out.printf("%-15s %-15s %-15s\n", "Mã Phiếu", "Ngày Nhập", "Nhà Cung Cấp");
+        System.out.printf("%-15s %-15s %-25s %-15s%n", "Mã Phiếu", "Ngày Nhập", "Nhà Cung Cấp", "Trạng thái");
         System.out.println("--------------------------------------------------------");
         for(int i=0;i<soLuongPN;i++){
             PhieuNhap pn = dsPN[i];
             String ngay = TienIch.ngaytoString(pn.getChiTiet().getNgayNhap());
-            System.out.printf("%-15s %-15s %-25s\n", pn.getMa(), ngay, pn.getChiTiet().getNhaCungCap());
+            System.out.printf("%-15s %-15s %-25s %-15s%n", pn.getMa(), ngay,
+                    pn.getChiTiet().getNhaCungCap().getTenNCC(), pn.getTrangThai());
             System.out.println("Thông tin hàng nhập: ");
             pn.xuat();
         }
@@ -81,7 +81,7 @@ public class DanhSachPhieuNhap implements IQuanLy, IFileIO{
 
         PhieuNhap pn = new PhieuNhap();
         pn.setMaPN(TienIch.nhapMa(dsPN, soLuongPN, "Nhập mã phiếu nhập mới: "));
-        LocalDate ngay = TienIch.nhapNgay("Ngày nhập (dd/MM/yyyy; Enter để lấy hôm nay): ");
+        LocalDate ngay = TienIch.nhapNgay("Ngày nhập (dd/MM/yyyy; Enter để lấy hôm nay): ", true);
         pn.getChiTiet().setNgayNhap(ngay == null ? LocalDate.now() : ngay);
         String tenNCC = TienIch.nhapChuoi("Tên nhà cung cấp: ");
         if (tenNCC.trim().isEmpty()) {
@@ -107,6 +107,10 @@ public class DanhSachPhieuNhap implements IQuanLy, IFileIO{
             System.out.println("Không tìm thấy phiếu có mã: "+ maCanSua);
             return;
         }
+        if (dsPN[vitri].getTrangThai() != TrangThaiPN.CHO_DUYET) {
+            System.out.println("Phiếu đã xử lý, không thể sửa.");
+            return;
+        }
         System.out.println("=======MENU SỬA======");
         System.out.println("1. Sửa thông tin mặt hàng nhập ghi trên phiếu");
         System.out.println("2. Sửa thông tin phiếu nhập(mã phiếu nhập, ngày nhập, ncc,...");
@@ -114,25 +118,42 @@ public class DanhSachPhieuNhap implements IQuanLy, IFileIO{
         System.out.println("4. Thoát");
         boolean tieptuc=true;
         while(tieptuc){
-            int n = TienIch.nhapSoNguyenDuong("Nhập lựa chọn của bạn: ");
+            int n = TienIch.nhapSoNguyenKhongAm("Nhập lựa chọn của bạn: ");
             switch(n){
                 case 1:
                     dsPN[vitri].sua();
                     break;
                 case 2:
-                    dsPN[vitri].setMaPN(TienIch.nhapMa(dsPN, soLuongPN, "Nhập mã phiếu nhập mới: "));
+                    System.out.println("Nhập mã phiếu mới (Enter để giữ nguyên): ");
+                    String maMoi = TienIch.sc.nextLine().trim();
+                    if (!maMoi.isEmpty()) {
+                        int viTriTrung = TienIch.timKiemViTri(dsPN, soLuongPN, maMoi);
+                        if (viTriTrung >= 0 && viTriTrung != vitri) {
+                            System.out.println("Mã phiếu đã tồn tại!");
+                            break;
+                        }
+                        dsPN[vitri].setMaPN(maMoi);
+                    }
                     dsPN[vitri].getChiTiet().setNgayNhap(TienIch.nhapNgay("Nhập ngày nhập mới: "));
                     dsPN[vitri].suaNCC(dsNCC);
                     break;
                 case 3:
                     System.out.println("Chọn trạng thái mới của phiếu: ");
                     System.out.println("1. Chờ duyệt\n 2. Đã duyệt\n 3.Đã hủy");
-                    int chon=TienIch.nhapSoNguyenDuong("Nhập chọn: ");
+                    int chon=TienIch.nhapSoNguyenKhongAm("Nhập chọn: ");
                     switch(chon){
-                        case 1: dsPN[vitri].setTrangThai(TrangThaiPN.CHO_DUYET); break;
-                        case 2: dsPN[vitri].setTrangThai(TrangThaiPN.DA_DUYET); break;
-                        case 3: dsPN[vitri].setTrangThai(TrangThaiPN.DA_HUY);
-                        break;
+                        case 1:
+                            if (dsPN[vitri].getTrangThai() != TrangThaiPN.CHO_DUYET)
+                                System.out.println("Không thể mở lại phiếu đã xử lý.");
+                            break;
+                        case 2:
+                            System.out.println("Hãy dùng chức năng nhập hàng vào kho để duyệt phiếu.");
+                            break;
+                        case 3:
+                            if (dsPN[vitri].getTrangThai() == TrangThaiPN.CHO_DUYET)
+                                dsPN[vitri].setTrangThai(TrangThaiPN.DA_HUY);
+                            else System.out.println("Phiếu đã xử lý, không thể đổi trạng thái.");
+                            break;
                     }
                     break;
                 case 4:
@@ -174,7 +195,8 @@ public class DanhSachPhieuNhap implements IQuanLy, IFileIO{
                 PhieuNhap pn = dsPN[i];
                 for (int j = 0; j < pn.getSoLuongNhap(); j++) {
                     pw.println(pn.getMa() + ";" + pn.getChiTiet().getNgayNhap().format(NGAY_FILE)
-                            + ";" + pn.getDSMH()[j].toString() + ";" + pn.getTrangThai());
+                            + ";" + pn.getDSMH()[j].toString() + ";" + pn.getTrangThai()
+                            + ";NCC=" + pn.getChiTiet().getNhaCungCap().getTenNCC());
                     dong++;
                 }
             }
@@ -268,22 +290,34 @@ public class DanhSachPhieuNhap implements IQuanLy, IFileIO{
                 dongSo++;
                 if (dong.isBlank()) continue;
                 try {
-                    String[] p = dong.replace("\uFEFF", "").split(";", -1);
+                    String[] cot = dong.replace("\uFEFF", "").split(";", -1);
+                    String nccChinh = null;
+                    if (cot[cot.length - 1].startsWith("NCC=")) {
+                        nccChinh = cot[cot.length - 1].substring(4).trim();
+                        cot = Arrays.copyOf(cot, cot.length - 1);
+                        if (nccChinh.isEmpty()) throw new IllegalArgumentException("thiếu NCC chính");
+                    }
+                    String[] p = cot;
                     if (p.length < 9) throw new IllegalArgumentException("dòng thiếu cột");
                     String maPN = p[0].trim();
                     if (maPN.isEmpty()) throw new IllegalArgumentException("thiếu mã phiếu");
                     LocalDate ngay = phanTichNgay(p[1]);
                     TrangThaiPN tt = TrangThaiPN.valueOf(p[p.length - 1].trim());
                     MatHang mh = matHangTuDong(p);
-                    String tenNCC = layTenNCC(mh);
-                    if (tenNCC == null || tenNCC.trim().isEmpty())
+                    String tenNCCDong = layTenNCC(mh);
+                    if (tenNCCDong == null || tenNCCDong.trim().isEmpty())
                         throw new IllegalArgumentException("thiếu tên nhà cung cấp/nhà xuất bản");
+                    boolean nccChinhDuocLuu = nccChinh != null;
+                    if (nccChinh == null) nccChinh = tenNCCDong;
 
                     int vt = TienIch.timKiemViTri(dsPN, soLuongPN, maPN);
                     PhieuNhap pn = vt < 0 ? null : dsPN[vt];
                     if (pn != null) {
                         if (!pn.getChiTiet().getNgayNhap().equals(ngay) || pn.getTrangThai() != tt)
                             throw new IllegalArgumentException("trùng mã phiếu nhưng khác ngày/trạng thái");
+                        if (nccChinhDuocLuu
+                                && !pn.getChiTiet().getNhaCungCap().getTenNCC().equalsIgnoreCase(nccChinh))
+                            throw new IllegalArgumentException("trùng mã phiếu nhưng khác NCC chính");
                         boolean daCo = false;
                         for (int i = 0; i < pn.getSoLuongNhap(); i++)
                             if (pn.getDSMH()[i].getMa().equalsIgnoreCase(mh.getMa())) { daCo = true; break; }
@@ -296,17 +330,16 @@ public class DanhSachPhieuNhap implements IQuanLy, IFileIO{
                         }
                         pn = new PhieuNhap();
                         pn.setMaPN(maPN);
-                        pn.setChiTiet(new ChiTietPhieuNhap(ngay, pn.taoNCC(tenNCC, dsNCC)));
+                        pn.setChiTiet(new ChiTietPhieuNhap(ngay, pn.taoNCC(nccChinh, dsNCC)));
                         pn.setTrangThai(tt);
                         dsPN[soLuongPN++] = pn;
-                    } else {
-                        NhaCungCap ncc = pn.taoNCC(tenNCC, dsNCC);
-                        // Mỗi phiếu hiện có một trường NCC. Không ghi đè tên NCC của dòng trước.
-                        if (!pn.getChiTiet().getNhaCungCap().getMaNCC().equals(ncc.getMaNCC())) {
-                            khacNCC++;
-                            System.out.println("Cảnh báo dòng " + dongSo + ": phiếu " + maPN
-                                    + " có nhiều NCC; giữ NCC của dòng đầu, NCC bổ sung vẫn có trong danh sách.");
-                        }
+                    }
+                    NhaCungCap ncc = pn.taoNCC(tenNCCDong, dsNCC);
+                    // Mỗi phiếu hiện có một trường NCC. Không ghi đè tên NCC của dòng trước.
+                    if (!pn.getChiTiet().getNhaCungCap().getMaNCC().equals(ncc.getMaNCC())) {
+                        khacNCC++;
+                        System.out.println("Cảnh báo dòng " + dongSo + ": phiếu " + maPN
+                                + " có nhiều NCC; giữ NCC của dòng đầu, NCC bổ sung vẫn có trong danh sách.");
                     }
                     pn.them(mh);
                     them++;

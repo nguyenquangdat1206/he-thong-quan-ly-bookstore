@@ -23,18 +23,14 @@ public class DanhSachKhachHang implements IQuanLy,IFileIO{
     //nhập
     @Override
     public void nhap(){
-        int n = TienIch.nhapSoNguyenDuong("Nhập số lượng khách hàng: ");
+        int n = TienIch.nhapSoNguyenKhongAm("Nhập số lượng khách hàng: ");
         if(n <= 0){
             System.out.println("Số lượng phải lớn hơn 0!");
             return;
         }
         for(int i=0; i<n; i++){
             System.out.println("\n--------KHÁCH HÀNG THỨ " + (i + 1) + "--------");
-            if(soLuong == ds.length) tangKichThuoc();
-            KhachHang kh = new KhachHang();
-            kh.nhap();
-            ds[soLuong] = kh;
-            soLuong++;
+            them();
         }
     }
     //xuat
@@ -109,7 +105,7 @@ public class DanhSachKhachHang implements IQuanLy,IFileIO{
                     System.out.println("1. Tên khách hàng");
                     System.out.println("2. Số điện thoại");
                     System.out.println("0. Thoát");
-                    choice = TienIch.nhapSoNguyenDuong("Chọn: ");
+                    choice = TienIch.nhapSoNguyenKhongAm("Chọn: ");
                     switch (choice) {
                         case 1:
                             ds[i].setTenKH(TienIch.nhapChuoi("Nhập tên mới "));
@@ -151,7 +147,7 @@ public class DanhSachKhachHang implements IQuanLy,IFileIO{
         System.out.println("1. Tìm theo mã khách hàng");
         System.out.println("2. Tìm theo tên khách hàng (gần đúng)");
         System.out.println("3. Tìm theo số điện thoại");
-        int chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+        int chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
         switch (chon) {
             case 1: {
                 String ma = TienIch.nhapChuoi("Nhập mã khách hàng: ");

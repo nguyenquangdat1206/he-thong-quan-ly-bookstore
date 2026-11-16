@@ -28,11 +28,12 @@ public class QuanLyKho {
         return (s.isEmpty() || s.equals(".")) ? macDinh : s;
     }
     public static void main(String[] args){
+        TienIch.cauHinhUnicodeConsole();
         Kho kho = new Kho();
         int chon;
         do{
             hienMenu();
-            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
             switch(chon){
                 case 1: kho.xuat(); break;
                 case 2: kho.them(); break;

@@ -1,12 +1,13 @@
 package mathang;
 
-import javax.swing.plaf.synth.SynthDesktopIconUI;
-
 import tienich.*;
 
 public class BaoTapChi extends MatHang {
     private final double thue = 10;
     private final double loinhuan = 18;
+
+    @Override public double getThue() { return thue; }
+    @Override public double getLoiNhuan() { return loinhuan; }
     private String nhaXuatBan;
     private String theloai;
 
@@ -62,7 +63,7 @@ public class BaoTapChi extends MatHang {
 
         setGiaNhap(TienIch.nhapGiaTien("Giá nhập hàng: "));
 
-        setSoLuong(TienIch.nhapSoNguyenDuong("Nhập số lượng: "));
+        setSoLuong(TienIch.nhapSoNguyenKhongAm("Nhập số lượng: "));
 
     }
 

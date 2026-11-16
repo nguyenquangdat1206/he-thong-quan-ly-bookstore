@@ -5,8 +5,9 @@ package mathang;
 import kho.*;
 import tienich.*;
 import interfaces.IQuanLy;
+import interfaces.IThaoTacThucThe;
 
-public class DanhSachMatHang implements IQuanLy {
+public class DanhSachMatHang implements IQuanLy, IThaoTacThucThe {
     private MatHang[] ds;
     private int soluong;
     private Kho kho;
@@ -15,6 +16,11 @@ public class DanhSachMatHang implements IQuanLy {
     public DanhSachMatHang() {
         ds = new MatHang[100]; // mảng ban đầu
         soluong = 0;
+    }
+
+    public DanhSachMatHang(Kho kho) {
+        this();
+        this.kho = kho;
     }
 
     // Điểm nối tối thiểu cho bộ lưu trữ TXT của TV5; không thay đổi thuật toán TV2.
@@ -37,6 +43,10 @@ public class DanhSachMatHang implements IQuanLy {
         //Nhap hang(nhap tu kho)
     @Override
     public void nhap(){
+        if (kho == null) {
+            System.out.println("Chưa kết nối với kho.");
+            return;
+        }
         System.out.println("Danh sách mặt hàng đang nhập hàng từ kho: ");
         String maCanLay = TienIch.nhapChuoi("Nhập mã hàng cần lấy: ");
         int soLuongLay = TienIch.nhapSoNguyenDuong("Nhập số lượng cần lấy: ");
@@ -61,7 +71,7 @@ public class DanhSachMatHang implements IQuanLy {
                         }
 
                         if (!daCoTrongDS) {
-                            MatHang mh = htk.getMatHang();
+                            MatHang mh = htk.getMatHang().saoChep();
                             mh.setSoLuong(soLuongLay);
                             if (soluong == ds.length) tangkichthuoc();
                             ds[soluong++] = mh;
@@ -103,7 +113,7 @@ public class DanhSachMatHang implements IQuanLy {
                     }
                 }
                 if (!daCoTrongDS) {
-                    MatHang mh = htk.getMatHang();
+                    MatHang mh = htk.getMatHang().saoChep();
                     mh.setSoLuong(soLuongLay);
                     if (soluong == ds.length) tangkichthuoc();
                     ds[soluong++] = mh;
@@ -224,6 +234,7 @@ public class DanhSachMatHang implements IQuanLy {
         maCanXoa=TienIch.nhapChuoi("Nhập mã cần xóa: ");
         xoa(maCanXoa);
     }
+    @Override
     public void xoa(String ma){
         boolean found = false;
         for(int i =0; i < soluong;i++){
@@ -245,9 +256,10 @@ public class DanhSachMatHang implements IQuanLy {
     @Override
     public void sua(){
         String ma;
-        ma = TienIch.nhapChuoi("Nhập mã cần sửa");
+        ma = TienIch.nhapChuoi("Nhập mã cần sửa: ");
         sua(ma);
     }
+    @Override
     public void sua(String ma) {
         boolean found = false;
 
@@ -263,7 +275,7 @@ public class DanhSachMatHang implements IQuanLy {
                     System.out.println("4. Số lượng mặt hàng");
                     System.out.println("0. Thoát chức năng");
 
-                    choice = TienIch.nhapSoNguyenDuong("Nhập: ");
+                    choice = TienIch.nhapSoNguyenKhongAm("Nhập: ");
 
                     switch (choice) {
                         case 1:
@@ -289,7 +301,7 @@ public class DanhSachMatHang implements IQuanLy {
                             break;
                         case 4:
                             int slMoi;
-                            slMoi= TienIch.nhapSoNguyenDuong("Nhập số lượng mới: ");
+                            slMoi= TienIch.nhapSoNguyenKhongAm("Nhập số lượng mới: ");
                             ds[i].setSoLuong(slMoi);
                             break;
                         case 0:
@@ -321,17 +333,14 @@ public class DanhSachMatHang implements IQuanLy {
     }
     
     public void timkiem(){
-        String timma = TienIch.nhapChuoi("Nhập mã hàng cần tìm:");
-        boolean found = false;
-        for(int i = 0 ; i< soluong;i++){
-            if(timma.equalsIgnoreCase(ds[i].getMa())){
-                ds[i].xuat();
-                found = true;
-            }
-        }
-        if(!found){
-            System.out.println("Không tồn tại mặt hàng nào có mã " + timma + " !" );
-        }
+        timKiem(TienIch.nhapChuoi("Nhập mã hàng cần tìm: "));
+    }
+
+    @Override
+    public void timKiem(String ma) {
+        MatHang mh = timKiem_hang(ma);
+        if (mh == null) System.out.println("Không tồn tại mặt hàng nào có mã " + ma + " !");
+        else mh.xuat();
     }
 
     //bo loc tim kiem nang cao
@@ -351,7 +360,7 @@ public void timkiem_nangcao() {
     System.out.println("11. Vở");
     System.out.println("Lựa chọn khác: thoát");
 
-    int choice = TienIch.nhapSoNguyenDuong("Nhập loại hàng muốn tìm kiếm: ");
+    int choice = TienIch.nhapSoNguyenKhongAm("Nhập loại hàng muốn tìm kiếm: ");
     switch (choice) {
 
         case 1:
@@ -360,7 +369,7 @@ public void timkiem_nangcao() {
             System.out.println("2/ Tìm kiếm theo thể loại");
             System.out.println("3/ Tìm kiếm theo nhà xuất bản");
             System.out.println("Lựa chọn khác: thoát");
-            int choice1 = TienIch.nhapSoNguyenDuong("Nhập:");
+            int choice1 = TienIch.nhapSoNguyenKhongAm("Nhập:");
             switch (choice1) {
 
                 case 1:
@@ -423,7 +432,7 @@ public void timkiem_nangcao() {
             System.out.println("1/ Tìm kiếm theo môn học");
             System.out.println("2/ Tìm kiếm theo NXB");
             System.out.println("Lựa chọn khác: thoát");
-            int choice2 = TienIch.nhapSoNguyenDuong("Nhập: ");
+            int choice2 = TienIch.nhapSoNguyenKhongAm("Nhập: ");
             switch (choice2) {
 
                 case 1:
@@ -470,7 +479,7 @@ public void timkiem_nangcao() {
             System.out.println("2/ Tìm kiếm theo thể loại");
             System.out.println("3/ Tìm kiếm theo nhà xuất bản");
             System.out.println("Lựa chọn khác: thoát");
-            int choice3 = TienIch.nhapSoNguyenDuong("Nhập: ");
+            int choice3 = TienIch.nhapSoNguyenKhongAm("Nhập: ");
             switch (choice3) {
 
                 case 1:
@@ -534,7 +543,7 @@ public void timkiem_nangcao() {
             System.out.println("2/ Tìm kiếm theo thể loại");
             System.out.println("3/ Tìm kiếm theo nhà xuất bản");
             System.out.println("Lựa chọn khác: thoát");
-            int choice4 = TienIch.nhapSoNguyenDuong("Nhập: ");
+            int choice4 = TienIch.nhapSoNguyenKhongAm("Nhập: ");
             switch (choice4) {
 
                 case 1:
@@ -597,7 +606,7 @@ public void timkiem_nangcao() {
             System.out.println("1/ Tìm kiếm theo loại văn phòng phẩm");
             System.out.println("2/ Tìm kiếm theo nhà sản xuất");
             System.out.println("Lựa chọn khác: thoát");
-            int choice5 = TienIch.nhapSoNguyenDuong("Nhập: ");
+            int choice5 = TienIch.nhapSoNguyenKhongAm("Nhập: ");
             switch (choice5) {
 
                 case 1:
@@ -643,7 +652,7 @@ public void timkiem_nangcao() {
             System.out.println("1/ Tìm kiếm theo thể loại");
             System.out.println("2/ Tìm kiếm theo nhà xuất bản");
             System.out.println("Lựa chọn khác: thoát");
-            int choice6 = TienIch.nhapSoNguyenDuong("Nhập: ");
+            int choice6 = TienIch.nhapSoNguyenKhongAm("Nhập: ");
             switch (choice6) {
 
                 case 1:
@@ -687,7 +696,7 @@ public void timkiem_nangcao() {
         case 7:
             System.out.println("1/ Tìm kiếm theo nhà sản xuất");
             System.out.println("Lựa chọn khác: thoát");
-            int choice7 = TienIch.nhapSoNguyenDuong("Nhập: ");
+            int choice7 = TienIch.nhapSoNguyenKhongAm("Nhập: ");
             switch (choice7) {
 
                 case 1:

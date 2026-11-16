@@ -123,8 +123,8 @@ public class IntegrationTests {
         });
         check("TV4 - stock file records WAREHOUSE not SHELF quantity", () -> {
             Kho kho = new Kho(); DanhSachMatHang ds = new DanhSachMatHang();
-            kho.tangTonKho(sach("SAVE01",0),25);
-            ds.nhapTuKho(kho,"SAVE01",10);
+            kho.tangTonKho(sach("SCH0100",0),25);
+            ds.nhapTuKho(kho,"SCH0100",10);
             Path f = Files.createTempFile("kho-", ".txt");
             kho.ghiFile(f.toString());
             expect(Files.readString(f,StandardCharsets.UTF_8).contains(";15;"),"saved 15 in warehouse");
@@ -136,6 +136,18 @@ public class IntegrationTests {
             Kho kho = new Kho(); kho.docFile("tests/fixtures/kho/kho_input.txt");
             expect(kho.getSoLuongTon()>=5, "at least 5 sample items");
             expect(kho.getTongSoLuongTon()>0,"positive stock");
+        });
+        check("TV4 - warehouse import is repeatable and skips malformed rows", () -> {
+            Path f = Files.createTempFile("kho-review-", ".txt");
+            try {
+                Files.writeString(f, "Sách;SCH0100;Sách thử;100;10;A;B;C\n"
+                        + "broken\nSách;SCH0101;Sách thứ hai;100;3;A;B;C\n", StandardCharsets.UTF_8);
+                Kho kho = new Kho();
+                kho.docFile(f.toString());
+                expect(kho.getSoLuongTon() == 2 && kho.getTongSoLuongTon() == 13, "valid rows after malformed row");
+                kho.docFile(f.toString());
+                expect(kho.getSoLuongTon() == 2 && kho.getTongSoLuongTon() == 13, "reimport must not duplicate stock");
+            } finally { Files.deleteIfExists(f); }
         });
         check("TV3 - cart add, duplicate accumulation, invalid quantity", () -> {
             MatHang mh = sach("S01",6); GioHang gio = new GioHang(new KhachHang("K01","Khách","0900"));
@@ -187,6 +199,36 @@ public class IntegrationTests {
             expect(s.getSoLuong()==2,"reload does not decrement again");
             Files.deleteIfExists(invoices);Files.deleteIfExists(customers);
         });
+        check("TV3 - invoice totals duplicate lines before charging stock", () -> {
+            Sach s = sach("SCH0102", 5);
+            HoaDon hd = new HoaDon("HD-DUP", java.time.LocalDate.now(), new KhachHang("KH", "Khách", "0900"), null);
+            expect(hd.themChiTiet(new ChiTietHoaDon(4, s)), "first detail");
+            expect(hd.themChiTiet(new ChiTietHoaDon(4, s)), "second detail");
+            expect(!hd.themChiTiet(new ChiTietHoaDon(-1, sach("SCH0103", 5))), "negative quantity rejected");
+            hd.setHinhThucThanhToan(new ThanhToanThe("TX", "Bank"));
+            expect(!hd.thanhToan() && s.getSoLuong() == 5, "combined quantity exceeds stock");
+            hd.suaSoLuongChiTiet(1, 1);
+            expect(hd.thanhToan() && s.getSoLuong() == 0, "combined quantity deducted once");
+        });
+        check("TV3 - invoice file preserves duplicate SKU without overselling", () -> {
+            Path customers = Files.createTempFile("customers-", ".txt");
+            Path invoices = Files.createTempFile("invoices-", ".txt");
+            try {
+                Files.writeString(customers, "KH;Khách;0900\n", StandardCharsets.UTF_8);
+                Files.writeString(invoices, "HD-DUP;2026-11-01;KH;;;0\n2\n"
+                        + "SCH0105;4;100\nSCH0105;4;100\n", StandardCharsets.UTF_8);
+                DanhSachKhachHang dskh = new DanhSachKhachHang(); dskh.docFile(customers.toString());
+                DanhSachMatHang dsmh = new DanhSachMatHang(); dsmh.themTuFile(sach("SCH0105", 5));
+                DanhSachHoaDon dshd = new DanhSachHoaDon(dsmh, dskh);
+                dshd.docFile(invoices.toString());
+                expect(dshd.getSoLuong() == 1 && dshd.timKiem("HD-DUP").getSoLuongChiTiet() == 2,
+                        "duplicate lines should be preserved");
+                HoaDon hd = dshd.timKiem("HD-DUP");
+                hd.setHinhThucThanhToan(new ThanhToanThe("TX", "Bank"));
+                expect(!hd.thanhToan(), "overselling should be blocked");
+                expect(dsmh.timKiem_hang("SCH0105").getSoLuong() == 5, "stock changed");
+            } finally { Files.deleteIfExists(customers); Files.deleteIfExists(invoices); }
+        });
         check("TV4 - purchase note removes middle correctly", () -> {
             PhieuNhap pn = new PhieuNhap();
             pn.them(sach("A",1));pn.them(sach("B",1));pn.them(sach("C",1));
@@ -205,6 +247,15 @@ public class IntegrationTests {
             expect(!k.nhapHangTuPhieu(pn),"same receipt cannot be applied twice");
             expect(k.getTongSoLuongTon()==4,"no double stock increment");
         });
+        check("TV4 - insufficient capacity keeps receipt pending for retry", () -> {
+            Kho k = new Kho(); PhieuNhap pn = new PhieuNhap();
+            expect(k.tangTonKho(sach("SCH0106", 0), 9999), "fill warehouse");
+            pn.them(sach("SCH0107", 2));
+            expect(!k.nhapHangTuPhieu(pn), "capacity should block receipt");
+            expect(pn.getTrangThai() == PhieuNhap.TrangThaiPN.CHO_DUYET, "receipt was canceled");
+            k.getDanhSachTon()[0].giamSoLuong(1);
+            expect(k.nhapHangTuPhieu(pn), "retry should succeed after freeing capacity");
+        });
         check("TV4 - supplier file read-write", () -> {
             Path p=Files.createTempFile("ncc-", ".txt");
             Files.writeString(p,"NCC1;Nhà sách;HCM;0900;mail@test.vn\n",StandardCharsets.UTF_8);
@@ -218,7 +269,7 @@ public class IntegrationTests {
             Kho k = new Kho();
             Scanner original = TienIch.sc;
             // Loại 1 Sách; ma, ten, theloai, tacgia, NXB, gia, soLuongQuay, soLuongNhapKho.
-            String input = "1\nSNEW\nSách mới\nKỹ thuật\nTác giả\nNXB\n10000\n0\n7\n";
+            String input = "1\nSCH0104\nSách mới\nKỹ thuật\nTác giả\nNXB\n10000\n0\n7\n";
             try { TienIch.sc = new Scanner(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
                 k.them();
             } finally { TienIch.sc=original; }
@@ -234,23 +285,43 @@ public class IntegrationTests {
         });
         check("TV2/TV5 - all seven product types TXT roundtrip, duplicate prevention", () -> {
             DanhSachMatHang a = new DanhSachMatHang();
-            expect(a.themTuFile(new Sach("S1","Sách",100,2,"A","NXB","T")), "sach");
-            expect(a.themTuFile(new SachGiaoKhoa("G1","SGK",100,3,"Toán","NXB")), "SGK");
-            expect(a.themTuFile(new TieuThuyet("T1","Novel",100,4,"Tác giả","NXB","Văn")), "Novel");
-            expect(a.themTuFile(new Truyen("TR1","Comic",100,5,"A","NXB","Comic")), "Truyen");
-            expect(a.themTuFile(new VanPhongPham("V1","Bút",100,6,"Thiên Long","Mực")), "VPP");
-            expect(a.themTuFile(new BaoTapChi("B1","Báo",100,7,"NXB báo","Khoa học")), "Báo");
-            expect(a.themTuFile(new SPKhac("K1","SP",100,8,"ABC")), "Khác");
+            expect(a.themTuFile(new Sach("SCH0101","Sách",100,2,"A","NXB","T")), "sach");
+            expect(a.themTuFile(new SachGiaoKhoa("SGK0101","SGK",100,3,"Toán","NXB")), "SGK");
+            expect(a.themTuFile(new TieuThuyet("TTH0101","Novel",100,4,"Tác giả","NXB","Văn")), "Novel");
+            expect(a.themTuFile(new Truyen("TRU0101","Comic",100,5,"A","NXB","Comic")), "Truyen");
+            expect(a.themTuFile(new VanPhongPham("VPP0101","Bút",100,6,"Thiên Long","Mực")), "VPP");
+            expect(a.themTuFile(new BaoTapChi("BTC0101","Báo",100,7,"NXB báo","Khoa học")), "Báo");
+            expect(a.themTuFile(new SPKhac("SPK0101","SP",100,8,"ABC")), "Khác");
             Path f = Files.createTempFile("mathang-", ".txt");
             expect(LuuTruMatHang.ghiFile(a,f.toString())==7,"wrote 7");
             DanhSachMatHang b = new DanhSachMatHang();
             expect(LuuTruMatHang.docFile(b,f.toString())==7,"read 7");
             expect(b.getSoMH()==7,"size 7");
-            expect(b.timKiem_hang("V1") instanceof VanPhongPham, "VPP type");
-            expect("Mực".equals(((VanPhongPham)b.timKiem_hang("V1")).getLoaiVPP()), "VPP subtype field");
-            expect("NXB báo".equals(((BaoTapChi)b.timKiem_hang("B1")).getNhaXuatBan()), "Báo subtype field");
+            expect(b.timKiem_hang("VPP0101") instanceof VanPhongPham, "VPP type");
+            expect("Mực".equals(((VanPhongPham)b.timKiem_hang("VPP0101")).getLoaiVPP()), "VPP subtype field");
+            expect("NXB báo".equals(((BaoTapChi)b.timKiem_hang("BTC0101")).getNhaXuatBan()), "Báo subtype field");
             expect(LuuTruMatHang.docFile(b,f.toString())==0,"duplicate import avoided");
             Files.deleteIfExists(f);
+        });
+        check("TV2/TV5 - repository product data loads all rows", () -> {
+            DanhSachMatHang ds = new DanhSachMatHang();
+            expect(LuuTruMatHang.docFile(ds, "data/mathang.txt") == 5, "five repository products");
+            expect(ds.timKiem_hang("SCH3001") instanceof Sach, "book code migrated");
+            expect(ds.timKiem_hang("VO3001") instanceof Vo, "notebook code migrated");
+        });
+        check("TV3 - historical invoices retain missing catalog items and prices", () -> {
+            DanhSachKhachHang customers = new DanhSachKhachHang();
+            customers.docFile("data/khachhang.txt");
+            DanhSachHoaDon invoices = new DanhSachHoaDon(new DanhSachMatHang(), customers);
+            invoices.docFile("data/hoadon.txt");
+            expect(invoices.getSoLuong() == 25, "all historical invoices loaded");
+            HoaDon first = invoices.timKiem("HD01");
+            expect(first != null && first.getSoLuongChiTiet() == 2, "first invoice details");
+            expect(first.getChiTiet()[0].getDonGia() == 88500.0, "historical price retained");
+            expect(first.getChiTiet()[0].getMathang().getTen().contains("không còn trong danh mục"),
+                    "missing product should be marked historical");
+            first.setHinhThucThanhToan(new ThanhToanThe("TX", "Bank"));
+            expect(!first.thanhToan(), "cannot settle unpaid invoice without shelf stock");
         });
         System.out.printf("%nTEST RESULT: %d PASS, %d FAIL%n",ok,fail);
         if (fail>0) System.exit(1);

@@ -39,7 +39,9 @@ public class HoaDon {
     }
     //Thêm 1 dòng chi tiết vào hóa đơn
     public boolean themChiTiet(ChiTietHoaDon ct) {
-        if (ct == null || daThanhToan) return false;
+        if (ct == null || ct.getMathang() == null || ct.getMathang().getMa() == null
+                || ct.getMathang().getMa().isBlank() || ct.getsoLuong() <= 0
+                || !Double.isFinite(ct.getDonGia()) || ct.getDonGia() < 0 || daThanhToan) return false;
         if (soLuongChiTiet >= chiTiet.length) {
             tangKichThuocChiTiet();
         }
@@ -115,15 +117,39 @@ public class HoaDon {
 
         for (int i = 0; i < soLuongChiTiet; i++) {
             ChiTietHoaDon ct = chiTiet[i];
-            MatHang mh = ct.getMathang();
-            if(mh.getSoLuong() < ct.getsoLuong()){
+            if (ct == null || ct.getMathang() == null || ct.getMathang().getMa() == null
+                    || ct.getMathang().getMa().isBlank() || ct.getsoLuong() <= 0
+                    || !Double.isFinite(ct.getDonGia()) || ct.getDonGia() < 0) {
+                System.out.println("Lỗi: Chi tiết hóa đơn không hợp lệ.");
+                return false;
+            }
+        }
+
+        for (int i = 0; i < soLuongChiTiet; i++) {
+            MatHang mh = chiTiet[i].getMathang();
+            long soLuongCanBan = 0;
+            for (int j = 0; j < soLuongChiTiet; j++) {
+                ChiTietHoaDon dong = chiTiet[j];
+                if (dong.getMathang().getMa().equalsIgnoreCase(mh.getMa())) {
+                    if (dong.getMathang() != mh) {
+                        System.out.println("Lỗi: Các dòng cùng mã hàng không trỏ tới cùng mặt hàng hợp lệ.");
+                        return false;
+                    }
+                    soLuongCanBan += dong.getsoLuong();
+                }
+            }
+            if(mh.getSoLuong() < soLuongCanBan){
                 System.out.println("Lỗi: Mặt hàng '" + mh.getTen() + "' chỉ còn "
                                     + mh.getSoLuong() + " cái trên kệ hàng, không đủ để bán ");
-                return false;// Dừng thanh toán vì không đủ hàng để bán
+                return false;
             }
         }
         // Tiền hành thu tiền
         double tongTien = tinhThanhTien();
+        if (!Double.isFinite(tongTien)) {
+            System.out.println("Lỗi: Tổng tiền hóa đơn không hợp lệ.");
+            return false;
+        }
         boolean ketQua = hinhThucThanhToan.xuLyThanhToan(tongTien);
         if(ketQua){
             for(int i=0; i<soLuongChiTiet; i++){

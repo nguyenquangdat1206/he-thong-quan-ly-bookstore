@@ -3,10 +3,12 @@ import mathang.MatHang;
 public class ChiTietGioHang {
     private MatHang matHang;
     private int soLuongMon;
+    private final double donGia;
 
     public ChiTietGioHang(MatHang matHang, int soLuongMon){
         this.matHang = matHang;
         this.soLuongMon = soLuongMon;
+        this.donGia = matHang.tinhGiaBan();
     }
 
     public MatHang getMatHang() {
@@ -22,7 +24,7 @@ public class ChiTietGioHang {
     }
 
     public double getDonGia(){
-        return matHang.tinhGiaBan();
+        return donGia;
     }
 
     public double thanhTien(){

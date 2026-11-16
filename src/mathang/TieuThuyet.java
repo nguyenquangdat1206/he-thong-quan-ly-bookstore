@@ -21,6 +21,7 @@ public class TieuThuyet extends Sach {
     public double getThue() { return thue; }
     @Override
     public double getLoinhuan() { return loinhuan; }
+    @Override public double getLoiNhuan() { return loinhuan; }
 
     @Override
     public void nhap() {
@@ -44,7 +45,7 @@ public class TieuThuyet extends Sach {
 
         setGiaNhap(TienIch.nhapGiaTien("Nhập giá nhập: "));
 
-        setSoLuong(TienIch.nhapSoNguyenDuong("Nhập số lượng: "));
+        setSoLuong(TienIch.nhapSoNguyenKhongAm("Nhập số lượng: "));
 
     }
 
@@ -53,6 +54,8 @@ public class TieuThuyet extends Sach {
         System.out.println("Mã: " + getMa());
 
         System.out.println("Tên: " + getTen());
+
+        System.out.println("Thể loại: " + getTheloai());
 
         System.out.println("Tác giả: " + getTacGia());
 

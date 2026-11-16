@@ -5,6 +5,9 @@ import tienich.*;
 public class Vo extends MatHang{
     private final double thue = 10;
     private final double loinhuan = 15;
+
+    @Override public double getThue() { return thue; }
+    @Override public double getLoiNhuan() { return loinhuan; }
     private int sotrang;
     private String nhaSX;
 
@@ -58,13 +61,11 @@ public class Vo extends MatHang{
 
         sotrang = TienIch.nhapSoNguyenDuong("Nhập số trang: ");
 
-        System.out.println("Nhà sản xuất: ");
         nhaSX = TienIch.nhapChuoi("Nhà sản xuất: ");
 
-        System.out.println("Giá nhập hàng: ");
         setGiaNhap(TienIch.nhapGiaTien("Giá nhập hàng: "));
 
-        setSoLuong(TienIch.nhapSoNguyenDuong("Nhập số lượng: "));
+        setSoLuong(TienIch.nhapSoNguyenKhongAm("Nhập số lượng: "));
 
     }
 

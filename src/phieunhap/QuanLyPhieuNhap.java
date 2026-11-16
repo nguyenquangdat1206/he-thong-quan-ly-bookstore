@@ -30,12 +30,13 @@ public class QuanLyPhieuNhap {
 
 
     public static void main(String[] args){
+        TienIch.cauHinhUnicodeConsole();
         DanhSachPhieuNhap ds = new DanhSachPhieuNhap();
         Kho kho = new Kho();
         int chon;
         do{
             hienMenu();
-            chon = TienIch.nhapSoNguyenDuong("Chọn: ");
+            chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
             switch(chon){
                 case 1:  ds.xuat(); break;
                 case 2:  ds.them(); break;
