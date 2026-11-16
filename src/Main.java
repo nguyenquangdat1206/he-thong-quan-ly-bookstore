@@ -31,7 +31,7 @@ public class Main {
         return (s.isEmpty() || s.equals(".")) ? macDinh : s;
     }
     static void menuChinh() {
-        System.out.println("\n" + ANSI + "======== QUẢN LÝ NHÀ SÁCH - TV5 MERGE ========" + RESET);
+        System.out.println("\n" + ANSI + "======== QUẢN LÝ NHÀ SÁCH ========" + RESET);
         System.out.println("1. Đăng nhập nhân viên");
         System.out.println("2. Xem danh sách mặt hàng (khách vãng lai)");
         System.out.println("0. Thoát");
