@@ -15,7 +15,7 @@ import interfaces.IGetMa;
 public class TienIch {
     public static Scanner sc = new Scanner(System.in, StandardCharsets.UTF_8);
 
-    /** Dùng ở các điểm vào console để Java không thay chữ tiếng Việt bằng '?'. */
+
     public static void cauHinhUnicodeConsole() {
         System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, StandardCharsets.UTF_8));
         System.setErr(new PrintStream(new FileOutputStream(FileDescriptor.err), true, StandardCharsets.UTF_8));
@@ -25,7 +25,7 @@ public class TienIch {
         return nhapSoNguyen(thongbao, 1);
     }
 
-    /** Dùng cho lựa chọn menu và những thao tác cho phép giá trị 0. */
+
     public static int nhapSoNguyenKhongAm(String thongbao) {
         return nhapSoNguyen(thongbao, 0);
     }
@@ -51,7 +51,6 @@ public class TienIch {
                 num=Double.parseDouble(sc.nextLine());
                 if(Double.isFinite(num) && num>0)
                     break;
-                System.out.println("LỖI: Giá tiền phải là số hữu hạn lớn hơn 0!");
             } 
             catch(NumberFormatException e){
                 System.out.println("LỖI: Vui lòng nhập lại giá tiền!");

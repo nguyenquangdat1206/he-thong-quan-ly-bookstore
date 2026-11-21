@@ -1,6 +1,6 @@
 package nhanvien;
 
-/** Quản lý một chi nhánh: chỉ thao tác trên chi nhánh được gán (maChiNhanh). */
+
 public class QuanLyChiNhanh extends NhanVien {
 
     public QuanLyChiNhanh() {

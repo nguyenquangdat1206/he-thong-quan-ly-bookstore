@@ -22,31 +22,6 @@ public class Truyen extends Sach {
     @Override
     public double getLoinhuan() { return loinhuan; }
 
-    @Override
-    public void nhap() {
-
-        while (true) {
-            try {
-                setMa(TienIch.nhapChuoi("Nhập mã (TRUxxxx): "));
-                break;
-            } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
-        setTen(TienIch.nhapChuoi("Nhập tên: "));
-
-        setTheloai(TienIch.nhapChuoi("Nhập thể loại: "));
-
-        setTacGia(TienIch.nhapChuoi("Nhập tác giả: "));
-
-        setNhaXuatBan(TienIch.nhapChuoi("Nhà xuất bản: "));
-
-        setGiaNhap(TienIch.nhapGiaTien("Giá nhập hàng: "));
-
-        setSoLuong(TienIch.nhapSoNguyenKhongAm("Nhập số lượng: "));
-
-    }
 
     // nhập truyền tên nhà cung cấp từ phiếu nhập lên
     @Override

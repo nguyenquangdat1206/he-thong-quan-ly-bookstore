@@ -1,4 +1,5 @@
 package mathang;
+import khachhang.DanhSachKhachHang;
 import kho.*;
 import tienich.TienIch;
 
@@ -12,7 +13,6 @@ public class QuanLyMatHang {
         return (s.isEmpty() || s.equals(".")) ? macDinh : s;
     }
     public static void main(String[] args) {
-        TienIch.cauHinhUnicodeConsole();
         int chon;
         do {
             System.out.println("\n---------- MẶT HÀNG (CỬA HÀNG) ----------");

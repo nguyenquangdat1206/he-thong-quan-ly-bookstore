@@ -1,2 +1,2 @@
-CN01;Chi nhánh 1;12 Nguyễn Huệ, Quận 1, TP.HCM
-CN02;Chi nhánh 2;45 Lê Văn Việt, TP. Thủ Đức, TP.HCM
+CN01;Chi nhánh 1;Phan Văn Trị, Hà Nội
+CN02;Chi nhánh 2; An Dương Vương, TPHCM

@@ -30,7 +30,6 @@ public class QuanLyPhieuNhap {
     }
 
     public static void main(String[] args){
-        TienIch.cauHinhUnicodeConsole();
         DanhSachPhieuNhap ds = new DanhSachPhieuNhap();
         Kho kho = new Kho();
         int chon;

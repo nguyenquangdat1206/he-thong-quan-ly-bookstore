@@ -54,15 +54,6 @@ public class DanhSachPhieuNhap implements IFileIO, IQuanLy{
 
     public DanhSachNCC getDanhSachNCC(){return dsNcc;}
     public int getSLpn(){return slPN;}
-    public PhieuNhap[] getMangPhieuNhap() { return dsPN; }
-
-    public boolean them(PhieuNhap pn) {
-        if (pn == null || pn.getMa() == null || pn.getMa().isBlank() || timPhieu(pn.getMa()) != null)
-            return false;
-        if (slPN == dsPN.length) dsPN = java.util.Arrays.copyOf(dsPN, Math.max(1, dsPN.length * 2));
-        dsPN[slPN++] = pn;
-        return true;
-    }
 
     public PhieuNhap timPhieu(String ma){
         int vt = TienIch.timKiemViTri(dsPN, slPN, ma);
@@ -93,7 +84,7 @@ public class DanhSachPhieuNhap implements IFileIO, IQuanLy{
 
         pn.setMaPN(TienIch.nhapMa(dsPN, slPN, "Nhập mã phiếu nhập"));
 
-        LocalDate ngay = TienIch.nhapNgay("Nhập ngày (dd/MM/yyyy) nhập hàng: (bấm Enter để lấy ngày hôm nay)", true);
+        LocalDate ngay = TienIch.nhapNgay("Nhập ngày (dd/MM/yyyy) nhập hàng: (bấm Enter để lấy ngày hôm nay)");
         pn.getChiTiet().setNgayNhap(ngay==null? LocalDate.now():ngay);
 
         String tenNcc = TienIch.nhapChuoi("Nhập tên nhà cung cấp cho phiếu nhập này: ");
@@ -117,10 +108,7 @@ public class DanhSachPhieuNhap implements IFileIO, IQuanLy{
             System.out.println("Không có mã phiếu nhập tương ứng trong danh sách!");
             return;
         }
-        if (dsPN[vt].getTrangThai() == TrangThaiPN.DA_DUYET) {
-            System.out.println("Phiếu đã nhập kho, không thể xóa.");
-            return;
-        }
+
         for(int i = vt;i<slPN-1;i++){
             dsPN[i]=dsPN[i+1];
         }
@@ -140,17 +128,13 @@ public class DanhSachPhieuNhap implements IFileIO, IQuanLy{
             System.out.println("Không có mã phiếu nhập tương ứng trong danh sách!");
             return;
         }
-        if (dsPN[vt].getTrangThai() == TrangThaiPN.DA_DUYET) {
-            System.out.println("Phiếu đã nhập kho, không thể sửa.");
-            return;
-        }
-        System.out.println("=======MENU SỬA======");
-        System.out.println("1. Sửa thông tin mặt hàng nhập ghi trên phiếu");
-        System.out.println("2. Sửa thông tin phiếu nhập(mã phiếu nhập, ngày nhập, ncc,...");
-        System.out.println("3. Sửa trạng thái phiếu nhập");
-        System.out.println("4. Thoát");
         boolean tieptuc = true;
         while(tieptuc){
+            System.out.println("=======MENU SỬA======");
+            System.out.println("1. Sửa thông tin mặt hàng nhập ghi trên phiếu");
+            System.out.println("2. Sửa thông tin phiếu nhập(mã phiếu nhập, ngày nhập, ncc,...");
+            System.out.println("3. Sửa trạng thái phiếu nhập");
+            System.out.println("4. Thoát");
             int n = TienIch.nhapSoNguyenDuong("Nhập lựa chọn: ");
             switch(n){
                 case 1: dsPN[vt].sua(); break;
@@ -171,7 +155,7 @@ public class DanhSachPhieuNhap implements IFileIO, IQuanLy{
                 while(true){
                     String lc = TienIch.nhapChuoi("Đổi ngày nhập? (Y/N): ");
                     if(lc.equalsIgnoreCase("Y")){
-                        LocalDate ngay = TienIch.nhapNgay("Nhập ngày nhập mới: ", true);
+                        LocalDate ngay = TienIch.nhapNgay("Nhập ngày nhập mới: ");
                         dsPN[vt].getChiTiet().setNgayNhap(ngay==null? LocalDate.now():ngay);
                         break;
                     }
@@ -201,16 +185,14 @@ public class DanhSachPhieuNhap implements IFileIO, IQuanLy{
                         break;
                     }
                     if(lc==2){
-                        System.out.println("Hãy nhập hàng vào kho để duyệt phiếu.");
+                        dsPN[vt].setTrangThai(TrangThaiPN.DA_DUYET);
                         break;
                     }
                     if(lc==3){
                         dsPN[vt].setTrangThai(TrangThaiPN.DA_HUY);
-                        break;
                     }
                     System.out.println("Vui lòng chọn lại!");
                     }
-                    break;
 
                 case 4: System.out.println("Đã thoát"); tieptuc=false; break;
 
@@ -232,7 +214,8 @@ public class DanhSachPhieuNhap implements IFileIO, IQuanLy{
         for(int i =0; i<slPN;i++){
             PhieuNhap pn = dsPN[i];
             String ngay = TienIch.ngaytoString(pn.getChiTiet().getNgayNhap());
-            System.out.printf("%-15s %-15s %-25s %-15s%n", pn.getMa(), ngay, pn.getChiTiet().getNhaCungCap().getTenNCC(), pn.getTrangThai());
+            System.out.printf("%-15s %-15s %-25s %-15s%n", pn.getMa(), ngay,
+                    pn.getChiTiet().getNhaCungCap().getTenNCC(), pn.getTrangThai());
             System.out.println("Thông tin hàng nhập: ");
             pn.xuat();
             System.out.println("=======================");
@@ -249,7 +232,7 @@ public class DanhSachPhieuNhap implements IFileIO, IQuanLy{
             for(int i = 0;i<slPN;i++){
                 PhieuNhap pn = dsPN[i];
                 for(int j=0;j<pn.getSoLuongNhap();j++){
-                    pw.println(pn.getMa() + ";" + pn.getChiTiet().getNgayNhap().format(NGAY_FILE) + ";" + dongMatHang(pn, j) + ";" + pn.getTrangThai());
+                    pw.println(pn.getMa() + ";" + pn.getChiTiet().getNgayNhap().format(NGAY_FILE) + ";" + pn.getDSMH()[j].toString() + ";" + pn.getTrangThai());
                     dong++;
                 }
             }
@@ -259,7 +242,7 @@ public class DanhSachPhieuNhap implements IFileIO, IQuanLy{
         }
     }
 
-    /** Ghi riêng các phiếu đã được nhập kho thành công. */
+
     public void ghiFileDaNhapKho(String duongDan){
         int soPhieu = 0, soDong = 0;
         try(PrintWriter pw = new PrintWriter(Files.newBufferedWriter(Path.of(duongDan), StandardCharsets.UTF_8))){
@@ -269,7 +252,7 @@ public class DanhSachPhieuNhap implements IFileIO, IQuanLy{
                 soPhieu++;
                 for(int j = 0; j < pn.getSoLuongNhap(); j++){
                     pw.println(pn.getMa() + ";" + pn.getChiTiet().getNgayNhap().format(NGAY_FILE)
-                            + ";" + dongMatHang(pn, j) + ";" + pn.getTrangThai());
+                            + ";" + pn.getDSMH()[j].toString() + ";" + pn.getTrangThai());
                     soDong++;
                 }
             }
@@ -280,7 +263,7 @@ public class DanhSachPhieuNhap implements IFileIO, IQuanLy{
         }
     }
 
-    /** Tự nhập tất cả phiếu đang chờ vào kho, rồi lưu danh sách phiếu đã duyệt. */
+
     public void tuDongNhapTatCaVaoKho(Kho kho, String duongDanGhi){
         if(kho == null){
             System.out.println("Kho rỗng");
@@ -295,14 +278,6 @@ public class DanhSachPhieuNhap implements IFileIO, IQuanLy{
         }
         System.out.println("Hoàn tất: nhập thành công " + thanhCong + " phiếu, thất bại " + thatBai + " phiếu.");
         ghiFileDaNhapKho(duongDanGhi);
-    }
-
-    private static String dongMatHang(PhieuNhap pn, int viTri) {
-        MatHang mh = pn.getDSMH()[viTri];
-        String[] cot = mh.toString().split(";", -1);
-        int viTriNcc = mh instanceof Sach ? 6 : cot.length - 1;
-        cot[viTriNcc] = pn.getChiTiet().getNhaCungCap().getTenNCC();
-        return String.join(";", cot);
     }
 
     private static MatHang taoMatHangTuDong(String[]p){

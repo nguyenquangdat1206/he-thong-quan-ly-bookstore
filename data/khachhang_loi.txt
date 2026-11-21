@@ -1,0 +1,12 @@
+KH901;Nguyễn Gốc Một;0901000001
+KH902;Trần Gốc Hai;0901000002
+KH903;Lê Thiếu Số Điện Thoại
+KH904;Phạm Thừa Cột;0901000004;thừa cột
+KH905;Hoàng Thừa Hai Cột;0901000005;thừa;thêm
+;Võ Thiếu Mã;0901000006
+KH907;;0901000007
+KH908;Đặng Thiếu SĐT;
+;;
+KH901;Trùng Mã Hệt KH901;0901999999
+kh902;Trùng Mã Khác Hoa Thường;0901888888
+KH910;   ;0901000010

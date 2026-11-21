@@ -33,10 +33,6 @@ public class ThanhToanThe implements IThanhToan {
     //Ghi đè phương thức xuLyThanhToan
     @Override
     public boolean xuLyThanhToan(double soTien) {
-        if (!Double.isFinite(soTien) || soTien < 0) {
-            System.out.println("Số tiền thanh toán không hợp lệ!");
-            return false;
-        }
         if (maGiaoDich == null || maGiaoDich.trim().isEmpty()
                 || nganHang == null || nganHang.trim().isEmpty()) {
             System.out.println("Thiếu mã giao dịch hoặc ngân hàng, thanh toán thẻ thất bại!");

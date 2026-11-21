@@ -1,8 +1,8 @@
 # integration smoke tests: no external dependencies
 from pathlib import Path
-import tempfile, shutil, subprocess, sys
+import os, tempfile, shutil, subprocess, sys
 ROOT=Path(__file__).resolve().parent.parent
-CP=str(ROOT/'build')
+CP=os.environ.get('BOOKSTORE_TEST_CP', str(ROOT/'build-test'))
 
 def simulate(inputs, expected, forbidden=(), max_timeout=25):
     with tempfile.TemporaryDirectory(prefix='oop_console_') as f:

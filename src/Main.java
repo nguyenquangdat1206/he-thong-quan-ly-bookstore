@@ -9,9 +9,8 @@ import nhacungcap.*;
 import giohang.*;
 import thanhtoan.*;
 import tienich.TienIch;
-import tienich.LuuTruPhien;
 
-/** TV5: lắp ghép menu với các module nguyên gốc của TV2,3,4. */
+
 public class Main {
     static final String FILE_NV = "data/nhanvien_cn.txt"; // file nhân viên mới: 8 cột, cột cuối là mã chi nhánh
     static final String ANSI = "\u001B[36m", RESET = "\u001B[0m";
@@ -27,8 +26,6 @@ public class Main {
     static NhanVien dangDangNhap;
     static NhanVienBanHang nvBanHang;
     static boolean coTheGhiNhanVien = true;
-    static final java.nio.file.Path FILE_PHIEN = java.nio.file.Path.of("data/phien.properties");
-    static boolean coTheLuuPhien = true;
 
     static String hoiFile(String macDinh) {
         System.out.print("Đường dẫn file (Enter hoặc . để dùng '" + macDinh + "'): ");
@@ -233,7 +230,7 @@ public class Main {
         } while (chon != 0);
     }
  
-    /** Áp dụng phân quyền tại cửa chọn chức năng; chỉ nhân viên đã xác thực mới vào các menu ghi dữ liệu. */
+
     static boolean duocPhep(NhanVien nv, String quyen) {
         return nv != null && ("ADMIN".equals(nv.getQuyen()) || quyen.equals(nv.getQuyen()));
     }
@@ -479,7 +476,7 @@ public class Main {
             }
         } while (chon != 0);
     }
-    /** Người lập hóa đơn phải thuộc chi nhánh đang làm việc. */
+
     static NhanVienBanHang layNguoiBanHang() {
         if (dangDangNhap instanceof NhanVienBanHang)
             return (NhanVienBanHang) dangDangNhap;
@@ -518,7 +515,7 @@ public class Main {
             System.out.println("Số tiền không hợp lệ.");
         }
     }
-    /** Bổ sung lối vào giỏ hàng có sẵn của TV3; thanh toán vẫn do TV3 thực hiện. */
+
     static void menuGioHang() {
         if (!coChiNhanh()) return;
         DanhSachMatHang dsmh = cnHienTai.getDsmh();
@@ -565,51 +562,28 @@ public class Main {
             }
         } while (chon != 0);
     }
-    // Tao thu muc data neu chua co.
-    static void taoThuMucData() {
-        try {
-            java.nio.file.Files.createDirectories(java.nio.file.Path.of("data"));
-        } catch (java.io.IOException e) {
-            System.out.println("Không thể tạo thư mục data: " + e.getMessage());
-        }
-    }
-
-    // Doc danh sach chi nhanh. Neu chua co thi tao CN01.
     static void khoiTaoChiNhanh() {
-        taoThuMucData();
-
-        if (java.nio.file.Files.exists(java.nio.file.Path.of(FILE_CN))) {
-            dsCN.docFile(FILE_CN);
-        }
-
+        try { java.nio.file.Files.createDirectories(java.nio.file.Path.of("data")); }
+        catch (java.io.IOException e) { System.out.println("Không thể tạo thư mục data: " + e.getMessage()); }
+        if (java.nio.file.Files.exists(java.nio.file.Path.of(FILE_CN))) dsCN.docFile(FILE_CN);
         if (dsCN.getSoLuong() == 0) {
             dsCN.them("CN01", "Chi nhánh 1", "Chưa cập nhật địa chỉ");
             dsCN.ghiFile(FILE_CN);
-            System.out.println("Đã tạo chi nhánh mặc định CN01.");
+            System.out.println("Chưa có chi nhánh, đã tạo chi nhánh mặc định CN01.");
         }
     }
 
-    // Gan chi nhanh dau tien cho nhan vien chua duoc gan chi nhanh.
     static void ganChiNhanhMacDinh() {
         if (dsCN.getSoLuong() == 0) return;
-
-        String maChiNhanh = dsCN.get(0).getMa();
-        int soNhanVien = 0;
-
+        String macDinh = dsCN.get(0).getMa();
+        int n = 0;
         for (int i = 0; i < dsnv.getSoLuong(); i++) {
             NhanVien nv = dsnv.getDanhSach()[i];
-
-            if (nv.thuocChiNhanh() && nv.getMaChiNhanh().isEmpty()) {
-                nv.setMaChiNhanh(maChiNhanh);
-                soNhanVien++;
-            }
+            if (nv.thuocChiNhanh() && nv.getMaChiNhanh().isEmpty()) { nv.setMaChiNhanh(macDinh); n++; }
         }
-
-        if (soNhanVien > 0) {
-            System.out.println("Đã gán " + soNhanVien + " nhân viên vào " + maChiNhanh);
-        }
+        if (n > 0) System.out.println("Đã gán " + n + " nhân viên chưa có chi nhánh vào " + macDinh
+            + ". Admin có thể đổi trong mục Nhân sự > Sửa.");
     }
-
     static void khoiTaoNhanVien() {
         try { java.nio.file.Files.createDirectories(java.nio.file.Path.of("data")); }
         catch (java.io.IOException e) { System.out.println("Không thể tạo thư mục data: " + e.getMessage()); }
@@ -643,82 +617,30 @@ public class Main {
         if (dsnv.soLuongAdmin() == 0)
             System.out.println("CẢNH BÁO: Không có tài khoản ADMIN trong file nhân viên!");
     }
-
-    // Khoi tao toan bo du lieu can thiet khi mo chuong trinh.
-    static void khoiTaoDuLieu() {
+    public static void main(String[] args) {
         TienIch.cauHinhUnicodeConsole();
         khoiTaoChiNhanh();
-
-        dsnv.setChuanHoaChiNhanh(ma -> {
-            ChiNhanh cn = dsCN.timTheoMa(ma);
-            if (cn == null) return null;
-            return cn.getMa();
-        });
-
+        dsnv.setChuanHoaChiNhanh(m -> { ChiNhanh c = dsCN.timTheoMa(m); return c == null ? null : c.getMa(); });
         khoiTaoNhanVien();
-        try {
-            LuuTruPhien.DuLieu phien = LuuTruPhien.doc(FILE_PHIEN, dsnv);
-            if (phien != null) {
-                kho = phien.kho; dskh = phien.khachHang; dsncc = phien.nhaCungCap;
-                dspn = phien.phieuNhap; dsCN = phien.chiNhanh;
-                System.out.println("Đã khôi phục dữ liệu phiên trước.");
-            }
-        } catch (java.io.IOException | IllegalArgumentException ex) {
-            coTheLuuPhien = false;
-            System.out.println("Không khôi phục được phiên trước; giữ nguyên bản lưu để kiểm tra: " + ex.getMessage());
-        }
         ganChiNhanhMacDinh();
-    }
-
-    // Luu du lieu truoc khi ket thuc chuong trinh.
-    static boolean luuDuLieu() {
-        if (coTheLuuPhien) {
-            try {
-                LuuTruPhien.ghi(FILE_PHIEN, new LuuTruPhien.DuLieu(kho, dskh, dsncc, dspn, dsCN), dsnv);
-            } catch (java.io.IOException | IllegalArgumentException ex) {
-                System.out.println("Chưa lưu được phiên. Chương trình tiếp tục để bạn có thể thử lại: " + ex.getMessage());
-                return false;
-            }
-        } else {
-            System.out.println("Bỏ qua lưu phiên để bảo vệ bản lưu chưa khôi phục được.");
-        }
-        dsCN.ghiFile(FILE_CN);
-
-        if (coTheGhiNhanVien) {
-            dsnv.ghiFile(FILE_NV);
-        } else {
-            System.out.println("Bỏ qua lưu nhân viên vì dữ liệu gốc chưa tương thích.");
-        }
-        return true;
-    }
-
-    public static void main(String[] args) {
-        khoiTaoDuLieu();
-
         int chon;
         do {
             menuChinh();
             chon = TienIch.nhapSoNguyenKhongAm("Chọn chức năng: ");
-
             switch (chon) {
-                case 1:
-                    dangNhap();
+                case 1: dangNhap(); break;
+                case 2: {
+                    ChiNhanh c = chonChiNhanh();
+                    if (c != null) c.getDsmh().xuat();
                     break;
-                case 2:
-                    ChiNhanh cn = chonChiNhanh();
-                    if (cn != null) {
-                        cn.getDsmh().xuat();
-                    }
-                    break;
+                }
                 case 0:
-                    if (luuDuLieu()) System.out.println("Tạm biệt!");
-                    else chon = -1;
-                    break;
-                default:
-                    System.out.println("Lựa chọn không hợp lệ!");
-                    break;
+                    dsCN.ghiFile(FILE_CN);
+                    if (coTheGhiNhanVien) dsnv.ghiFile(FILE_NV);
+                    else System.out.println("Bỏ qua lưu nhân viên vì dữ liệu gốc chưa tương thích.");
+                    System.out.println("Tạm biệt!"); break;
+                default: System.out.println("Lựa chọn không hợp lệ!");
             }
         } while (chon != 0);
     }
-
 }

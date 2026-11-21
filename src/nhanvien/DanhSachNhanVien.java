@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/** Module TV5: danh sách bằng mảng thuần, không dùng Collection. */
+
 public class DanhSachNhanVien implements IQuanLy, IFileIO {
     private NhanVien[] danhSach = new NhanVien[2];
     private int soLuong = 0;

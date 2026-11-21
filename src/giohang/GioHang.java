@@ -44,8 +44,7 @@ public class GioHang {
         }
         int vt = timViTri(mh.getMa());
         int daCo = (vt == -1) ? 0 : ds[vt].getSoLuongMon(); // số lượng mặt hàng có sẵn trong giỏ
-        MatHang hangTrenKe = vt == -1 ? mh : ds[vt].getMatHang();
-        if ((long) daCo + sl > hangTrenKe.getSoLuong()) {
+        if ((long) daCo + sl > mh.getSoLuong()) {
             System.out.println("Không đủ hàng! Trên kệ còn " + mh.getSoLuong() + ", trong giỏ đã có " + daCo);
             return;
         }

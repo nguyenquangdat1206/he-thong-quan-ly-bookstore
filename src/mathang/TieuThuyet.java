@@ -48,32 +48,6 @@ public class TieuThuyet extends Sach {
 
     }
 
-    // nhập truyền tên nhà cung cấp từ phiếu nhập lên
-    @Override
-    public void nhap(String tenNCC) {
-
-        while (true) {
-            try {
-                setMa(TienIch.nhapChuoi("Nhập mã (TTHxxxx): "));
-                break;
-            } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
-        setTen(TienIch.nhapChuoi("Nhập tên: "));
-
-        setTheloai(TienIch.nhapChuoi("Nhập thể loại: "));
-
-        setTacGia(TienIch.nhapChuoi("Nhập tác giả: "));
-
-        setNhaXuatBan(tenNCC);
-
-        setGiaNhap(TienIch.nhapGiaTien("Nhập giá nhập: "));
-
-        setSoLuong(TienIch.nhapSoNguyenKhongAm("Nhập số lượng: "));
-
-    }
 
     @Override
     public void xuat() {

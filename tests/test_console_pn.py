@@ -1,6 +1,7 @@
 from pathlib import Path
-import tempfile, subprocess, shutil, sys
+import os, tempfile, subprocess, shutil, sys
 ROOT=Path(__file__).resolve().parent.parent
+CP=os.environ.get('BOOKSTORE_TEST_CP', str(ROOT/'build-test'))
 
 scenarios=[
  ('admin imports PN, views auto-suppliers',
@@ -33,7 +34,7 @@ for name,inputs,expected,forbidden in scenarios:
   for filename,sub in [('kho_input.txt','kho'),('khachhang.txt','khachhang'),('phieunhap_input.txt','phieunhap'),('hoadon.txt','hoadon')]:
    shutil.copy2(ROOT/'tests'/'fixtures'/sub/filename,dest/'data'/filename)
   shutil.copy2(ROOT/'tests'/'fixtures'/'nhanvien_demo.txt',dest/'data'/'nhanvien_cn.txt')
-  run=subprocess.run(['java','-Dfile.encoding=UTF-8','-Dstdout.encoding=UTF-8','-Dstderr.encoding=UTF-8','-cp',str(ROOT/'build'),'Main'],
+  run=subprocess.run(['java','-Dfile.encoding=UTF-8','-Dstdout.encoding=UTF-8','-Dstderr.encoding=UTF-8','-cp',CP,'Main'],
     input='\n'.join(inputs)+'\n',text=True,encoding='utf8',capture_output=True,cwd=dest,timeout=20)
   out=run.stdout+'\n'+run.stderr
   errors=[f'exit {run.returncode}' if run.returncode!=0 else ''] + [f'missing {p}' for p in expected if p not in out] + [f'unexpected {p}' for p in forbidden if p in out]

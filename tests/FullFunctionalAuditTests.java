@@ -263,11 +263,19 @@ public class FullFunctionalAuditTests {
         test("RECEIPT select existing ID for editing", () -> {
             DanhSachPhieuNhap list=receipts(); input("PN01\n4\n",list::sua); yes(list.getSLpn()==1,"edit changed count");
         });
+        test("RECEIPT editing a missing ID preserves the list without entering an editor", () -> {
+            DanhSachPhieuNhap list=receipts();
+            String out=input("MISSING\n",list::sua);
+            yes(list.getSLpn()==1 && list.timPhieu("PN01")!=null,"missing edit changed receipts");
+            yes(out.contains("Không có mã phiếu nhập") && !out.contains("MENU SỬA"),"missing edit was not rejected");
+        });
         test("RECEIPT product editor accepts zero to exit", () -> {
             PhieuNhap note=receipts().timPhieu("PN01"); input("SCH0101\n0\n",note::sua); yes(note.getSoLuongNhap()==1,"exit changed rows");
         });
-        test("RECEIPT supplier rename preserves export/import relationship", () -> {
-            DanhSachPhieuNhap list=receipts(); list.getDanhSachNCC().timNCC("NCC0").setTenNCC("Renamed"); Path path=file("");
+        test("RECEIPT TXT restores supplier from the product publisher", () -> {
+            DanhSachPhieuNhap list=receipts();
+            ((Sach)list.timPhieu("PN01").getDSMH()[0]).setNhaXuatBan("Renamed");
+            Path path=file("");
             try {
                 list.ghiFile(path.toString()); DanhSachPhieuNhap copy=new DanhSachPhieuNhap(); copy.docFile(path.toString());
                 yes("Renamed".equals(copy.timPhieu("PN01").getChiTiet().getNhaCungCap().getTenNCC()),"supplier rename lost on reload");
@@ -316,6 +324,12 @@ public class FullFunctionalAuditTests {
             MatHang item=book("SCH0101",5); HoaDon hd=order("A",item,2); hd.setHinhThucThanhToan(new ThanhToanTienMat(Double.NaN));
             yes(!hd.thanhToan() && !hd.isDaThanhToan() && item.getSoLuong()==5,"NaN cash marked paid");
         });
+        test("PAYMENT rejects nonfinite and negative cash and totals", () -> {
+            for (double invalid : new double[]{Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, -1}) {
+                yes(!new ThanhToanTienMat(invalid).xuLyThanhToan(100),"invalid cash accepted: " + invalid);
+                yes(!new ThanhToanTienMat(100).xuLyThanhToan(invalid),"invalid total accepted: " + invalid);
+            }
+        });
         test("PAYMENT invalid card and valid card", () -> {
             yes(!new ThanhToanThe("", "Bank").xuLyThanhToan(100),"empty transaction");
             yes(!new ThanhToanThe("TX", " ").xuLyThanhToan(100),"empty bank");
@@ -343,6 +357,21 @@ public class FullFunctionalAuditTests {
             Path path=file("BROKEN\nHDVALID;2026-11-21;KH01;BH01;Seller;1\n1\nSCH0101;2;150\n");
             try { Main.cnHienTai.getDshd().docFile(path.toString()); yes(Main.cnHienTai.getDshd().timKiem("HDVALID")!=null,"valid record after malformed row lost"); }
             finally { Files.deleteIfExists(path); }
+        });
+        test("INVOICE invalid date, count and detail do not leave partial invoices", () -> {
+            for (String invalid : new String[]{
+                    "BAD;not-a-date;KH01\n1\nSCH0101;1;150\n",
+                    "BAD;2026-11-21;KH01\nnot-a-count\n",
+                    "BAD;2026-11-21;KH01\n2147483647\n",
+                    "BAD;2026-11-21;KH01\n2\nSCH0101;1;150\nSCH0102;invalid;150\n"}) {
+                reset(); input("KH01\nAlice\n090\n",Main.dskh::them);
+                Path path=file(invalid + "VALID;2026-11-21;KH01;BH01;Seller;1\n1\nSCH0101;2;150\n");
+                try {
+                    Main.cnHienTai.getDshd().docFile(path.toString());
+                    yes(Main.cnHienTai.getDshd().getSoLuong()==1
+                            && Main.cnHienTai.getDshd().timKiem("VALID")!=null,"partial or missing invoice after bad record");
+                } finally { Files.deleteIfExists(path); }
+            }
         });
         test("REPORT paid revenue, pending total and customer ranking", () -> {
             reset(); input("KH01\nAlice\n090\n",Main.dskh::them); MatHang item=book("SCH0101",10);

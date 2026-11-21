@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Check legacy staff and invalid receipt dates without altering input bytes."""
 from pathlib import Path
-import tempfile, subprocess, shutil
+import os, tempfile, subprocess, shutil
 ROOT = Path(__file__).resolve().parent.parent
 with tempfile.TemporaryDirectory(prefix='oop_v4_legacy_') as d:
     tmp=Path(d)
@@ -20,7 +20,7 @@ with tempfile.TemporaryDirectory(prefix='oop_v4_legacy_') as d:
         shutil.copyfile(ROOT/'tests'/'fixtures'/folder/name,data/name)
     (data/'mathang.txt').write_text('Sách;SCH0001;Sách mẫu;25000;4;Tác giả;NXB;Thiếu nhi\n',encoding='utf-8')
     original={p.name:p.read_bytes() for p in data.iterdir() if p.name != 'chinhanh.txt'}
-    cp=str(ROOT/'build')
+    cp=os.environ.get('BOOKSTORE_TEST_CP', str(ROOT/'build-test'))
     run=subprocess.run(['java','-Dfile.encoding=UTF-8','-Dstdout.encoding=UTF-8','-Dstderr.encoding=UTF-8','-cp',cp,'Main'],cwd=tmp,input='1\nadmin\ntest-only\nCN01\n7\n1\n0\n0\n0\n',text=True,capture_output=True,encoding='utf-8',timeout=25)
     assert run.returncode==0,run.stderr[-2000:]
     assert 'Đăng nhập thành công' in run.stdout,run.stdout[-2000:]

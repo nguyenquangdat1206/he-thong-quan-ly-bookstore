@@ -106,6 +106,8 @@ public class PhieuNhap implements IGetMa, IQuanLy{
         if (mhMoi instanceof Vo) ((Vo) mhMoi).nhap(tenNCC);;
         return mhMoi;
     }
+
+
     @Override 
     public void them(){
         MatHang mhMoi;

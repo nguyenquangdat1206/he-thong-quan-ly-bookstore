@@ -5,6 +5,7 @@ build-test/
 /.venv/
 /out/
 /temp/
+/backups/
 *.iml
 *.class
 

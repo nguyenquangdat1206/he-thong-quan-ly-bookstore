@@ -17,7 +17,7 @@ public class DanhSachNCC implements IQuanLy, IFileIO {
         soLuongNCC = 0;
     }
 
-    /** Dùng chung một danh sách NCC với module phiếu nhập. Giữ nguyên mảng tĩnh, tự tăng sức chứa. */
+
     public NhaCungCap timHoacTaoTheoTen(String tenNCC) {
         if (tenNCC == null || tenNCC.trim().isEmpty())
             throw new IllegalArgumentException("Tên nhà cung cấp không được trống");
@@ -56,13 +56,13 @@ public class DanhSachNCC implements IQuanLy, IFileIO {
         }
 
         System.out.println("\n===== DANH SÁCH NHÀ CUNG CẤP =====");
-        System.out.printf("%-10s %-25s %-25s %-15s %-25s\n",
+        System.out.printf("%-10s %-25s %-40s %-20s %-30s\n",
                 "Mã NCC", "Tên NCC", "Địa chỉ", "SĐT", "Email");
 
         for (int i = 0; i < soLuongNCC; i++) {
             NhaCungCap ncc = dsNCC[i];
 
-            System.out.printf("%-10s %-25s %-25s %-15s %-25s\n",
+            System.out.printf("%-10s %-25s %-40s %-20s %-30s\n",
                     ncc.getMaNCC(),
                     ncc.getTenNCC(),
                     ncc.getDiaChi(),
@@ -265,15 +265,5 @@ public class DanhSachNCC implements IQuanLy, IFileIO {
 
     public int getSoLuongNCC() {
         return soLuongNCC;
-    }
-
-    /** Khôi phục đầy đủ NCC, bao gồm mã và các trường liên hệ đã lưu. */
-    public boolean them(NhaCungCap ncc) {
-        if (ncc == null || ncc.getMaNCC() == null || ncc.getMaNCC().isBlank()
-                || ncc.getTenNCC() == null || ncc.getTenNCC().isBlank() || timNCC(ncc.getMaNCC()) != null)
-            return false;
-        if (soLuongNCC == dsNCC.length) dsNCC = java.util.Arrays.copyOf(dsNCC, dsNCC.length * 2);
-        dsNCC[soLuongNCC++] = ncc;
-        return true;
     }
 }

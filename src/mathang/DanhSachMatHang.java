@@ -12,6 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import interfaces.IQuanLy;
+import interfaces.IThaoTacThucThe;
 
 public class DanhSachMatHang implements IQuanLyMatHang {
     MatHang[] ds;
@@ -30,16 +32,6 @@ public class DanhSachMatHang implements IQuanLyMatHang {
 
     public void setKho(Kho kho) { this.kho = kho; }
 
-    /** Nạp ảnh chụp kệ đã lưu; không chuyển hoặc trừ hàng trong kho. */
-    public boolean khoiPhuc(MatHang mh) {
-        if (mh == null || mh.getMa() == null || mh.getMa().isBlank() || mh.getSoLuong() < 0
-                || !Double.isFinite(mh.getGiaNhap()) || mh.getGiaNhap() < 0 || timKiem_hang(mh.getMa()) != null)
-            return false;
-        if (soluong == ds.length) tangkichthuoc();
-        ds[soluong++] = mh.saoChep();
-        return true;
-    }
-
     //Ham tang kich thuoc
     private void tangkichthuoc(){
         MatHang[] temp = new MatHang[ds.length*2];
@@ -51,14 +43,8 @@ public class DanhSachMatHang implements IQuanLyMatHang {
 
     //Nhap hang(nhap tu kho)
     public void themvaods(String macanlay, int sl, HangTonKho htk){
-        if (macanlay == null || macanlay.isBlank() || sl <= 0 || htk == null
-                || htk.getMatHang() == null || !macanlay.equalsIgnoreCase(htk.getMa())) {
-            throw new IllegalArgumentException("Thông tin chuyển hàng không hợp lệ");
-        }
         for(int i =0 ;i < soluong; i++){
             if(ds[i].getMa().equalsIgnoreCase(macanlay)) {
-                if ((long) ds[i].getSoLuong() + sl > Integer.MAX_VALUE)
-                    throw new IllegalArgumentException("Số lượng trên kệ vượt giới hạn");
                 ds[i].setSoLuong(ds[i].getSoLuong()+sl);
                 System.out.println("(ĐÃ TỒN TẠI) Đã tăng " + sl +" mặt hàng "+ macanlay + " lên bày bán !");
                 return;
@@ -80,8 +66,8 @@ public class DanhSachMatHang implements IQuanLyMatHang {
             HangTonKho htk = kho.getDanhSachTon()[i];
             if(htk.getMa().equalsIgnoreCase(macanlay)){
                 if(sl <= htk.getSoLuong()){
-                    themvaods(macanlay, sl, htk);
                     htk.giamSoLuong(sl);
+                    themvaods(macanlay, sl, htk);
                     return;
                 }
                 else{System.out.println("Hiện tại mặt hàng này chỉ còn " + htk.getSoLuong()+ " nên không thể nhập !"); return;}
@@ -98,7 +84,7 @@ public class DanhSachMatHang implements IQuanLyMatHang {
         nhaptukho(kho, macanlay, slcanlay);
     }
 
-    /** Trả số lượng hàng từ kệ bán về kho; chỉ trừ trên kệ khi kho nhận hàng thành công. */
+
     public boolean traHangVeKho(Kho kho, String ma, int soLuongTra) {
         if (kho == null || ma == null || ma.isBlank() || soLuongTra <= 0) {
             System.out.println("Kho, mã hàng hoặc số lượng trả không hợp lệ.");
@@ -147,7 +133,7 @@ public class DanhSachMatHang implements IQuanLyMatHang {
         }
     }
 
-    /** Liệt kê hàng còn trong kho nhưng chưa có mã tương ứng trên kệ bán. */
+
     public void thongKeHangChuaLenKe(Kho kho){
         if(kho == null){
             System.out.println("Kho trống!");

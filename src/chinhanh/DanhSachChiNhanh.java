@@ -1,10 +1,5 @@
 package chinhanh;
 
-import khachhang.DanhSachKhachHang;
-import kho.Kho;
-import nhanvien.DanhSachNhanVien;
-import nhanvien.NhanVien;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -12,10 +7,16 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-/** Danh sách chi nhánh bằng mảng thuần. Định dạng file: ma;ten;diachi (file cũ 2 cột ma;ten vẫn đọc được) */
+import khachhang.DanhSachKhachHang;
+import kho.Kho;
+import nhanvien.DanhSachNhanVien;
+import nhanvien.NhanVien;
+
+// Quan ly cac chi nhanh bang mang, khong dung ArrayList.
 public class DanhSachChiNhanh {
     private ChiNhanh[] ds = new ChiNhanh[4];
     private int soLuong = 0;
+
     private final Kho kho;
     private final DanhSachKhachHang dskh;
     private final DanhSachNhanVien dsnv;
@@ -26,106 +27,176 @@ public class DanhSachChiNhanh {
         this.dsnv = dsnv;
     }
 
-    public int getSoLuong() { return soLuong; }
-    public ChiNhanh get(int i) { return ds[i]; }
+    public int getSoLuong() {
+        return soLuong;
+    }
+
+    public ChiNhanh get(int viTri) {
+        if (viTri < 0 || viTri >= soLuong) return null;
+        return ds[viTri];
+    }
 
     public ChiNhanh timTheoMa(String ma) {
         if (ma == null) return null;
-        for (int i = 0; i < soLuong; i++)
-            if (ds[i].getMa().equalsIgnoreCase(ma.trim())) return ds[i];
+
+        for (int i = 0; i < soLuong; i++) {
+            if (ds[i].getMa().equalsIgnoreCase(ma.trim())) {
+                return ds[i];
+            }
+        }
         return null;
     }
 
-    public boolean them(String ma, String ten) { return them(ma, ten, ""); }
+    public boolean them(String ma, String ten) {
+        return them(ma, ten, "");
+    }
 
     public boolean them(String ma, String ten, String diaChi) {
-        if (ma == null || ma.isBlank() || ten == null || ten.isBlank()) return false;
+        if (ma == null || ma.trim().isEmpty()) return false;
+        if (ten == null || ten.trim().isEmpty()) return false;
         if (diaChi == null) diaChi = "";
-        if (ma.contains(";") || ten.contains(";") || diaChi.contains(";") || timTheoMa(ma) != null) return false;
-        if (soLuong == ds.length) ds = java.util.Arrays.copyOf(ds, ds.length * 2);
-        ds[soLuong++] = new ChiNhanh(ma.trim(), ten.trim(), diaChi.trim(), kho, dskh, dsnv);
+        if (ma.contains(";") || ten.contains(";") || diaChi.contains(";")) return false;
+        if (timTheoMa(ma) != null) return false;
+
+        // Neu mang day thi tang kich thuoc mang len gap doi.
+        if (soLuong == ds.length) {
+            ChiNhanh[] mangMoi = new ChiNhanh[ds.length * 2];
+            for (int i = 0; i < ds.length; i++) {
+                mangMoi[i] = ds[i];
+            }
+            ds = mangMoi;
+        }
+
+        ds[soLuong] = new ChiNhanh(ma.trim(), ten.trim(), diaChi.trim(), kho, dskh, dsnv);
+        soLuong++;
         return true;
     }
 
-    /** Chỉ xóa được chi nhánh trống (không còn hàng trên kệ, hóa đơn, hay nhân viên). */
     public boolean xoa(String ma) {
-        ChiNhanh c = timTheoMa(ma);
-        if (c == null || c.coDuLieu() || dsnv.demTheoChiNhanh(c.getMa()) > 0) return false;
-        int vt = 0;
-        while (ds[vt] != c) vt++;
-        for (int i = vt; i < soLuong - 1; i++) ds[i] = ds[i + 1];
-        ds[--soLuong] = null;
+        ChiNhanh cn = timTheoMa(ma);
+        if (cn == null) return false;
+        if (cn.coDuLieu()) return false;
+        if (dsnv.demTheoChiNhanh(cn.getMa()) > 0) return false;
+
+        int viTri = 0;
+        while (ds[viTri] != cn) {
+            viTri++;
+        }
+
+        for (int i = viTri; i < soLuong - 1; i++) {
+            ds[i] = ds[i + 1];
+        }
+
+        ds[soLuong - 1] = null;
+        soLuong--;
         return true;
     }
 
     public void xuat() {
-        System.out.println("=== DANH SÁCH CHI NHÁNH ===");
-        if (soLuong == 0) System.out.println("Chưa có chi nhánh nào.");
-        for (int i = 0; i < soLuong; i++)
-            System.out.printf("%-8s | %-22s | %-32s | %d mặt hàng trên kệ | %d hóa đơn%n", ds[i].getMa(), ds[i].getTen(),
-                    ds[i].getDiaChi().isEmpty() ? "(chưa có địa chỉ)" : ds[i].getDiaChi(),
-                    ds[i].getDsmh().getSoMH(), ds[i].getDshd().getSoLuong());
+        System.out.println("=== DANH SACH CHI NHANH ===");
+
+        if (soLuong == 0) {
+            System.out.println("Chua co chi nhanh nao.");
+            return;
+        }
+
+        for (int i = 0; i < soLuong; i++) {
+            ChiNhanh cn = ds[i];
+            System.out.println("Ma: " + cn.getMa()
+                    + " | Ten: " + cn.getTen()
+                    + " | Dia chi: " + cn.getDiaChi()
+                    + " | Mat hang: " + cn.getDsmh().getSoMH()
+                    + " | Hoa don: " + cn.getDshd().getSoLuong());
+        }
     }
 
-    /** Xem nhân viên đang làm ở một chi nhánh (chỉ đọc danh sách nhân viên). */
-    public void xuatNhanVien(ChiNhanh c) {
-        System.out.println("=== NHÂN VIÊN - " + c.getMa() + " | " + c.getTen()
-                + (c.getDiaChi().isEmpty() ? "" : " | " + c.getDiaChi()) + " ===");
-        int n = 0;
+    public void xuatNhanVien(ChiNhanh cn) {
+        if (cn == null) return;
+
+        System.out.println("=== NHAN VIEN CHI NHANH " + cn.getMa() + " ===");
+        int dem = 0;
+
         for (int i = 0; i < dsnv.getSoLuong(); i++) {
             NhanVien nv = dsnv.getDanhSach()[i];
-            if (nv.thuocChiNhanh() && nv.getMaChiNhanh().equalsIgnoreCase(c.getMa())) {
-                System.out.printf("%-8s | %-20s | %-10s | Ca: %s%n",
-                        nv.getMaNguoi(), nv.getHoTen(), nv.getQuyen(), nv.getCaLamViec());
-                n++;
+            if (nv.thuocChiNhanh()
+                    && nv.getMaChiNhanh().equalsIgnoreCase(cn.getMa())) {
+                System.out.println(nv.getMaNguoi() + " | " + nv.getHoTen()
+                        + " | " + nv.getQuyen() + " | Ca: " + nv.getCaLamViec());
+                dem++;
             }
         }
-        if (n == 0) System.out.println("Chi nhánh chưa có nhân viên.");
+
+        if (dem == 0) {
+            System.out.println("Chi nhanh chua co nhan vien.");
+        }
     }
 
-    /** Mô tả nơi làm việc của một nhân viên: chi nhánh (kèm địa chỉ) hoặc toàn hệ thống (kho chung). */
     public String moTaChiNhanhCua(NhanVien nv) {
-        if (!nv.thuocChiNhanh()) return "Toàn hệ thống (kho chung)";
-        ChiNhanh c = timTheoMa(nv.getMaChiNhanh());
-        if (c == null) return "(chưa gán chi nhánh hợp lệ)";
-        return c.getMa() + " - " + c.getTen() + (c.getDiaChi().isEmpty() ? "" : " (" + c.getDiaChi() + ")");
+        if (!nv.thuocChiNhanh()) {
+            return "Toan he thong (kho chung)";
+        }
+
+        ChiNhanh cn = timTheoMa(nv.getMaChiNhanh());
+        if (cn == null) return "Chua gan chi nhanh hop le";
+
+        return cn.getMa() + " - " + cn.getTen() + " - " + cn.getDiaChi();
     }
 
     public void xuatNhanVienTatCaChiNhanh() {
-        for (int i = 0; i < soLuong; i++) { xuatNhanVien(ds[i]); System.out.println(); }
-        System.out.println("=== NHÂN VIÊN TOÀN HỆ THỐNG (ADMIN / NHẬP KHO, dùng kho chung) ===");
-        int n = 0;
+        for (int i = 0; i < soLuong; i++) {
+            xuatNhanVien(ds[i]);
+            System.out.println();
+        }
+
+        System.out.println("=== NHAN VIEN TOAN HE THONG ===");
+        int dem = 0;
         for (int i = 0; i < dsnv.getSoLuong(); i++) {
             NhanVien nv = dsnv.getDanhSach()[i];
             if (!nv.thuocChiNhanh()) {
-                System.out.printf("%-8s | %-20s | %s%n", nv.getMaNguoi(), nv.getHoTen(), nv.getQuyen());
-                n++;
+                System.out.println(nv.getMaNguoi() + " | " + nv.getHoTen()
+                        + " | " + nv.getQuyen());
+                dem++;
             }
         }
-        if (n == 0) System.out.println("(không có)");
+        if (dem == 0) System.out.println("Khong co nhan vien.");
     }
 
     public void ghiFile(String duongDan) {
-        try (BufferedWriter bw = Files.newBufferedWriter(Path.of(duongDan), StandardCharsets.UTF_8)) {
+        try {
+            BufferedWriter bw = Files.newBufferedWriter(
+                    Path.of(duongDan), StandardCharsets.UTF_8);
+
             for (int i = 0; i < soLuong; i++) {
                 bw.write(ds[i].getMa() + ";" + ds[i].getTen() + ";" + ds[i].getDiaChi());
                 bw.newLine();
             }
-            System.out.println("Đã ghi " + soLuong + " chi nhánh vào " + duongDan);
-        } catch (IOException e) { System.out.println("Lỗi ghi chi nhánh: " + e.getMessage()); }
+            bw.close();
+            System.out.println("Da ghi danh sach chi nhanh.");
+        } catch (IOException e) {
+            System.out.println("Loi ghi file chi nhanh: " + e.getMessage());
+        }
     }
 
-    /** Chỉ thêm chi nhánh chưa có; không làm mất dữ liệu của chi nhánh đã nạp. */
     public void docFile(String duongDan) {
-        int them = 0, boQua = 0;
-        try (BufferedReader br = Files.newBufferedReader(Path.of(duongDan), StandardCharsets.UTF_8)) {
-            String s;
-            while ((s = br.readLine()) != null) {
-                if (s.isBlank()) continue;
-                String[] a = s.split(";", -1);
-                if ((a.length == 2 && them(a[0], a[1])) || (a.length == 3 && them(a[0], a[1], a[2]))) them++; else boQua++;
+        try {
+            BufferedReader br = Files.newBufferedReader(
+                    Path.of(duongDan), StandardCharsets.UTF_8);
+
+            String dong;
+            while ((dong = br.readLine()) != null) {
+                if (dong.trim().isEmpty()) continue;
+
+                String[] thongTin = dong.split(";", -1);
+                if (thongTin.length == 2) {
+                    them(thongTin[0], thongTin[1]);
+                } else if (thongTin.length == 3) {
+                    them(thongTin[0], thongTin[1], thongTin[2]);
+                }
             }
-            System.out.println("Đã tải " + them + " chi nhánh (bỏ qua " + boQua + " dòng lỗi/trùng).");
-        } catch (IOException e) { System.out.println("Không thể đọc " + duongDan + ": " + e.getMessage()); }
+            br.close();
+            System.out.println("Da doc file chi nhanh.");
+        } catch (IOException e) {
+            System.out.println("Loi doc file chi nhanh: " + e.getMessage());
+        }
     }
 }

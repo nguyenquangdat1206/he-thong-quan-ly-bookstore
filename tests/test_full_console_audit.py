@@ -1,12 +1,13 @@
 """Exercise Main in isolated folders; continue after failures to audit every scenario."""
 from pathlib import Path
+import os
 import re
 import shutil
 import subprocess
 import tempfile
 
 ROOT = Path(__file__).resolve().parent.parent
-CP = str(ROOT / "build")
+CP = os.environ.get('BOOKSTORE_TEST_CP', str(ROOT / "build-test"))
 ADMIN = ["1", "ADMIN", "test-only", "CN01"]
 IMPORT = ["2", "8", ".", "11", ".", "0"]
 CUSTOMERS = ["4", "6", ".", "0"]
@@ -92,7 +93,15 @@ case("seller assigned to CN02 and denied branch management", ["1", "BH02", "test
 case("warehouse role can view CN02 shelf", ["1", "KHO01", "test-only", "4", "CN02", "0", "9", "0", "0"], ["NHÂN VIÊN NHẬP KHO", "Không được phép"])
 case("branch create edit export delete", ADMIN + ["9", "2", "CN03", "Third", "Third Address", "7", "CN03", "New Address", "6", "data/branches_output.txt", "3", "CN03", "0"] + EXIT,
      ["Đã thêm chi nhánh", "Đã cập nhật địa chỉ", "Đã xóa chi nhánh"], verify=lambda f, o: expect_file(f, "branches_output.txt", "CN03;Third;New Address"))
-case("branch import skips invalid and duplicate rows", ADMIN + ["9", "5", "data/branches_import.txt", "1", "0"] + EXIT, ["Đã tải 1 chi nhánh", "CN03"])
+def verify_branch_import(folder, output):
+    records = saved(folder, "chinhanh.txt").splitlines()
+    assert len(records) == 3, f"expected 3 branches after import, got {records!r}"
+    assert "CN01;Branch One;Address One" in records, "duplicate import replaced the original branch"
+    assert "CN03;Third;Third Address" in records, "new branch was not saved"
+
+
+case("branch import skips invalid and duplicate rows", ADMIN + ["9", "5", "data/branches_import.txt", "1", "0"] + EXIT,
+     ["Da doc file chi nhanh.", "CN03"], verify=verify_branch_import)
 case("branch with employees cannot be deleted", ADMIN + ["9", "3", "CN01", "0"] + EXIT, ["chi nhánh còn hàng trên kệ / hóa đơn / nhân viên"])
 case("admin branch switch", ADMIN + ["9", "4", "CN02", "0", "3", "1", "0"] + EXIT, ["Đang làm việc tại: Branch Two", "CN02 - Branch Two"])
 case("admin without branch is guarded", ["1", "ADMIN", "test-only", "0", "3", "5", "8", "0", "0"], ["Chưa chọn chi nhánh"])
@@ -143,9 +152,17 @@ case("same invoice ID and stock isolated between CN01 and CN02", ADMIN + IMPORT 
 
 def restart_verify(folder, output):
     second = launch(folder, ADMIN + ["3", "1", "0", "5", "1", "0"] + EXIT)
-    assert "Số mặt hàng: 1" in second and "Mã hóa đơn: HDAUDIT" in second, "shelf and invoices are empty after ordinary exit/restart"
+    contains(second, "Số mặt hàng: 0", "Chưa có hóa đơn nào")
+    assert "Mã hóa đơn: HDAUDIT" not in second, "business data was unexpectedly loaded automatically"
+    assert not (folder / "data" / "phien.properties").exists(), "obsolete session snapshot was created"
+    expect_file(folder, "CN01_mathang_output.txt", "SCH0001;Doraemon Tập 1;25000.0;8")
+    expect_file(folder, "CN01_hoadon_output.txt", "HDAUDIT", ";1\n", "SCH0001;2;37500.0")
+    third = launch(folder, ADMIN + CUSTOMERS + ["5", "5", "data/CN01_hoadon_output.txt", "1", "0"] + EXIT)
+    contains(third, "Mã hóa đơn: HDAUDIT", "Đã thanh toán")
 
 
-case("restart preserves operating shelf and paid invoice", ADMIN + IMPORT + CUSTOMERS + SHELF + CREATE_ORDER + CARD + ["0"] + EXIT, verify=restart_verify)
+case("restart retains metadata; business TXT is exported and invoices reloaded explicitly",
+     ADMIN + IMPORT + CUSTOMERS + SHELF + CREATE_ORDER + CARD + ["6", ".", "0", "3", "10", ".", "0"] + EXIT,
+     verify=restart_verify)
 print(f"FULL CONSOLE AUDIT: {passed} PASS, {failed} FAIL")
 raise SystemExit(1 if failed else 0)

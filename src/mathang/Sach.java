@@ -46,11 +46,10 @@ public class Sach extends MatHang {
     public String getNhaXuatBan() { return nhaXuatBan; }
     public void setNhaXuatBan(String nhaXuatBan) { this.nhaXuatBan = nhaXuatBan; }
 
-    @Override
     public double getThue() { return thue; }
+    public double getLoinhuan() { return loinhuan; }
     @Override
     public double getLoiNhuan() { return getLoinhuan(); }
-    public double getLoinhuan() { return loinhuan; }
 
     @Override
     public void nhap() {

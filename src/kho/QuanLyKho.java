@@ -11,11 +11,6 @@ public class QuanLyKho {
 
     static Kho kho = new Kho();
 
-    public static void main(String[] args) {
-        TienIch.cauHinhUnicodeConsole();
-        menuKho();
-    }
-
     public static void menuKho() {
         int chon;
         do {

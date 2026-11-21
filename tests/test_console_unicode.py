@@ -1,27 +1,32 @@
-"""Verify every console entry point prints Vietnamese without JVM encoding flags."""
+"""Verify Main's UTF-8 setup and standalone menus with explicit JVM encoding."""
 
 from pathlib import Path
+import os
 import shutil
 import subprocess
 import tempfile
 
 
 ROOT = Path(__file__).resolve().parent.parent
+CP = os.environ.get('BOOKSTORE_TEST_CP', str(ROOT / 'build-test'))
 CASES = (
-    ("Main", "QUẢN LÝ NHÀ SÁCH"),
-    ("kho.QuanLyKho", "---------- KHO ----------"),
-    ("phieunhap.QuanLyPhieuNhap", "QUẢN LÝ PHIẾU NHẬP"),
-    ("mathang.QuanLyMatHang", "MẶT HÀNG (CỬA HÀNG)"),
+    ("Main", "0\n", "QUẢN LÝ NHÀ SÁCH"),
+    ("Main", "1\nADMIN\nadmin123\nCN01\n1\n0\n0\n0\n", "---------- KHO ----------"),
+    ("phieunhap.QuanLyPhieuNhap", "0\n", "QUẢN LÝ PHIẾU NHẬP"),
+    ("mathang.QuanLyMatHang", "0\n", "MẶT HÀNG (CỬA HÀNG)"),
 )
+UTF8_FLAGS = ["-Dfile.encoding=UTF-8", "-Dstdout.encoding=UTF-8", "-Dstderr.encoding=UTF-8"]
 
 with tempfile.TemporaryDirectory(prefix="bookstore_unicode_") as directory:
     work = Path(directory)
     (work / "data").mkdir()
     shutil.copy2(ROOT / "tests" / "fixtures" / "nhanvien_demo.txt", work / "data" / "nhanvien_cn.txt")
-    for main_class, heading in CASES:
+    for main_class, inputs, heading in CASES:
+        # Main configures its own UTF-8 streams; standalone modules need JVM flags.
+        flags = [] if main_class == "Main" else UTF8_FLAGS
         run = subprocess.run(
-            ["java", "-cp", str(ROOT / "build"), main_class],
-            input="0\n",
+            ["java", *flags, "-cp", CP, main_class],
+            input=inputs,
             text=True,
             capture_output=True,
             encoding="utf-8",
@@ -36,7 +41,7 @@ with tempfile.TemporaryDirectory(prefix="bookstore_unicode_") as directory:
 
     shutil.copy2(ROOT / "tests" / "fixtures" / "phieunhap" / "phieunhap_input.txt", work / "data" / "phieunhap_input.txt")
     run = subprocess.run(
-        ["java", "-cp", str(ROOT / "build"), "phieunhap.QuanLyPhieuNhap"],
+        ["java", *UTF8_FLAGS, "-cp", CP, "phieunhap.QuanLyPhieuNhap"],
         input="8\n.\n11\n.\n7\n0\n",
         text=True,
         capture_output=True,

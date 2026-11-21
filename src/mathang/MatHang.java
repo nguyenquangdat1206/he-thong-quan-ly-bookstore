@@ -60,7 +60,7 @@ public abstract class MatHang implements IGetMa, Cloneable {
         this.soLuong = soLuong;
     }
 
-    /** Các thuộc tính mặt hàng hiện chỉ gồm kiểu nguyên thủy và String bất biến. */
+
     public MatHang saoChep() {
         try {
             return (MatHang) super.clone();
@@ -84,6 +84,8 @@ public abstract class MatHang implements IGetMa, Cloneable {
         soLuong = TienIch.nhapSoNguyenKhongAm("Nhập số lượng: ");
 
     }
+
+
 
     // Xuat
     public void xuat() {
