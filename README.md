@@ -24,11 +24,27 @@ python3 scripts/audit_data.py
 
 Các script biên dịch với --release 17 vào thư mục build. Bộ kiểm thử gồm 7 chương trình Java, 7 script Python và bước audit 10 tệp dữ liệu. Nếu thiếu Python launcher py trên Windows, test.bat trả mã 2 và báo kiểm thử chưa đầy đủ. Mã 0 chỉ được trả khi tất cả bước đạt.
 
+Nhóm kiểm thử luồng console đầy đủ mở một JVM cho mỗi kịch bản, giới hạn 30 giây/phiên, thu stdout/stderr vào tệp tạm và in kết quả từng ca ngay khi xong. Nếu vượt thời gian, nhật ký có phần đầu ra cuối để hỗ trợ chẩn đoán. Các kiểm tra mã thoát, kết quả nghiệp vụ, phân quyền và dữ liệu lưu vẫn bắt buộc phải đạt.
+
 Trong IDE, chọn src làm source root, tests làm test source root, đặt working directory là thư mục gốc dự án. [Cấu hình VS Code](.vscode/settings.json) tách đầu ra của IDE vào build/ide để tránh xung đột với lệnh kiểm thử.
 
 Kết quả và phạm vi đợt rà soát mới nhất: [báo cáo rà soát](docs/DEEP_AUDIT_2026-11-21.md). Các báo cáo cũ trong docs ghi lại lịch sử và có thể mô tả menu/định dạng của phiên bản trước.
 
-Đợt rà soát này xác nhận 243 ca kiểm thử riêng biệt đạt, 0 thất bại; audit 10/10 tệp dữ liệu đạt. Xem báo cáo để biết cách tổng hợp và giới hạn môi trường kiểm chứng.
+## Kết quả kiểm thử mới nhất — 21/11/2026
+
+Đã chạy lại toàn bộ 14 bộ kiểm thử trên nhánh develop sau khi chuyển lớp tiện ích sang gói tienich. Kết quả cuối cùng tính theo các ca riêng biệt:
+
+| Nhóm | Số bộ | Ca đạt | Thất bại |
+| --- | ---: | ---: | ---: |
+| Java: nghiệp vụ, kho/kệ, dữ liệu và lưu phiên | 7 | 163 | 0 |
+| Python: console, UTF-8, audit và lỗi lưu/khôi phục | 7 | 80 | 0 |
+| **Tổng** | **14** | **243** | **0** |
+
+Audit dữ liệu đạt **10/10 tệp**. Biên dịch toàn bộ mã với --release 17 -Xlint:all không có lỗi/cảnh báo; VS Code không báo lỗi; liên kết README và cú pháp hai script shell đều được kiểm tra.
+
+Lượt chạy đầu có một ca console vượt thời gian chờ. Sau khi chẩn đoán, bộ console được chỉnh ngưỡng 30 giây và thu đầu ra bằng tệp tạm; toàn bộ nhóm 39 ca đã được chạy lại và đạt 39/39, mã thoát 0. Tổng 243 phía trên không cộng lặp các lần chạy lại. Chi tiết các timeout và cách kiểm chứng nằm trong [báo cáo](docs/DEEP_AUDIT_2026-11-21.md).
+
+Môi trường thực thi: Windows, JDK 20.0.2 với target Java 17, Python 3.14.3. Script Linux/macOS đã được kiểm tra cú pháp bằng Git Bash; chưa chạy toàn bộ bộ kiểm thử trên Linux/macOS hoặc JVM 17.
 
 ## Dữ liệu lúc khởi động và khi thoát
 
@@ -96,7 +112,7 @@ Nhập Enter hoặc dấu chấm tại câu hỏi đường dẫn để dùng t�
 3. Vào Mặt hàng → 2, nhập mã và số lượng chuyển lên kệ. Ví dụ SCH0001 từ tệp kho, hoặc SCH2001 từ tệp phiếu nhập hiện có.
 4. Kiểm tra tồn kho và kệ riêng. Chuyển hàng giảm kho và tăng kệ; trả hàng làm ngược lại.
 
-Kho chứa tối đa 10.000 đơn vị. Đọc lại cùng tệp kho bỏ qua mã đã có. Chuyển hàng loạt lấy 20% của từng mã còn ít nhất 15 đơn vị trong kho. Kho, kệ và phiếu giữ bản sao metadata riêng để việc sửa ở một nơi không âm thầm thay đổi nơi khác.
+Kho chứa tối đa 10.000 đơn vị. Đọc lại cùng tệp kho bỏ qua mã đã có. Chuyển hàng loạt lấy 20% của từng mã còn ít nhất 15 đơn vị trong kho. Kho, kệ và phiếu giữ bản sao thông tin mặt hàng riêng để việc sửa ở một nơi không âm thầm thay đổi nơi khác.
 
 Ba chương trình độc lập vẫn dùng được: [QuanLyKho](src/kho/QuanLyKho.java), [QuanLyPhieuNhap](src/phieunhap/QuanLyPhieuNhap.java) và [QuanLyMatHang](src/mathang/QuanLyMatHang.java). Menu mặt hàng độc lập có mục 12 để đọc kho trước khi chuyển lên kệ. Các chương trình độc lập không dùng cơ chế lưu phiên của Main; xuất TXT trước khi thoát nếu cần giữ dữ liệu.
 
@@ -142,6 +158,8 @@ loai;maSKU;ten;giaNhap;soLuong;[thuocTinhRieng]
 
 Số lượng ghi trong tệp kho là tồn kho; số lượng ghi trong tệp kệ là hàng trên kệ. [danhsach_mathang.txt](data/danhsach_mathang.txt) và [mathang.txt](data/mathang.txt) là bộ dữ liệu mặt hàng bổ sung, không tự nạp lúc khởi động.
 
+Menu Mặt hàng nhận hàng từ kho lên kệ bằng mục 2/3 và xuất TXT bằng mục 10. Để dùng dữ liệu TXT làm nguồn hàng, đọc bằng Kho → 10 trước, sau đó chuyển số lượng cần bán lên kệ. Menu mặt hàng độc lập dùng mục 12 để nạp kho. Việc khôi phục kệ ở lần mở Main tiếp theo do bộ lưu phiên thực hiện.
+
 ### Phiếu nhập
 
 ~~~text
@@ -174,6 +192,16 @@ Nhà cung cấp: ma;ten;diaChi;sdt;email
 Mã chi nhánh không được chứa thành phần đường dẫn. Nhập lại khách hàng/nhân viên thay danh sách tương ứng; nhập chi nhánh chỉ bổ sung mã chưa có. Nhập nhân viên thất bại giữ phiên hiện tại; nhập thành công kết thúc đăng nhập để xác thực lại và khóa tự lưu nguồn nhân sự cho tới khi người dùng xuất dữ liệu chủ động.
 
 ## Cấu trúc và phạm vi kiểm chứng
+
+| Thành phần | Trách nhiệm |
+| --- | --- |
+| [mathang](src/mathang) | Các loại sản phẩm, giá bán, thuộc tính và thao tác trên kệ |
+| [Kho](src/kho/Kho.java) | Quản lý tồn kho, sức chứa, đọc/ghi TXT và nhận hàng từ phiếu nhập |
+| [BoChuyenDoiMatHang](src/tienich/BoChuyenDoiMatHang.java) | Chuyển dòng TXT/Properties thành đúng loại sản phẩm và đóng gói thuộc tính để lưu |
+| [LuuTruPhien](src/tienich/LuuTruPhien.java) | Lưu/khôi phục dữ liệu nghiệp vụ và kệ của từng chi nhánh |
+| [Main](src/Main.java) | Ghép các module, đăng nhập, phân quyền và menu |
+
+Các lớp sản phẩm nằm trong gói mathang; phần chuyển đổi dữ liệu và lưu phiên dùng chung nằm trong gói tienich. Tên lớp chuyển đổi hiện tại là BoChuyenDoiMatHang. Các danh sách nghiệp vụ sử dụng mảng Java; Properties dùng để đóng gói bản lưu phiên.
 
 - [src](src): 52 tệp Java, gồm nghiệp vụ, menu, interface, chuyển đổi dữ liệu và lưu phiên.
 - [tests](tests): các bộ Java/Python; fixture và dữ liệu tạm dùng độc lập với dữ liệu nguồn.

@@ -10,6 +10,7 @@ import phieunhap.*;
 import mathang.*;
 import interfaces.IQuanLy;
 import tienich.*;
+import tienich.BoChuyenDoiMatHang;
 
 
 public class Kho implements IQuanLy, interfaces.IFileIO {
@@ -302,7 +303,7 @@ public class Kho implements IQuanLy, interfaces.IFileIO {
                 if (line.startsWith("\uFEFF")) line = line.substring(1);
                 if (line.isBlank()) continue;
                 try {
-                    MatHang item = DuLieuMatHang.docDong(line);
+                    MatHang item = BoChuyenDoiMatHang.docDong(line);
                     if (TienIch.timKiemViTri(dsTonKho, soLuongMatHang, item.getMa()) >= 0) { boQua++; continue; }
                     if (tangTonKho(item, item.getSoLuong())) them++; else boQua++;
                 } catch (IllegalArgumentException ex) { boQua++; }

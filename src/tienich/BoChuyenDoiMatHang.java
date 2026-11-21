@@ -1,10 +1,15 @@
-package mathang;
+package tienich;
 
+import mathang.*;
 import java.util.Properties;
 
-/** Lưu từng thuộc tính để tên chứa dấu ';', dấu xuống dòng vẫn khôi phục được. */
-public final class DuLieuMatHang {
-    private DuLieuMatHang() { }
+/**
+ * Tiện ích chuyển đổi giữa các đối tượng mặt hàng và dữ liệu TXT/Properties.
+ * Kho và bộ lưu phiên dùng chung lớp này; các lớp sản phẩm chỉ giữ nghiệp vụ.
+ * Lưu từng thuộc tính riêng giúp Properties giữ được dấu ';' và xuống dòng.
+ */
+public final class BoChuyenDoiMatHang {
+    private BoChuyenDoiMatHang() { }
 
     /** Dòng TXT: danhMuc;ma;ten;giaNhap;soLuong;thuocTinhRieng... */
     public static MatHang docDong(String line) {

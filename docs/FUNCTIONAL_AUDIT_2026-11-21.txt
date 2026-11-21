@@ -1,5 +1,9 @@
 CẬP NHẬT SAU KHI SỬA LỖI — 21/11/2026
 
+Ghi chú tổ chức mã: lớp src/mathang/DuLieuMatHang.java được nhắc trong
+bản ghi lịch sử bên dưới đã chuyển thành src/tienich/BoChuyenDoiMatHang.java.
+Đây là tiện ích dùng chung của kho và lưu phiên, không thuộc module sản phẩm.
+
 KẾT LUẬN HIỆN TẠI
 Đã xử lý các lỗi F01–F09 và bổ sung lưu/khôi phục phiên cho F10.
 Đã chạy trọn test.bat trên mã sau khi sửa: 197 PASS, 0 FAIL,

@@ -6,6 +6,8 @@
 
 Các thử nghiệm ghi dữ liệu chạy trong thư mục tạm. Không thay đổi tài khoản, mật khẩu hoặc nội dung các tệp đầu vào trong data.
 
+Điều chỉnh tổ chức mã sau rà soát: phần chuyển đổi dùng chung đã chuyển từ lớp DuLieuMatHang trong mathang sang [BoChuyenDoiMatHang](../src/tienich/BoChuyenDoiMatHang.java) trong tienich. Kho và bộ lưu phiên gọi tiện ích này; giữ nguyên định dạng dữ liệu và các lớp sản phẩm.
+
 ## Các lỗi và thay đổi đã xử lý
 
 | Nhóm | Vấn đề xác minh được | Cách xử lý |
@@ -60,7 +62,11 @@ Kết quả: **243 ca riêng biệt đạt, 0 ca thất bại; 10/10 tệp dữ 
 | test_deep_console.py | 10 | 0 |
 | **Tổng** | **243** | **0** |
 
-Lượt test.bat đầy đủ chạy 14 bộ và audit, trả mã 0, in ALL TEST SUITES PASSED. Lượt này chạy 25 ca DeepAuditRegressionTests; sau khi bổ sung hai ca đọc kho, đã biên dịch lại toàn bộ mã và chạy riêng bộ này đạt 27/27. Tổng 243 phía trên đếm các ca riêng biệt, không cộng lặp các lần chạy lại.
+Đợt chạy mới nhất sau khi chuyển lớp tiện ích đã thực thi đủ 14 bộ và audit. Lượt test.bat đầu đạt 242 ca, có một timeout 15 giây ở ca tạo quản lý chi nhánh, nên lệnh tổng trả mã 1. Khi tăng ngưỡng lên 30 giây nhưng vẫn thu đầu ra bằng pipe, nhóm console gặp một timeout ở ca nhập hóa đơn lỗi, dù đầu ra đã chứa hóa đơn hợp lệ và thông báo Tạm biệt. Hai ca này đều chạy riêng thành công nhiều lần, khoảng 8,2–8,4 giây; chưa tái hiện lỗi nghiệp vụ.
+
+Bộ test console sau đó được chuyển sang thu stdout/stderr vào tệp tạm, chờ trực tiếp trạng thái tiến trình, giữ ngưỡng 30 giây và in tiến độ ngay khi từng ca hoàn tất. Toàn bộ nhóm đã chạy lại đạt **39 PASS, 0 FAIL**, mã thoát 0; timeout không tái diễn trong lượt này. Các kiểm tra mã thoát, phân quyền, hóa đơn, tồn kho, tệp lưu và việc giữ nguyên dữ liệu nguồn được giữ đầy đủ. Không sửa mã nghiệp vụ để xử lý timeout của bộ test.
+
+Kết quả cuối cùng 243 phía trên kết hợp các bộ đã đạt trong lượt đầy đủ và kết quả chạy lại bộ console bị ảnh hưởng; đếm theo ca riêng biệt, không cộng lặp những lần chẩn đoán/chạy lại. Không coi lượt test.bat ban đầu là một lượt thành công trọn vẹn.
 
 Biên dịch toàn bộ src và tests bằng javac --release 17 -Xlint:all: không có lỗi hoặc cảnh báo. VS Code Problems không còn lỗi; git diff --check đạt. Dữ liệu đầu vào trong data không có thay đổi so với Git; test console cũng kiểm tra byte của các tệp nguồn trong bản sao tạm.
 

@@ -42,7 +42,7 @@ public final class LuuTruPhien {
         for (int i = 0; i < data.kho.getSoLuongTon(); i++) {
             HangTonKho row = data.kho.getDanhSachTon()[i];
             MatHang mh = row.getMatHang().saoChep(); mh.setSoLuong(row.getSoLuong());
-            DuLieuMatHang.ghi(p, "kho." + i, mh);
+            BoChuyenDoiMatHang.ghi(p, "kho." + i, mh);
         }
         put(p, "kh.count", data.khachHang.getSoLuong());
         for (int i = 0; i < data.khachHang.getSoLuong(); i++) ghiKhach(p, "kh." + i, data.khachHang.getDs()[i]);
@@ -54,7 +54,7 @@ public final class LuuTruPhien {
             put(p, key + ".ma", pn.getMa()); put(p, key + ".ngay", pn.getChiTiet().getNgayNhap());
             put(p, key + ".trangThai", pn.getTrangThai()); ghiNcc(p, key + ".ncc", pn.getChiTiet().getNhaCungCap());
             put(p, key + ".count", pn.getSoLuongNhap());
-            for (int j = 0; j < pn.getSoLuongNhap(); j++) DuLieuMatHang.ghi(p, key + ".hang." + j, pn.getDSMH()[j]);
+            for (int j = 0; j < pn.getSoLuongNhap(); j++) BoChuyenDoiMatHang.ghi(p, key + ".hang." + j, pn.getDSMH()[j]);
         }
         put(p, "cn.count", data.chiNhanh.getSoLuong());
         for (int i = 0; i < data.chiNhanh.getSoLuong(); i++) {
@@ -62,7 +62,7 @@ public final class LuuTruPhien {
             put(p, key + ".ma", cn.getMa()); put(p, key + ".ten", cn.getTen()); put(p, key + ".diaChi", cn.getDiaChi());
             put(p, key + ".ke.count", cn.getDsmh().getSoMH());
             for (int j = 0; j < cn.getDsmh().getSoMH(); j++)
-                DuLieuMatHang.ghi(p, key + ".ke." + j, cn.getDsmh().getMangMatHang()[j]);
+                BoChuyenDoiMatHang.ghi(p, key + ".ke." + j, cn.getDsmh().getMangMatHang()[j]);
             put(p, key + ".hd.count", cn.getDshd().getSoLuong());
             for (int j = 0; j < cn.getDshd().getSoLuong(); j++) ghiHoaDon(p, key + ".hd." + j, cn.getDshd().getDs()[j]);
         }
@@ -95,7 +95,7 @@ public final class LuuTruPhien {
         Kho kho = new Kho(); DanhSachKhachHang kh = new DanhSachKhachHang(); DanhSachNCC ncc = new DanhSachNCC();
         DanhSachPhieuNhap pn = new DanhSachPhieuNhap(ncc); DanhSachChiNhanh cn = new DanhSachChiNhanh(kho, kh, nhanVien);
         for (int i = 0, n = count(p, "kho.count"); i < n; i++) {
-            MatHang item = DuLieuMatHang.doc(p, "kho." + i);
+            MatHang item = BoChuyenDoiMatHang.doc(p, "kho." + i);
             for (int j = 0; j < kho.getSoLuongTon(); j++)
                 check(!kho.getDanhSachTon()[j].getMa().equalsIgnoreCase(item.getMa()), "Trùng mã tồn kho");
             check(kho.tangTonKho(item, item.getSoLuong()), "Tồn kho vượt sức chứa");
@@ -108,7 +108,7 @@ public final class LuuTruPhien {
             if (supplier == null || !supplier.getTenNCC().equals(saved.getTenNCC())) supplier = saved;
             note.setChiTiet(new ChiTietPhieuNhap(LocalDate.parse(get(p, key + ".ngay")), supplier));
             for (int j = 0, m = count(p, key + ".count"); j < m; j++) {
-                MatHang item = DuLieuMatHang.doc(p, key + ".hang." + j);
+                MatHang item = BoChuyenDoiMatHang.doc(p, key + ".hang." + j);
                 check(item.getSoLuong() > 0, "Dòng phiếu nhập không có số lượng");
                 check(TienIch.timKiemViTri(note.getDSMH(), note.getSoLuongNhap(), item.getMa()) < 0, "Trùng hàng trên phiếu nhập");
                 note.them(item);
@@ -121,7 +121,7 @@ public final class LuuTruPhien {
             check(cn.them(get(p, key + ".ma"), get(p, key + ".ten"), get(p, key + ".diaChi")), "Chi nhánh không hợp lệ hoặc trùng mã");
             ChiNhanh branch = cn.get(i);
             for (int j = 0, m = count(p, key + ".ke.count"); j < m; j++)
-                check(branch.getDsmh().khoiPhuc(DuLieuMatHang.doc(p, key + ".ke." + j)), "Dữ liệu kệ không hợp lệ");
+                check(branch.getDsmh().khoiPhuc(BoChuyenDoiMatHang.doc(p, key + ".ke." + j)), "Dữ liệu kệ không hợp lệ");
             for (int j = 0, m = count(p, key + ".hd.count"); j < m; j++)
                 check(branch.getDshd().them(docHoaDon(p, key + ".hd." + j, branch, kh, nhanVien)), "Trùng hóa đơn");
         }

@@ -72,7 +72,7 @@ public class DeepAuditRegressionTests {
             yes(kho.getSoLuongTon() == 50 && total > 0, "warehouse data unavailable");
             kho.docFile("data/kho_input.txt"); yes(kho.getSoLuongTon() == 50 && kho.getTongSoLuongTon() == total, "warehouse duplicated");
             for (MatHang item : PersistenceRegressionTests.products()) {
-                MatHang copy = DuLieuMatHang.docDong(item.toString().replace("Sách; tiếng Việt\nTập 1", "Book"));
+                MatHang copy = BoChuyenDoiMatHang.docDong(item.toString().replace("Sách; tiếng Việt\nTập 1", "Book"));
                 yes(copy.getClass() == item.getClass() && copy.getSoLuong() == item.getSoLuong(), "TXT subtype lost");
             }
         });

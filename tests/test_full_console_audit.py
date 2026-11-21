@@ -7,6 +7,8 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parent.parent
 CP = str(ROOT / "build")
+# Each case starts a fresh JVM; leave room for startup and filesystem delays.
+CONSOLE_TIMEOUT_SECONDS = 30
 ADMIN = ["1", "ADMIN", "test-only", "CN01"]
 IMPORT = ["2", "8", ".", "11", ".", "0"]
 CUSTOMERS = ["4", "6", ".", "0"]
@@ -35,10 +37,18 @@ def seed(folder):
 
 
 def launch(folder, inputs):
-    run = subprocess.run(
-        ["java", "-Dfile.encoding=UTF-8", "-Dstdout.encoding=UTF-8", "-Dstderr.encoding=UTF-8", "-cp", CP, "Main"],
-        input="\n".join(inputs) + "\n", text=True, encoding="utf-8", capture_output=True, cwd=folder, timeout=15)
-    output = run.stdout + "\n" + run.stderr
+    # File capture lets the timeout wait on the JVM itself instead of pipe-reader
+    # threads; all stdout/stderr assertions below still apply.
+    log = folder / "console-output.log"
+    try:
+        with log.open("w", encoding="utf-8") as stream:
+            run = subprocess.run(
+                ["java", "-Dfile.encoding=UTF-8", "-Dstdout.encoding=UTF-8", "-Dstderr.encoding=UTF-8", "-cp", CP, "Main"],
+                input="\n".join(inputs) + "\n", text=True, encoding="utf-8", stdout=stream, stderr=subprocess.STDOUT,
+                cwd=folder, timeout=CONSOLE_TIMEOUT_SECONDS)
+    except subprocess.TimeoutExpired as error:
+        raise subprocess.TimeoutExpired(error.cmd, error.timeout, output=log.read_text(encoding="utf-8")) from error
+    output = log.read_text(encoding="utf-8")
     assert run.returncode == 0, f"exit {run.returncode}: {output[-600:]}"
     assert "Exception in thread" not in output, output[-600:]
     return output
@@ -70,10 +80,15 @@ def case(name, inputs, expected=(), forbidden=(), verify=None):
             for name_in, data in originals.items():
                 assert (folder / "data" / name_in).read_bytes() == data, f"input mutated: {name_in}"
         passed += 1
-        print("PASS FULL CONSOLE", name)
+        print("PASS FULL CONSOLE", name, flush=True)
     except (AssertionError, OSError, subprocess.TimeoutExpired) as error:
         failed += 1
-        print("FAIL FULL CONSOLE", name, ":", error)
+        print("FAIL FULL CONSOLE", name, ":", error, flush=True)
+        if isinstance(error, subprocess.TimeoutExpired) and error.stdout:
+            partial = error.stdout
+            if isinstance(partial, bytes):
+                partial = partial.decode("utf-8", errors="replace")
+            print("OUTPUT BEFORE TIMEOUT:", partial[-1200:], flush=True)
 
 
 def expect_file(folder, filename, *needles):
