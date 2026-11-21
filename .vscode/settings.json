@@ -1,0 +1,5 @@
+{
+  "java.project.sourcePaths": ["src", "tests"],
+  "java.project.outputPath": "build/ide",
+  "files.encoding": "utf8"
+}

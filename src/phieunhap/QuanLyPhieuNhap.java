@@ -6,9 +6,7 @@ import tienich.TienIch;
 public class QuanLyPhieuNhap {
 
     static String hoiFile(String macDinh) {
-        System.out.print("Đường dẫn file (Enter hoặc . để dùng '" + macDinh + "'): ");
-        String s = TienIch.sc.nextLine().trim();
-        return (s.isEmpty() || s.equals(".")) ? macDinh : s;
+        return TienIch.nhapDuongDan(macDinh);
     }
 
     private static void hienMenu(){

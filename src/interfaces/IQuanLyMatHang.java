@@ -1,5 +1,6 @@
 package interfaces;
 
+/** Các thao tác công khai trên danh sách hàng của một chi nhánh. */
 public interface IQuanLyMatHang {
 
     void nhap();

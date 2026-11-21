@@ -4,9 +4,7 @@ import tienich.*;
  
 public class QuanLyKho {
     static String hoiFile(String macDinh) {
-        System.out.print("Đường dẫn file (Enter hoặc . để dùng '" + macDinh + "'): ");
-        String s = TienIch.sc.nextLine().trim();
-        return (s.isEmpty() || s.equals(".")) ? macDinh : s;
+        return TienIch.nhapDuongDan(macDinh);
     }
 
     static Kho kho = new Kho();
@@ -29,6 +27,7 @@ public class QuanLyKho {
             System.out.println("7. Kiểm tra sức chứa");
             System.out.println("8. Ghi kho ra file");
             System.out.println("9. Thống kê tồn kho theo danh mục");
+            System.out.println("10. Đọc kho từ file");
             System.out.println("0. Quay lại");
             chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
             switch (chon) {
@@ -41,6 +40,7 @@ public class QuanLyKho {
                 case 7: kho.kiemTraSucChua(); break;
                 case 8: kho.ghiFile(hoiFile("data/kho_output.txt")); break;
                 case 9: kho.thongKeTheoDanhMuc(); break;
+                case 10: kho.docFile(hoiFile("data/kho_input.txt")); break;
                 case 0: break;
                 default: System.out.println("Lựa chọn không hợp lệ!");
             }

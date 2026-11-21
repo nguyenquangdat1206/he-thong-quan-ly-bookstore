@@ -4,6 +4,7 @@ package hoadon;
 import java.time.LocalDate;
 import khachhang.KhachHang;
 import mathang.MatHang;
+import mathang.DanhSachMatHang;
 import nhanvien.NhanVienBanHang;
 import thanhtoan.IThanhToan;
 import tienich.TienIch;
@@ -18,17 +19,25 @@ public class HoaDon {
     private int soLuongChiTiet;
     private IThanhToan hinhThucThanhToan;
     private boolean daThanhToan;
+    private DanhSachMatHang keBan;
+    private final String maNhanVienLap;
+    private final String tenNhanVienLap;
     private static final int MAX_CHI_TIET = 10;
 
     //Constructor
     public HoaDon(String maHD, LocalDate ngayLap, KhachHang khachHang, NhanVienBanHang nhanVienLap) {
-        this.maHD = maHD;
+        this.maHD = maHD == null ? null : maHD.trim();
         this.ngayLap = ngayLap;
-        this.khachHang = khachHang;
+        this.khachHang = khachHang == null ? null : new KhachHang(khachHang.getMaKH(), khachHang.getTenKH(), khachHang.getSoDienThoai());
         this.nhanVienLap = nhanVienLap;
+        this.maNhanVienLap = nhanVienLap == null ? "" : nhanVienLap.getMaNguoi();
+        this.tenNhanVienLap = nhanVienLap == null ? "" : nhanVienLap.getHoTen();
         this.chiTiet = new ChiTietHoaDon[MAX_CHI_TIET];
         this.soLuongChiTiet = 0;
     }
+    void setKeBan(DanhSachMatHang keBan) { this.keBan = keBan; }
+    public String getMaNhanVienLap() { return maNhanVienLap; }
+    public String getTenNhanVienLap() { return tenNhanVienLap; }
     // Tăng số dòng chi tiết trong hóa đơn
     public void tangKichThuocChiTiet() {
         ChiTietHoaDon[] temp = new ChiTietHoaDon[chiTiet.length + MAX_CHI_TIET];
@@ -41,7 +50,9 @@ public class HoaDon {
     public boolean themChiTiet(ChiTietHoaDon ct) {
         if (ct == null || ct.getMathang() == null || ct.getMathang().getMa() == null
                 || ct.getMathang().getMa().isBlank() || ct.getsoLuong() <= 0
-                || !Double.isFinite(ct.getDonGia()) || ct.getDonGia() < 0 || daThanhToan) return false;
+                || ct.getMaMatHang() == null || ct.getMaMatHang().isBlank() || ct.getTenMatHang() == null
+                || !Double.isFinite(ct.getDonGia()) || ct.getDonGia() < 0
+                || !Double.isFinite(ct.thanhTien()) || !Double.isFinite(tinhThanhTien() + ct.thanhTien()) || daThanhToan) return false;
         if (soLuongChiTiet >= chiTiet.length) {
             tangKichThuocChiTiet();
         }
@@ -94,7 +105,7 @@ public class HoaDon {
     public void inChiTiet() {
         for (int i = 0; i < soLuongChiTiet; i++) {
             ChiTietHoaDon ct = chiTiet[i];
-            System.out.println((i + 1) + ". " + ct.getMathang().getTen()
+            System.out.println((i + 1) + ". " + ct.getTenMatHang()
                     + " | SL: " + ct.getsoLuong());
         }
     }
@@ -125,13 +136,22 @@ public class HoaDon {
             }
         }
 
+        MatHang[] hangCanTru = new MatHang[soLuongChiTiet];
         for (int i = 0; i < soLuongChiTiet; i++) {
-            MatHang mh = chiTiet[i].getMathang();
+            ChiTietHoaDon ct = chiTiet[i];
+            hangCanTru[i] = keBan == null ? ct.getMathang() : keBan.timKiem_hang(ct.getMaMatHang());
+            if (hangCanTru[i] == null || !ct.getMaMatHang().equalsIgnoreCase(hangCanTru[i].getMa())) {
+                System.out.println("Mặt hàng " + ct.getMaMatHang() + " không còn trên kệ; chưa thu tiền.");
+                return false;
+            }
+        }
+        for (int i = 0; i < soLuongChiTiet; i++) {
+            MatHang mh = hangCanTru[i];
             long soLuongCanBan = 0;
             for (int j = 0; j < soLuongChiTiet; j++) {
                 ChiTietHoaDon dong = chiTiet[j];
-                if (dong.getMathang().getMa().equalsIgnoreCase(mh.getMa())) {
-                    if (dong.getMathang() != mh) {
+                if (dong.getMaMatHang().equalsIgnoreCase(chiTiet[i].getMaMatHang())) {
+                    if (hangCanTru[j] != mh) {
                         System.out.println("Lỗi: Các dòng cùng mã hàng không trỏ tới cùng mặt hàng hợp lệ.");
                         return false;
                     }
@@ -154,11 +174,11 @@ public class HoaDon {
         if(ketQua){
             for(int i=0; i<soLuongChiTiet; i++){
                 ChiTietHoaDon ct = chiTiet[i];
-                MatHang mh = ct.getMathang();
+                MatHang mh = hangCanTru[i];
                 //trừ trực tiếp số lượng mặt hàng đang có
                 mh.setSoLuong(mh.getSoLuong()-ct.getsoLuong());
             }
-            daThanhToan = true;
+            danhDauDaThanhToan();
             System.out.println("Thanh toán thành công. Đã cập nhật lại số lượng trên kệ hàng ");
         }
         return ketQua;
@@ -168,13 +188,13 @@ public class HoaDon {
         System.out.println("Mã hóa đơn: " + maHD);
         System.out.println("Ngày lập: " + TienIch.ngaytoString(ngayLap));
         System.out.println("Khách hàng: " + khachHang.getTenKH());
-        System.out.println("Nhân viên lập: " + (nhanVienLap == null ? "(không rõ)" : nhanVienLap.getHoTen()));
+        System.out.println("Nhân viên lập: " + (maNhanVienLap.isEmpty() ? "(không rõ)" : tenNhanVienLap));
         System.out.println("Trạng thái: " + (daThanhToan ? "Đã thanh toán" : "Chưa thanh toán"));
         System.out.println("--- Chi tiết ---");
         for (int i = 0; i < soLuongChiTiet; i++) {
             ChiTietHoaDon ct = chiTiet[i];
             System.out.printf("%d. %s | SL: %d | Đơn giá: %.0f | Thành tiền: %.0f%n", i + 1,
-                    ct.getMathang().getTen(), ct.getsoLuong(), ct.getDonGia(), ct.thanhTien());
+                    ct.getTenMatHang(), ct.getsoLuong(), ct.getDonGia(), ct.thanhTien());
         }
         System.out.printf("Tổng cộng %.0f%n", tinhThanhTien());
     }
@@ -182,6 +202,8 @@ public class HoaDon {
     // Chỉ dùng khi nạp hóa đơn đã thanh toán từ file (không trừ hàng lần nữa)
     // Phải gọi SAU khi đã thêm đủ chi tiết, vì thêm chi tiết bị chặn khi đã thanh toán
     public void danhDauDaThanhToan() {
+        if (daThanhToan) return;
+        for (int i = 0; i < soLuongChiTiet; i++) chiTiet[i].chotLichSu();
         this.daThanhToan = true;
     }
 
@@ -215,7 +237,7 @@ public class HoaDon {
     }
 
     public ChiTietHoaDon[] getChiTiet() {
-        return chiTiet;
+        return java.util.Arrays.copyOf(chiTiet, soLuongChiTiet);
     }
 
     public boolean isDaThanhToan() {

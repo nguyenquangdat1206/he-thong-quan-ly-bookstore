@@ -6,7 +6,6 @@ import nhanvien.DanhSachNhanVien;
 import nhanvien.NhanVien;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -41,7 +40,10 @@ public class DanhSachChiNhanh {
     public boolean them(String ma, String ten, String diaChi) {
         if (ma == null || ma.isBlank() || ten == null || ten.isBlank()) return false;
         if (diaChi == null) diaChi = "";
-        if (ma.contains(";") || ten.contains(";") || diaChi.contains(";") || timTheoMa(ma) != null) return false;
+        try { tienich.TienIch.kiemTraTruongTxt(ma, ten, diaChi); }
+        catch (IllegalArgumentException ex) { return false; }
+        if (ma.contains("/") || ma.contains("\\") || ma.contains(":") || ma.trim().equals(".") || ma.trim().equals("..")
+                || timTheoMa(ma) != null) return false;
         if (soLuong == ds.length) ds = java.util.Arrays.copyOf(ds, ds.length * 2);
         ds[soLuong++] = new ChiNhanh(ma.trim(), ten.trim(), diaChi.trim(), kho, dskh, dsnv);
         return true;
@@ -106,13 +108,19 @@ public class DanhSachChiNhanh {
     }
 
     public void ghiFile(String duongDan) {
-        try (BufferedWriter bw = Files.newBufferedWriter(Path.of(duongDan), StandardCharsets.UTF_8)) {
-            for (int i = 0; i < soLuong; i++) {
-                bw.write(ds[i].getMa() + ";" + ds[i].getTen() + ";" + ds[i].getDiaChi());
-                bw.newLine();
-            }
+        try {
+            ghiFileAnToan(duongDan);
             System.out.println("Đã ghi " + soLuong + " chi nhánh vào " + duongDan);
-        } catch (IOException e) { System.out.println("Lỗi ghi chi nhánh: " + e.getMessage()); }
+        } catch (IOException | IllegalArgumentException e) { System.out.println("Lỗi ghi chi nhánh: " + e.getMessage()); }
+    }
+
+    public void ghiFileAnToan(String duongDan) throws IOException {
+        StringBuilder text = new StringBuilder();
+        for (int i = 0; i < soLuong; i++) {
+            tienich.TienIch.kiemTraTruongTxt(ds[i].getMa(), ds[i].getTen(), ds[i].getDiaChi());
+            text.append(ds[i].getMa()).append(';').append(ds[i].getTen()).append(';').append(ds[i].getDiaChi()).append('\n');
+        }
+        tienich.TienIch.ghiTepNguyenTu(duongDan, text.toString());
     }
 
     /** Chỉ thêm chi nhánh chưa có; không làm mất dữ liệu của chi nhánh đã nạp. */
@@ -121,6 +129,7 @@ public class DanhSachChiNhanh {
         try (BufferedReader br = Files.newBufferedReader(Path.of(duongDan), StandardCharsets.UTF_8)) {
             String s;
             while ((s = br.readLine()) != null) {
+                if (s.startsWith("\uFEFF")) s = s.substring(1);
                 if (s.isBlank()) continue;
                 String[] a = s.split(";", -1);
                 if ((a.length == 2 && them(a[0], a[1])) || (a.length == 3 && them(a[0], a[1], a[2]))) them++; else boQua++;

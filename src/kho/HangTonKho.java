@@ -32,12 +32,14 @@ public class HangTonKho implements IGetMa{
 
 //tăng số lượng hàng tồn khi nhập kho
     public void tangSoLuong(int soLuongTang){
+        if (soLuongTang < 0 || (long) soLuong + soLuongTang > Integer.MAX_VALUE)
+            throw new IllegalArgumentException("Số lượng tăng không hợp lệ");
         soLuong+=soLuongTang;
     }
 
 //giảm số lượng hàng tồn khi xuất kho
     public boolean giamSoLuong(int soLuongGiam){
-        if(soLuongGiam<=soLuong){
+        if(soLuongGiam >= 0 && soLuongGiam<=soLuong){
             soLuong-=soLuongGiam;
             return true;
         }
@@ -48,6 +50,7 @@ public class HangTonKho implements IGetMa{
     }
 
     public void xuat(){
+        if (matHang == null) { System.out.println("Hàng tồn chưa có mặt hàng."); return; }
         String ten = (matHang==null) ? "":matHang.getTen();
         String ma = (matHang==null) ? "":matHang.getMa();
         double giaNhap = matHang.getGiaNhap();

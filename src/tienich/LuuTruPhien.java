@@ -83,8 +83,10 @@ public final class LuuTruPhien {
     public static DuLieu doc(Path file, DanhSachNhanVien nhanVien) throws IOException {
         if (!Files.exists(file)) return null;
         Properties p = new Properties();
-        try (Reader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) { p.load(reader); }
-        try { return doc(p, nhanVien); }
+        try (Reader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
+            p.load(reader);
+            return doc(p, nhanVien);
+        }
         catch (IllegalArgumentException | java.time.DateTimeException ex) { throw new IOException("Bản lưu phiên bị lỗi", ex); }
     }
 
@@ -129,13 +131,12 @@ public final class LuuTruPhien {
     private static void ghiHoaDon(Properties p, String key, HoaDon hd) {
         put(p, key + ".ma", hd.getMaHD()); put(p, key + ".ngay", hd.getNgayLap());
         put(p, key + ".daThanhToan", hd.isDaThanhToan()); ghiKhach(p, key + ".kh", hd.getKhachHang());
-        NhanVienBanHang nv = hd.getNhanVienLap();
-        put(p, key + ".nv.ma", nv == null ? "" : nv.getMaNguoi());
-        put(p, key + ".nv.ten", nv == null ? "" : nv.getHoTen());
+        put(p, key + ".nv.ma", hd.getMaNhanVienLap());
+        put(p, key + ".nv.ten", hd.getTenNhanVienLap());
         put(p, key + ".count", hd.getSoLuongChiTiet());
         for (int i = 0; i < hd.getSoLuongChiTiet(); i++) {
             ChiTietHoaDon ct = hd.getChiTiet()[i]; String row = key + ".dong." + i;
-            put(p, row + ".ma", ct.getMathang().getMa()); put(p, row + ".ten", ct.getMathang().getTen());
+            put(p, row + ".ma", ct.getMaMatHang()); put(p, row + ".ten", ct.getTenMatHang());
             put(p, row + ".soLuong", ct.getsoLuong()); put(p, row + ".donGia", ct.getDonGia());
         }
     }
@@ -148,6 +149,7 @@ public final class LuuTruPhien {
         NhanVienBanHang seller = null;
         if (!maNv.isBlank()) {
             seller = employee instanceof NhanVienBanHang && cn.getMa().equalsIgnoreCase(employee.getMaChiNhanh())
+                    && get(p, key + ".nv.ten").equals(employee.getHoTen())
                     ? (NhanVienBanHang) employee
                     : new NhanVienBanHang(maNv, get(p, key + ".nv.ten"), "", "", "", 0, cn.getMa());
         }
@@ -163,7 +165,7 @@ public final class LuuTruPhien {
                     if (hd.getChiTiet()[j].getMathang().getMa().equalsIgnoreCase(code)) item = hd.getChiTiet()[j].getMathang();
                 if (item == null) item = new MatHangLichSu(code, get(p, row + ".ten"), price);
             }
-            check(hd.themChiTiet(new ChiTietHoaDon(qty, item, price)), "Chi tiết hóa đơn không hợp lệ");
+            check(hd.themChiTiet(new ChiTietHoaDon(qty, item, price, code, get(p, row + ".ten"))), "Chi tiết hóa đơn không hợp lệ");
         }
         String paid = get(p, key + ".daThanhToan");
         check(paid.equals("true") || paid.equals("false"), "Trạng thái hóa đơn không hợp lệ");

@@ -40,7 +40,7 @@ public class DanhSachPhieuNhap implements IFileIO, IQuanLy{
 
     //tiết kiệm bộ nhớ vs n pn biết trước
     public DanhSachPhieuNhap(int n){
-        dsPN = new PhieuNhap [n];
+        dsPN = new PhieuNhap [Math.max(1, n)];
         slPN=0;
         dsNcc = new DanhSachNCC();
     }
@@ -241,6 +241,11 @@ public class DanhSachPhieuNhap implements IFileIO, IQuanLy{
 
     //thống nhất format ngày nhập cho đọc file và ghi file
     private static final DateTimeFormatter NGAY_FILE = DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT);
+    private static final DateTimeFormatter NGAY_FILE_CU = DateTimeFormatter.ofPattern("dd-MM-uuuu").withResolverStyle(ResolverStyle.STRICT);
+
+    private static LocalDate docNgay(String value) {
+        return LocalDate.parse(value, value.indexOf('/') >= 0 ? NGAY_FILE : NGAY_FILE_CU);
+    }
 
     @Override
     public void ghiFile(String duongDan){
@@ -352,6 +357,10 @@ public class DanhSachPhieuNhap implements IFileIO, IQuanLy{
     private static MatHang matHangTuDong(String[] p) {
         MatHang mh = taoMatHangTuDong(p);
         mh.setMa(mh.getMa()); // mã phải đúng định dạng của loại mặt hàng, sai thì ném IllegalArgumentException
+        if ((mh instanceof DoChoi && ((DoChoi) mh).getdotuoi() <= 0)
+                || (mh instanceof Vo && ((Vo) mh).getSotrang() <= 0))
+            throw new IllegalArgumentException("Độ tuổi/số trang phải lớn hơn 0");
+        if (layTenNCC(mh).isBlank()) throw new IllegalArgumentException("Thiếu nhà cung cấp");
         return mh;
     }
 
@@ -373,19 +382,21 @@ public class DanhSachPhieuNhap implements IFileIO, IQuanLy{
     @Override
     public void docFile(String duongDan){
         int them = 0, boQua = 0, dongSo = 0, khacNCC = 0;
+        int soPhieuTruocKhiDoc = slPN;
         try(BufferedReader br = Files.newBufferedReader(Path.of(duongDan), StandardCharsets.UTF_8)){
             String dong;
             while((dong = br.readLine())!=null){
                 dongSo++;
                 if(dong.isBlank()) continue;
                 try{
-                    String [] p = dong.replace("\uFEFF", "").split(";");
+                    String [] p = dong.replace("\uFEFF", "").split(";", -1);
 
                     if(p.length < 9)
                         throw new IllegalArgumentException("Thiếu cột dữ liệu");
 
                     String maPn = p[0].trim();
-                    LocalDate ngayNhap= LocalDate.parse(p[1].trim(),NGAY_FILE);
+                    if (maPn.isEmpty()) throw new IllegalArgumentException("Thiếu mã phiếu nhập");
+                    LocalDate ngayNhap= docNgay(p[1].trim());
                     MatHang mh = matHangTuDong(p);
                     String tenNcc = layTenNCC(mh);
                     TrangThaiPN tt = TrangThaiPN.valueOf(p[p.length-1].trim());
@@ -393,6 +404,10 @@ public class DanhSachPhieuNhap implements IFileIO, IQuanLy{
                     PhieuNhap pn = timPhieu(maPn);
 
                     if(pn!=null){
+                        if (TienIch.timKiemViTri(dsPN, soPhieuTruocKhiDoc, maPn) >= 0
+                                && pn.getTrangThai() != TrangThaiPN.CHO_DUYET) {
+                            boQua++; continue;
+                        }
                         if (!pn.getChiTiet().getNgayNhap().equals(ngayNhap) || pn.getTrangThai() != tt)
                             throw new IllegalArgumentException("trùng mã phiếu nhưng khác ngày/trạng thái");
 

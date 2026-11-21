@@ -12,7 +12,7 @@ import interfaces.IQuanLy;
 import tienich.*;
 
 
-public class Kho implements IQuanLy  {
+public class Kho implements IQuanLy, interfaces.IFileIO {
     private static final int sucChuaToiDa = 10000;
     private HangTonKho[] dsTonKho;
     private int soLuongMatHang;
@@ -101,7 +101,9 @@ public class Kho implements IQuanLy  {
 
 //tăng tồn kho: 
     public boolean tangTonKho(MatHang mh, int soLuong){
-        if(mh==null || soLuong<0) return false;
+        if(mh==null || mh.getMa() == null || mh.getMa().isBlank() || soLuong<0
+                || mh.getTen() == null || mh.getTen().isBlank()
+                || !Double.isFinite(mh.getGiaNhap()) || mh.getGiaNhap() < 0) return false;
         if(soLuong>getConTrong()){
             System.out.println("Kho không đủ chỗ!");
             return false;
@@ -109,7 +111,7 @@ public class Kho implements IQuanLy  {
         int vtMH = TienIch.timKiemViTri(dsTonKho, soLuongMatHang, mh.getMa());
         if(vtMH==-1){
             if(soLuongMatHang==dsTonKho.length) tangKichThuocMang();
-            dsTonKho[soLuongMatHang]=new HangTonKho(mh, soLuong);
+            dsTonKho[soLuongMatHang]=new HangTonKho(mh.saoChep(), soLuong);
             soLuongMatHang++;
         }
         else dsTonKho[vtMH].tangSoLuong(soLuong);
@@ -124,7 +126,22 @@ public class Kho implements IQuanLy  {
             System.out.println("Phiếu không ở trạng thái chờ duyệt; không nhập kho lần nữa!");
             return false;
         }
-        if(pn.getTongSlNhap()>getConTrong()){
+        if (pn.getSoLuongNhap() <= 0) {
+            System.out.println("Phiếu nhập phải có ít nhất một mặt hàng.");
+            return false;
+        }
+        long tongNhap = 0;
+        for (int i = 0; i < pn.getSoLuongNhap(); i++) {
+            MatHang item = pn.getDSMH()[i];
+            if (item == null || item.getMa() == null || item.getMa().isBlank()
+                    || item.getTen() == null || item.getTen().isBlank() || item.getSoLuong() <= 0
+                    || !Double.isFinite(item.getGiaNhap()) || item.getGiaNhap() < 0) {
+                System.out.println("Dòng phiếu nhập không hợp lệ; chưa thay đổi kho.");
+                return false;
+            }
+            tongNhap += item.getSoLuong();
+        }
+        if(tongNhap>getConTrong()){
             System.out.println("Kho không đủ chỗ trống!");
             return false;
         }
@@ -274,6 +291,24 @@ public class Kho implements IQuanLy  {
         } catch(IOException e){
             System.out.println("LỖI ghi file: " + e.getMessage());
         }
+    }
+
+    @Override
+    public void docFile(String duongDan) {
+        int them = 0, boQua = 0;
+        try (java.io.BufferedReader reader = Files.newBufferedReader(Path.of(duongDan), StandardCharsets.UTF_8)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("\uFEFF")) line = line.substring(1);
+                if (line.isBlank()) continue;
+                try {
+                    MatHang item = DuLieuMatHang.docDong(line);
+                    if (TienIch.timKiemViTri(dsTonKho, soLuongMatHang, item.getMa()) >= 0) { boQua++; continue; }
+                    if (tangTonKho(item, item.getSoLuong())) them++; else boQua++;
+                } catch (IllegalArgumentException ex) { boQua++; }
+            }
+            System.out.println("Đã đọc kho: thêm " + them + " mã, bỏ qua " + boQua + " dòng lỗi/trùng/vượt sức chứa.");
+        } catch (IOException ex) { System.out.println("Lỗi đọc kho: " + ex.getMessage()); }
     }
 }
 

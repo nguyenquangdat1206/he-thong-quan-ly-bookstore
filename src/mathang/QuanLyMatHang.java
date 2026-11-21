@@ -7,9 +7,7 @@ public class QuanLyMatHang {
     static DanhSachMatHang dsmh = new DanhSachMatHang(kho);
 
     static String hoiFile(String macDinh) {
-        System.out.print("Đường dẫn file (Enter hoặc . để dùng '" + macDinh + "'): ");
-        String s = TienIch.sc.nextLine().trim();
-        return (s.isEmpty() || s.equals(".")) ? macDinh : s;
+        return TienIch.nhapDuongDan(macDinh);
     }
     public static void main(String[] args) {
         TienIch.cauHinhUnicodeConsole();
@@ -27,6 +25,7 @@ public class QuanLyMatHang {
             System.out.println("9. Bộ lọc nâng cao");
             System.out.println("10. Ghi mặt hàng ra file");
             System.out.println("11. Thống kê hàng trong kho chưa lên kệ bán");
+            System.out.println("12. Đọc kho từ file trước khi đưa hàng lên kệ");
             System.out.println("0. Quay lại");
             chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
             switch (chon) {
@@ -44,6 +43,7 @@ public class QuanLyMatHang {
                 case 9: dsmh.timkiem_nangcao(); break;
                 case 10: dsmh.ghiFile(hoiFile("data/mathang_output.txt")); break;
                 case 11: dsmh.thongKeHangChuaLenKe(kho); break;
+                case 12: kho.docFile(hoiFile("data/kho_input.txt")); break;
                 case 0: break;
                 default: System.out.println("Lựa chọn không hợp lệ!");
             }

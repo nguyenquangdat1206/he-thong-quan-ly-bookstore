@@ -15,6 +15,33 @@ import interfaces.IGetMa;
 public class TienIch {
     public static Scanner sc = new Scanner(System.in, StandardCharsets.UTF_8);
 
+    public static void kiemTraTruongTxt(String... fields) {
+        for (String value : fields)
+            if (value == null || value.indexOf(';') >= 0 || value.indexOf('\n') >= 0 || value.indexOf('\r') >= 0)
+                throw new IllegalArgumentException("Trường TXT không được chứa dấu ';' hoặc xuống dòng");
+    }
+
+    /** Ghi xong file tạm rồi mới thay thế bản cũ. */
+    public static void ghiTepNguyenTu(String path, String content) throws java.io.IOException {
+        java.nio.file.Path target = java.nio.file.Path.of(path).toAbsolutePath().normalize();
+        java.nio.file.Path temp = java.nio.file.Files.createTempFile(target.getParent(), "bookstore-", ".tmp");
+        try {
+            java.nio.file.Files.writeString(temp, content, StandardCharsets.UTF_8);
+            java.nio.file.Files.move(temp, target, java.nio.file.StandardCopyOption.ATOMIC_MOVE,
+                    java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        } finally { java.nio.file.Files.deleteIfExists(temp); }
+    }
+
+    public static String nhapDuongDan(String macDinh) {
+        while (true) {
+            System.out.print("Đường dẫn file (Enter hoặc . để dùng '" + macDinh + "'): ");
+            String input = sc.nextLine().trim();
+            String path = input.isEmpty() || input.equals(".") ? macDinh : input;
+            try { java.nio.file.Path.of(path); return path; }
+            catch (java.nio.file.InvalidPathException ex) { System.out.println("Đường dẫn không hợp lệ, vui lòng nhập lại."); }
+        }
+    }
+
     /** Dùng ở các điểm vào console để Java không thay chữ tiếng Việt bằng '?'. */
     public static void cauHinhUnicodeConsole() {
         System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, StandardCharsets.UTF_8));

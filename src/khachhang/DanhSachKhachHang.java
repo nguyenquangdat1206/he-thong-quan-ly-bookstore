@@ -221,10 +221,8 @@ public class DanhSachKhachHang implements IQuanLy,IFileIO{
     // Đọc dữ liệu từ file
     @Override
     public void docFile(String duongDan) {
-        try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(new FileInputStream(duongDan), StandardCharsets.UTF_8))) {
-            soLuong = 0;
-            ds = new KhachHang[1000];
+        DanhSachKhachHang moi = new DanhSachKhachHang();
+        try (BufferedReader br = java.nio.file.Files.newBufferedReader(java.nio.file.Path.of(duongDan), StandardCharsets.UTF_8)) {
             String line;
             boolean dongDau = true;
             while ((line = br.readLine()) != null) {
@@ -235,15 +233,16 @@ public class DanhSachKhachHang implements IQuanLy,IFileIO{
                 if (line.trim().isEmpty()) continue;
                 String[] data = line.split(";", -1); // -1: giữ trường rỗng ở cuối để đếm đúng
                 if (data.length != 3 || data[0].trim().isEmpty() || data[1].trim().isEmpty()
-                        || data[2].trim().isEmpty() || timkiem_khachhang(data[0].trim()) != null) {
-                    System.out.println("Bỏ qua dòng không hợp lệ hoặc trùng mã: " + line);
+                        || data[2].trim().isEmpty() || moi.timkiem_khachhang(data[0].trim()) != null) {
+                    System.out.println("Bỏ qua dòng khách hàng không hợp lệ hoặc trùng mã.");
                     continue;
                 }
-                if (soLuong == ds.length) tangKichThuoc();
-                ds[soLuong++] = new KhachHang(data[0].trim(), data[1].trim(), data[2].trim());
+                moi.them(new KhachHang(data[0].trim(), data[1].trim(), data[2].trim()));
             }
+            ds = moi.ds;
+            soLuong = moi.soLuong;
             System.out.println("Đã tải " + soLuong + " khách hàng từ file " + duongDan);
-        } catch (FileNotFoundException e) {
+        } catch (java.nio.file.NoSuchFileException e) {
             System.out.println("Chưa tìm thấy file " + duongDan);
         } catch (IOException e) {
             System.out.println("Lỗi khi đọc file: " + e.getMessage());

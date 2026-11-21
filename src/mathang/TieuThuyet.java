@@ -94,8 +94,7 @@ public class TieuThuyet extends Sach {
 
     @Override
     public double tinhGiaBan() {
-        double giaBan = getGiaNhap() * (1 + loinhuan / 100.0) * (1 + thue / 100.0);
-        return Math.round(giaBan * 100.0) / 100.0;
+        return tinhGiaBan(loinhuan, thue);
     }
 
     @Override 

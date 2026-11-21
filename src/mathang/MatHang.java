@@ -72,6 +72,13 @@ public abstract class MatHang implements IGetMa, Cloneable {
     //Tinh gia ban
     public abstract double tinhGiaBan();
 
+    protected double tinhGiaBan(double loiNhuan, double thueSuat) {
+        if (!Double.isFinite(giaNhap) || giaNhap < 0) return Double.NaN;
+        double value = giaNhap * (1 + loiNhuan / 100.0) * (1 + thueSuat / 100.0);
+        // Math.round trả long và bão hòa với giá lớn; ở độ lớn này double không còn phần xu.
+        return Math.abs(value) >= Long.MAX_VALUE / 100.0 ? value : Math.round(value * 100.0) / 100.0;
+    }
+
     // Nhap
     public void nhap() {
 

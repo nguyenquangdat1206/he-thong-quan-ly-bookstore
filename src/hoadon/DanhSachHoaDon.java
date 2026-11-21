@@ -82,8 +82,10 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
     }
     //them (hàm riêng)
     public boolean them(HoaDon hd) {
-        if(hd == null || timKiem(hd.getMaHD()) != null/* ktra có tồn tại ma HD hoặc có bị trùng maHD không*/) return false;
+        if(hd == null || hd.getMaHD() == null || hd.getMaHD().isBlank()
+                || hd.getNgayLap() == null || hd.getKhachHang() == null || timKiem(hd.getMaHD()) != null) return false;
         if(soLuong == ds.length) tangKichThuocHoaDon();
+        hd.setKeBan(dsmh);
         ds[soLuong++] = hd;
         return true;
     }
@@ -283,7 +285,7 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
 
         String[] maMH = new String[1000];
         String[] tenMH = new String[1000];
-        int[] slBan = new int[1000];
+        long[] slBan = new long[1000];
         double[] thuVe = new double[1000];
         int soLoaiMH = 0;
 
@@ -295,14 +297,21 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
                 doanhThuThucTe += tien;
                 for (int j = 0; j < hd.getSoLuongChiTiet(); j++) {
                     ChiTietHoaDon ct = hd.getChiTiet()[j];
-                    String ma = ct.getMathang().getMa();
+                    String ma = ct.getMaMatHang();
                     int vt = -1;
                     for (int k = 0; k < soLoaiMH; k++) {
                         if (maMH[k].equalsIgnoreCase(ma)) { vt = k; break; }
                     }
                     if (vt == -1) {
+                        if (soLoaiMH == maMH.length) {
+                            int n = maMH.length * 2;
+                            maMH = java.util.Arrays.copyOf(maMH, n);
+                            tenMH = java.util.Arrays.copyOf(tenMH, n);
+                            slBan = java.util.Arrays.copyOf(slBan, n);
+                            thuVe = java.util.Arrays.copyOf(thuVe, n);
+                        }
                         maMH[soLoaiMH] = ma;
-                        tenMH[soLoaiMH] = ct.getMathang().getTen();
+                        tenMH[soLoaiMH] = ct.getTenMatHang();
                         slBan[soLoaiMH] = ct.getsoLuong();
                         thuVe[soLoaiMH] = ct.thanhTien();
                         soLoaiMH++;
@@ -328,7 +337,7 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
             for (int i = 0; i < soLoaiMH - 1; i++) {
                 for (int j = i + 1; j < soLoaiMH; j++) {
                     if (slBan[j] > slBan[i]) {
-                        int tmpSL = slBan[i]; slBan[i] = slBan[j]; slBan[j] = tmpSL;
+                        long tmpSL = slBan[i]; slBan[i] = slBan[j]; slBan[j] = tmpSL;
                         double tmpThu = thuVe[i]; thuVe[i] = thuVe[j]; thuVe[j] = tmpThu;
                         String tmpMa = maMH[i]; maMH[i] = maMH[j]; maMH[j] = tmpMa;
                         String tmpTen = tenMH[i]; tenMH[i] = tenMH[j]; tenMH[j] = tmpTen;
@@ -350,15 +359,14 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
         try (PrintWriter pw = new PrintWriter(Files.newBufferedWriter(Path.of(duongDan), StandardCharsets.UTF_8))) {
             for (int i = 0; i < soLuong; i++) {
                 HoaDon hd = ds[i];
-                NhanVienBanHang nv = hd.getNhanVienLap();
-                String maNV = (nv == null) ? "" : nv.getMaNguoi();
-                String tenNV = (nv == null) ? "" : nv.getHoTen();
+                String maNV = hd.getMaNhanVienLap();
+                String tenNV = hd.getTenNhanVienLap();
                 pw.println(hd.getMaHD() + ";" + hd.getNgayLap() + ";" + hd.getKhachHang().getMaKH()
                         + ";" + maNV + ";" + tenNV + ";" + (hd.isDaThanhToan() ? 1 : 0));
                 pw.println(hd.getSoLuongChiTiet());
                 for (int j = 0; j < hd.getSoLuongChiTiet(); j++) {
                     ChiTietHoaDon ct = hd.getChiTiet()[j];
-                    pw.println(ct.getMathang().getMa() + ";" + ct.getsoLuong() + ";" + ct.getDonGia());
+                    pw.println(ct.getMaMatHang() + ";" + ct.getsoLuong() + ";" + ct.getDonGia());
                 }
             }
             System.out.println("Đã ghi dữ liệu hóa đơn ra file " + duongDan);

@@ -6,6 +6,22 @@ import java.util.Properties;
 public final class DuLieuMatHang {
     private DuLieuMatHang() { }
 
+    /** Dòng TXT: danhMuc;ma;ten;giaNhap;soLuong;thuocTinhRieng... */
+    public static MatHang docDong(String line) {
+        String[] fields = line.split(";", -1);
+        if (fields.length < 6 || fields.length > 8) throw new IllegalArgumentException("Sai số cột mặt hàng");
+        for (int i = 0; i < fields.length; i++) {
+            fields[i] = fields[i].trim();
+            if (fields[i].isEmpty()) throw new IllegalArgumentException("Thiếu trường mặt hàng");
+        }
+        Properties p = new Properties();
+        String[] names = {"loai", "ma", "ten", "gia", "soLuong"};
+        for (int i = 0; i < names.length; i++) p.setProperty("row." + names[i], fields[i]);
+        p.setProperty("row.soThuocTinh", Integer.toString(fields.length - 5));
+        for (int i = 5; i < fields.length; i++) p.setProperty("row.rieng." + (i - 5), fields[i]);
+        return doc(p, "row");
+    }
+
     public static void ghi(Properties duLieu, String khoa, MatHang mh) {
         String[] rieng;
         if (mh instanceof Sach) {

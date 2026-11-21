@@ -12,6 +12,7 @@ build-test/
 /data/*_output.txt
 /data/phien.properties
 /data/phien-*.tmp
+/data/bookstore-*.tmp
 /tests/*.log
 __pycache__/
 *.pyc

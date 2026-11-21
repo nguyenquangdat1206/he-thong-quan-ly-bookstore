@@ -10,6 +10,7 @@ from __future__ import annotations
 from datetime import datetime
 from pathlib import Path
 import re
+import math
 import shutil
 import sys
 import tempfile
@@ -59,6 +60,9 @@ def staff_rows(src: Path) -> tuple[list[str], int]:
                 raise ValueError(f'nhanvien.txt dòng {number}: lương không hợp lệ') from None
         if any(';' in v or '\n' in v or '\r' in v for v in values) or values[0].lower() in keys:
             raise ValueError(f'nhanvien.txt dòng {number}: dữ liệu không an toàn hoặc mã trùng')
+        salary = float(values[5])
+        if not all(values[i].strip() for i in (0, 1, 3)) or not math.isfinite(salary) or salary < 0:
+            raise ValueError(f'nhanvien.txt dòng {number}: thiếu thông tin hoặc lương không hợp lệ')
         keys.add(values[0].lower())
         rows.append(';'.join(values))
     if not rows or not any(r.endswith(';ADMIN') for r in rows):

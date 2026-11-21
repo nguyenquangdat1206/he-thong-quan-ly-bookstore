@@ -55,8 +55,8 @@ public class PhieuNhap implements IGetMa, IQuanLy{
         return dsMH;
     }
 
-    public int getTongSlNhap() {
-        int sum=0;
+    public long getTongSlNhap() {
+        long sum=0;
         for(int i=0;i<soLuongNhap;i++){
             sum+=dsMH[i].getSoLuong();
         }
@@ -94,9 +94,7 @@ public class PhieuNhap implements IGetMa, IQuanLy{
         }
         String tenNCC = getChiTiet().getNhaCungCap().getTenNCC();
         if (mhMoi instanceof Sach) ((Sach) mhMoi).nhap(tenNCC);
-        if (mhMoi instanceof TieuThuyet)  ((TieuThuyet) mhMoi).nhap(tenNCC);;
         if (mhMoi instanceof SachGiaoKhoa)  ((SachGiaoKhoa) mhMoi).nhap(tenNCC);;
-        if (mhMoi instanceof Truyen)  ((Truyen) mhMoi).nhap(tenNCC);
         if (mhMoi instanceof VanPhongPham)  ((VanPhongPham) mhMoi).nhap(tenNCC);;
         if (mhMoi instanceof BaoTapChi)  ((BaoTapChi) mhMoi).nhap(tenNCC);;
         if (mhMoi instanceof SPKhac)  ((SPKhac) mhMoi).nhap(tenNCC);;
@@ -112,6 +110,8 @@ public class PhieuNhap implements IGetMa, IQuanLy{
         while (true) {
             mhMoi = nhapMH();
             if (mhMoi == null) return;
+            if (mhMoi.getSoLuong() <= 0)
+                mhMoi.setSoLuong(TienIch.nhapSoNguyenDuong("Số lượng ghi trên phiếu phải lớn hơn 0: "));
             if (TienIch.timKiemViTri(dsMH, soLuongNhap, mhMoi.getMa()) == -1) break;
             System.out.println("Mã mặt hàng đã có trong phiếu! Vui lòng nhập lại.");
         }

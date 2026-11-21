@@ -14,15 +14,17 @@ set "SRC_FILE=%TEMP%\oop-test-%RANDOM%-%RANDOM%.txt"
 type nul > "%SRC_FILE%"
 for /r src %%F in (*.java) do call :appendJava "%%~fF" "%SRC_FILE%"
 for /r tests %%F in (*.java) do call :appendJava "%%~fF" "%SRC_FILE%"
-javac -encoding UTF-8 -d build @"%SRC_FILE%"
+javac --release 17 -encoding UTF-8 -d build @"%SRC_FILE%"
 set "RESULT=%ERRORLEVEL%"
 del "%SRC_FILE%" >nul 2>nul
 if not "%RESULT%"=="0" exit /b %RESULT%
 set "TEST_FAILED=0"
-for %%T in (IntegrationTests FeatureNCCPhieuNhapTests LegacyProductRegressionTests DisplayLogicRegressionTests FullFunctionalAuditTests PersistenceRegressionTests) do call :runJava %%T
+for %%T in (IntegrationTests FeatureNCCPhieuNhapTests LegacyProductRegressionTests DisplayLogicRegressionTests FullFunctionalAuditTests PersistenceRegressionTests DeepAuditRegressionTests) do call :runJava %%T
 where py >nul 2>nul
 if errorlevel 1 goto :missingPython
-for %%T in (test_console.py test_console_pn.py test_legacy_runtime.py test_console_unicode.py test_full_console_audit.py) do call :runPython %%T
+for %%T in (test_console.py test_console_pn.py test_legacy_runtime.py test_console_unicode.py test_full_console_audit.py test_data_audit.py test_deep_console.py) do call :runPython %%T
+py -3 -X utf8 scripts\audit_data.py
+if errorlevel 1 set "TEST_FAILED=1"
 if "%TEST_FAILED%"=="1" (
   echo ONE OR MORE TEST SUITES FAILED
   exit /b 1

@@ -12,7 +12,7 @@ rem Java argfiles treat backslashes as escapes: emit forward slash paths.
 set "SRC_FILE=%TEMP%\oop-run-%RANDOM%-%RANDOM%.txt"
 type nul > "%SRC_FILE%"
 for /r src %%F in (*.java) do call :appendJava "%%~fF" "%SRC_FILE%"
-javac -encoding UTF-8 -d build @"%SRC_FILE%"
+javac --release 17 -encoding UTF-8 -d build @"%SRC_FILE%"
 set "RESULT=%ERRORLEVEL%"
 del "%SRC_FILE%" >nul 2>nul
 if not "%RESULT%"=="0" exit /b %RESULT%

@@ -27,13 +27,12 @@ public class Main {
     static NhanVien dangDangNhap;
     static NhanVienBanHang nvBanHang;
     static boolean coTheGhiNhanVien = true;
+    static boolean coTheGhiChiNhanh = true;
     static final java.nio.file.Path FILE_PHIEN = java.nio.file.Path.of("data/phien.properties");
     static boolean coTheLuuPhien = true;
 
     static String hoiFile(String macDinh) {
-        System.out.print("Đường dẫn file (Enter hoặc . để dùng '" + macDinh + "'): ");
-        String s = TienIch.sc.nextLine().trim();
-        return (s.isEmpty() || s.equals(".")) ? macDinh : s;
+        return TienIch.nhapDuongDan(macDinh);
     }
     static boolean coChiNhanh() {
         if (cnHienTai != null) return true;
@@ -71,6 +70,7 @@ public class Main {
             System.out.println("7. Kiểm tra sức chứa");
             System.out.println("8. Ghi kho ra file");
             System.out.println("9. Thống kê tồn kho theo danh mục");
+            System.out.println("10. Đọc kho từ file");
             System.out.println("0. Quay lại");
             chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
             switch (chon) {
@@ -83,6 +83,7 @@ public class Main {
                 case 7: kho.kiemTraSucChua(); break;
                 case 8: kho.ghiFile(hoiFile("data/kho_output.txt")); break;
                 case 9: kho.thongKeTheoDanhMuc(); break;
+                case 10: kho.docFile(hoiFile("data/kho_input.txt")); break;
                 case 0: break;
                 default: System.out.println("Lựa chọn không hợp lệ!");
             }
@@ -425,7 +426,7 @@ public class Main {
                 case 2: dsncc.them(); break;
                 case 3: dsncc.sua(); break;
                 case 4: dsncc.xoa(); break;
-                case 5: dsncc.docFile(hoiFile("data/nhacungcap.txt")); break;
+                case 5: dsncc.docFile(hoiFile("data/nhacungcap_input.txt")); break;
                 case 6: dsncc.ghiFile(hoiFile("data/nhacungcap_output.txt")); break;
                 case 0: break;
                 default: System.out.println("Lựa chọn không hợp lệ.");
@@ -457,6 +458,10 @@ public class Main {
                     // Đọc lại file chỉ từ giao diện Admin; không khóa mất phiên do thay danh sách.
                     String f = hoiFile(FILE_NV);
                     dsnv.docFile(f);
+                    if (!dsnv.docLanCuoiThanhCong()) {
+                        System.out.println("Chưa đọc được file; giữ nguyên nhân viên và phiên đăng nhập.");
+                        break;
+                    }
                     // Sau thao tác import, tránh tự ghi đè file nguồn nếu còn sai định dạng.
                     coTheGhiNhanVien = false;
                     nvBanHang = null;
@@ -580,6 +585,13 @@ public class Main {
 
         if (java.nio.file.Files.exists(java.nio.file.Path.of(FILE_CN))) {
             dsCN.docFile(FILE_CN);
+            try (java.util.stream.Stream<String> lines = java.nio.file.Files.lines(
+                    java.nio.file.Path.of(FILE_CN), java.nio.charset.StandardCharsets.UTF_8)) {
+                coTheGhiChiNhanh = lines.filter(line -> !line.isBlank()).count() == dsCN.getSoLuong()
+                        && dsCN.getSoLuong() > 0;
+            } catch (java.io.IOException | java.io.UncheckedIOException ex) { coTheGhiChiNhanh = false; }
+            if (!coTheGhiChiNhanh) System.out.println("File chi nhánh có lỗi; không tự ghi đè dữ liệu gốc.");
+            return;
         }
 
         if (dsCN.getSoLuong() == 0) {
@@ -627,7 +639,7 @@ public class Main {
                     System.out.println("CẢNH BÁO: " + FILE_NV + " là định dạng cũ hoặc chứa dòng lỗi; "
                         + "không tự ghi đè khi thoát. Hãy kiểm tra file trước.");
                 }
-            } catch (java.io.IOException e) {
+            } catch (java.io.IOException | java.io.UncheckedIOException e) {
                 coTheGhiNhanVien = false;
                 System.out.println("Không kiểm tra được file nhân viên; đã khóa tự lưu để bảo vệ dữ liệu: "
                     + e.getMessage());
@@ -682,12 +694,14 @@ public class Main {
         } else {
             System.out.println("Bỏ qua lưu phiên để bảo vệ bản lưu chưa khôi phục được.");
         }
-        dsCN.ghiFile(FILE_CN);
-
-        if (coTheGhiNhanVien) {
-            dsnv.ghiFile(FILE_NV);
-        } else {
-            System.out.println("Bỏ qua lưu nhân viên vì dữ liệu gốc chưa tương thích.");
+        try {
+            if (coTheGhiChiNhanh) dsCN.ghiFileAnToan(FILE_CN);
+            else System.out.println("Bỏ qua lưu chi nhánh để bảo vệ file gốc có lỗi.");
+            if (coTheGhiNhanVien) dsnv.ghiFileAnToan(FILE_NV);
+            else System.out.println("Bỏ qua lưu nhân viên vì dữ liệu gốc chưa tương thích.");
+        } catch (java.io.IOException | IllegalArgumentException ex) {
+            System.out.println("Chưa lưu được chi nhánh/nhân viên; chương trình tiếp tục: " + ex.getMessage());
+            return false;
         }
         return true;
     }
@@ -696,7 +710,7 @@ public class Main {
         khoiTaoDuLieu();
 
         int chon;
-        do {
+        try { do {
             menuChinh();
             chon = TienIch.nhapSoNguyenKhongAm("Chọn chức năng: ");
 
@@ -719,6 +733,10 @@ public class Main {
                     break;
             }
         } while (chon != 0);
+        } catch (java.util.NoSuchElementException ex) {
+            System.out.println("Đã kết thúc đầu vào. Đang lưu dữ liệu trước khi thoát.");
+            if (!luuDuLieu()) System.exit(1);
+        }
     }
 
 }

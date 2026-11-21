@@ -5,7 +5,6 @@ import interfaces.IQuanLy;
 import tienich.TienIch;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -18,6 +17,8 @@ public class DanhSachNhanVien implements IQuanLy, IFileIO {
     private NhanVien[] danhSach = new NhanVien[2];
     private int soLuong = 0;
     private boolean duLieuDinhDangCu = false;
+    private boolean docThanhCong;
+    public boolean docLanCuoiThanhCong() { return docThanhCong; }
     public boolean laDuLieuDinhDangCu() { return duLieuDinhDangCu; }
 
     // Trả về mã chi nhánh chuẩn nếu tồn tại, null nếu không. Main gắn hàm này với danh sách chi nhánh.
@@ -206,23 +207,31 @@ public class DanhSachNhanVien implements IQuanLy, IFileIO {
     }
     // Format: ma;ten;sdt;matkhau;ca;luong;quyen;maChiNhanh (file cũ 7 cột vẫn đọc được). Dữ liệu mẫu học tập, không dùng cho production.
     @Override public void ghiFile(String duongDan) {
-        try (BufferedWriter bw = Files.newBufferedWriter(Path.of(duongDan), StandardCharsets.UTF_8)) {
-            for (int i = 0; i < soLuong; i++) {
-                NhanVien n = danhSach[i];
-                bw.write(String.join(";", n.getMaNguoi(),n.getHoTen(),n.getSoDienThoai(),
-                    n.getMatKhau(), n.getCaLamViec(), Double.toString(n.getLuongCoBan()), n.getQuyen(), n.getMaChiNhanh()));
-                bw.newLine();
-            }
+        try {
+            ghiFileAnToan(duongDan);
             System.out.println("Đã ghi " + soLuong + " nhân viên vào " + duongDan);
-        } catch (IOException e) { System.out.println("Lỗi ghi nhân viên: " + e.getMessage()); }
+        } catch (IOException | IllegalArgumentException e) { System.out.println("Lỗi ghi nhân viên: " + e.getMessage()); }
+    }
+    public void ghiFileAnToan(String duongDan) throws IOException {
+        StringBuilder text = new StringBuilder();
+        for (int i = 0; i < soLuong; i++) {
+            NhanVien n = danhSach[i];
+            String[] fields = {n.getMaNguoi(), n.getHoTen(), n.getSoDienThoai(), n.getMatKhau(),
+                    n.getCaLamViec(), Double.toString(n.getLuongCoBan()), n.getQuyen(), n.getMaChiNhanh()};
+            TienIch.kiemTraTruongTxt(fields);
+            text.append(String.join(";", fields)).append('\n');
+        }
+        TienIch.ghiTepNguyenTu(duongDan, text.toString());
     }
     @Override public void docFile(String duongDan) {
+        docThanhCong = false;
         NhanVien[] moi = new NhanVien[2];
         int dem = 0, boQua = 0;
         boolean coDongCu = false;
         try (BufferedReader br = Files.newBufferedReader(Path.of(duongDan), StandardCharsets.UTF_8)) {
             String s;
             while ((s = br.readLine()) != null) {
+                if (dem == 0 && s.startsWith("\uFEFF")) s = s.substring(1);
                 if (s.isBlank()) continue;
                 String[] a;
                 if (s.stripLeading().startsWith("dsNhanVien")) {
@@ -233,6 +242,7 @@ public class DanhSachNhanVien implements IQuanLy, IFileIO {
                     a = s.split(";", -1);
                 }
                 if (a.length != 7 && a.length != 8) { boQua++; continue; }
+                a[0] = a[0].trim();
                 NhanVien nv;
                 try {
                     double luong = Double.parseDouble(a[5]);
@@ -255,9 +265,16 @@ public class DanhSachNhanVien implements IQuanLy, IFileIO {
                 } catch (NumberFormatException e) { boQua++; }
             }
             // Chỉ thay trạng thái khi đọc hoàn tất; đọc file lỗi không phá hỏng danh sách cũ.
+            boolean coAdmin = false;
+            for (int i = 0; i < dem; i++) if ("ADMIN".equals(moi[i].getQuyen())) coAdmin = true;
+            if (soLuong > 0 && (dem == 0 || (soLuongAdmin() > 0 && !coAdmin))) {
+                System.out.println("Từ chối thay danh sách nhân viên rỗng hoặc làm mất ADMIN cuối cùng.");
+                return;
+            }
             danhSach = moi;
             soLuong = dem;
             duLieuDinhDangCu = coDongCu;
+            docThanhCong = true;
             System.out.println("Đã tải " + dem + " nhân viên (bỏ qua " + boQua + " dòng lỗi).");
         } catch (IOException e) { System.out.println("Không thể đọc " + duongDan + ": " + e.getMessage()); }
     }
