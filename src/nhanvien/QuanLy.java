@@ -12,12 +12,15 @@ public class QuanLy extends NhanVien {
 
     @Override
     public String getQuyen() {
-        return "ADMIN"; // Toàn quyền hệ thống
+        return "ADMIN"; // Toàn quyền hệ thống, truy cập mọi chi nhánh
     }
+
+    @Override
+    public boolean thuocChiNhanh() { return false; }
 
     @Override
     public void xuatThongTin() {
         super.xuatThongTin();
-        System.out.println("Vai trò: Quản lý (Master)");
+        System.out.println("Vai trò: Admin (mọi chi nhánh)");
     }
 }

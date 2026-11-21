@@ -10,6 +10,11 @@ public class NhanVienBanHang extends NhanVien {
         super(ma, ten, sdt, mk, ca, luong);
     }
 
+    public NhanVienBanHang(String ma, String ten, String sdt, String mk, String ca, double luong, String maChiNhanh) {
+        super(ma, ten, sdt, mk, ca, luong);
+        setMaChiNhanh(maChiNhanh);
+    }
+
     @Override
     public String getQuyen() {
         return "BAN_HANG"; // Chỉ được xem tồn kho và bán hàng

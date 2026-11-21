@@ -20,6 +20,33 @@ public class DanhSachNhanVien implements IQuanLy, IFileIO {
     private boolean duLieuDinhDangCu = false;
     public boolean laDuLieuDinhDangCu() { return duLieuDinhDangCu; }
 
+    // Trả về mã chi nhánh chuẩn nếu tồn tại, null nếu không. Main gắn hàm này với danh sách chi nhánh.
+    private java.util.function.UnaryOperator<String> chuanHoaChiNhanh = s -> s;
+    public void setChuanHoaChiNhanh(java.util.function.UnaryOperator<String> f) {
+        chuanHoaChiNhanh = (f == null) ? (s -> s) : f;
+    }
+    public int demTheoChiNhanh(String maCN) {
+        int n = 0;
+        for (int i = 0; i < soLuong; i++)
+            if (danhSach[i].thuocChiNhanh() && danhSach[i].getMaChiNhanh().equalsIgnoreCase(maCN)) n++;
+        return n;
+    }
+    public void xuatTheoChiNhanh(String maCN) {
+        int n = 0;
+        for (int i = 0; i < soLuong; i++)
+            if (danhSach[i].thuocChiNhanh() && danhSach[i].getMaChiNhanh().equalsIgnoreCase(maCN)) {
+                danhSach[i].xuatThongTin(); n++;
+            }
+        if (n == 0) System.out.println("Chi nhánh chưa có nhân viên.");
+    }
+    private String nhapMaChiNhanh(String thongBao) {
+        while (true) {
+            String chuan = chuanHoaChiNhanh.apply(TienIch.nhapChuoi(thongBao).trim());
+            if (chuan != null) return chuan;
+            System.out.println("Chi nhánh không tồn tại.");
+        }
+    }
+
     // Đọc được các dòng text mô tả khởi tạo nhân viên từ bản main cũ.
     // Không bao giờ thực thi code Java có trong file dữ liệu.
     private static final Pattern NHAN_VIEN_CU = Pattern.compile(
@@ -110,14 +137,16 @@ public class DanhSachNhanVien implements IQuanLy, IFileIO {
         String mk = TienIch.nhapChuoi("Mật khẩu: ");
         String ca = TienIch.nhapChuoi("Ca làm việc: ");
         double luong = nhapLuong();
-        int quyen = TienIch.nhapSoNguyenDuong("Vai trò (1: bán hàng, 2: nhập kho, 3: quản lý): ");
+        int quyen = TienIch.nhapSoNguyenDuong("Vai trò (1: bán hàng, 2: nhập kho, 3: quản lý chi nhánh, 4: admin): ");
         NhanVien nv;
         switch (quyen) {
             case 1: nv = new NhanVienBanHang(ma,ten,sdt,mk,ca,luong); break;
             case 2: nv = new NhanVienNhapKho(ma,ten,sdt,mk,ca,luong); break;
-            case 3: nv = new QuanLy(ma,ten,sdt,mk,ca,luong); break;
+            case 3: nv = new QuanLyChiNhanh(ma,ten,sdt,mk,ca,luong,""); break;
+            case 4: nv = new QuanLy(ma,ten,sdt,mk,ca,luong); break;
             default: System.out.println("Vai trò không hợp lệ."); return;
         }
+        if (nv.thuocChiNhanh()) nv.setMaChiNhanh(nhapMaChiNhanh("Mã chi nhánh làm việc: "));
         System.out.println(them(nv) ? "Đã thêm nhân viên." : "Thông tin không hợp lệ hoặc mã bị trùng.");
     }
     private static double nhapLuong() {
@@ -147,7 +176,18 @@ public class DanhSachNhanVien implements IQuanLy, IFileIO {
             catch (NumberFormatException e) { System.out.println("Lương không hợp lệ, hủy cập nhật."); return; }
         }
         String mk = nhapTuyChon("Mật khẩu mới");
-        System.out.println(sua(ma,ten,sdt,ca,luongMoi,mk) ? "Cập nhật thành công." : "Cập nhật thất bại.");
+        NhanVien nvSua = timTheoMa(ma);
+        String cnMoi = null;
+        if (nvSua.thuocChiNhanh()) {
+            String cn = nhapTuyChon("Mã chi nhánh mới");
+            if (!cn.isEmpty()) {
+                cnMoi = chuanHoaChiNhanh.apply(cn);
+                if (cnMoi == null) { System.out.println("Chi nhánh không tồn tại, hủy cập nhật."); return; }
+            }
+        }
+        boolean ok = sua(ma,ten,sdt,ca,luongMoi,mk);
+        if (ok && cnMoi != null) nvSua.setMaChiNhanh(cnMoi);
+        System.out.println(ok ? "Cập nhật thành công." : "Cập nhật thất bại.");
     }
     private static String nhapTuyChon(String nhan) {
         System.out.print(nhan + " (Enter để giữ nguyên): ");
@@ -164,13 +204,13 @@ public class DanhSachNhanVien implements IQuanLy, IFileIO {
         if (nv == null) System.out.println("Không tìm thấy.");
         else nv.xuatThongTin();
     }
-    // Format: ma;ten;sdt;matkhau;ca;luong;quyen. Dữ liệu mẫu học tập, không dùng cho production.
+    // Format: ma;ten;sdt;matkhau;ca;luong;quyen;maChiNhanh (file cũ 7 cột vẫn đọc được). Dữ liệu mẫu học tập, không dùng cho production.
     @Override public void ghiFile(String duongDan) {
         try (BufferedWriter bw = Files.newBufferedWriter(Path.of(duongDan), StandardCharsets.UTF_8)) {
             for (int i = 0; i < soLuong; i++) {
                 NhanVien n = danhSach[i];
                 bw.write(String.join(";", n.getMaNguoi(),n.getHoTen(),n.getSoDienThoai(),
-                    n.getMatKhau(), n.getCaLamViec(), Double.toString(n.getLuongCoBan()), n.getQuyen()));
+                    n.getMatKhau(), n.getCaLamViec(), Double.toString(n.getLuongCoBan()), n.getQuyen(), n.getMaChiNhanh()));
                 bw.newLine();
             }
             System.out.println("Đã ghi " + soLuong + " nhân viên vào " + duongDan);
@@ -192,16 +232,18 @@ public class DanhSachNhanVien implements IQuanLy, IFileIO {
                 } else {
                     a = s.split(";", -1);
                 }
-                if (a.length != 7) { boQua++; continue; }
+                if (a.length != 7 && a.length != 8) { boQua++; continue; }
                 NhanVien nv;
                 try {
                     double luong = Double.parseDouble(a[5]);
                     switch (a[6].trim()) {
                         case "ADMIN": nv = new QuanLy(a[0],a[1],a[2],a[3],a[4],luong); break;
+                        case "QUAN_LY": nv = new QuanLyChiNhanh(a[0],a[1],a[2],a[3],a[4],luong,""); break;
                         case "BAN_HANG": nv = new NhanVienBanHang(a[0],a[1],a[2],a[3],a[4],luong); break;
                         case "NHAP_KHO": nv = new NhanVienNhapKho(a[0],a[1],a[2],a[3],a[4],luong); break;
                         default: boQua++; continue;
                     }
+                    if (a.length == 8 && nv.thuocChiNhanh()) nv.setMaChiNhanh(a[7]);
                     boolean trung = false;
                     for (int i = 0; i < dem; i++) if (moi[i].getMaNguoi().equalsIgnoreCase(nv.getMaNguoi())) trung = true;
                     if (trung || nv.getMaNguoi().isBlank() || nv.getHoTen().isBlank() || nv.getMatKhau().isBlank() || luong < 0 || !Double.isFinite(luong)) { boQua++; continue; }

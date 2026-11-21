@@ -11,6 +11,9 @@ public class NhanVienNhapKho extends NhanVien {
     }
 
     @Override
+    public boolean thuocChiNhanh() { return false; } // làm việc trên kho chung
+
+    @Override
     public String getQuyen() {
         return "NHAP_KHO"; // Chỉ được thao tác với DanhSachSanPham
     }

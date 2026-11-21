@@ -208,7 +208,7 @@ public class DanhSachNCC implements IQuanLy, IFileIO {
 
     @Override
     public void docFile(String duongDan) {
-        int them = 0, boQua = 0, dongSo = 0;
+        int capNhat = 0, boQua = 0, dongSo = 0;
         try (BufferedReader br = java.nio.file.Files.newBufferedReader(
                 java.nio.file.Path.of(duongDan), java.nio.charset.StandardCharsets.UTF_8)) {
             String dong;
@@ -220,17 +220,21 @@ public class DanhSachNCC implements IQuanLy, IFileIO {
                     System.out.println("Bỏ qua NCC dòng " + dongSo + ": sai cấu trúc/mã/tên"); boQua++; continue;
                 }
                 String ma = phan[0].trim();
-                if (timKiemViTri(ma) != -1) { boQua++; continue; }
-                if (soLuongNCC == dsNCC.length) {
-                    NhaCungCap[] moi = new NhaCungCap[dsNCC.length * 2];
-                    System.arraycopy(dsNCC, 0, moi, 0, soLuongNCC);
-                    dsNCC = moi;
+                int vt = timKiemViTri(ma);
+                if (vt == -1) {
+                    System.out.println("Bỏ qua NCC dòng " + dongSo + ": mã " + ma + " chưa có trong danh sách.");
+                    boQua++;
+                    continue;
                 }
-                dsNCC[soLuongNCC++] = new NhaCungCap(ma, phan[1].trim(),
-                    phan[2].trim(), phan[3].trim(), phan[4].trim());
-                them++;
+                NhaCungCap ncc = dsNCC[vt];
+                //chỉ bổ sung thông tin NCC đã có; ô trống giữ nguyên dữ liệu hiện tại.
+                if (!phan[1].trim().isEmpty()) ncc.setTenNCC(phan[1].trim());
+                if (!phan[2].trim().isEmpty()) ncc.setDiaChi(phan[2].trim());
+                if (!phan[3].trim().isEmpty()) ncc.setSoDienThoai(phan[3].trim());
+                if (!phan[4].trim().isEmpty()) ncc.setEmail(phan[4].trim());
+                capNhat++;
             }
-            System.out.println("Đọc NCC: thêm " + them + ", bỏ qua " + boQua + " dòng.");
+            System.out.println("Đọc NCC: cập nhật " + capNhat + ", bỏ qua " + boQua + " dòng; không thêm NCC mới.");
         } catch (IOException e) {
             System.out.println("Lỗi đọc file NCC: " + e.getMessage());
         }
@@ -261,5 +265,15 @@ public class DanhSachNCC implements IQuanLy, IFileIO {
 
     public int getSoLuongNCC() {
         return soLuongNCC;
+    }
+
+    /** Khôi phục đầy đủ NCC, bao gồm mã và các trường liên hệ đã lưu. */
+    public boolean them(NhaCungCap ncc) {
+        if (ncc == null || ncc.getMaNCC() == null || ncc.getMaNCC().isBlank()
+                || ncc.getTenNCC() == null || ncc.getTenNCC().isBlank() || timNCC(ncc.getMaNCC()) != null)
+            return false;
+        if (soLuongNCC == dsNCC.length) dsNCC = java.util.Arrays.copyOf(dsNCC, dsNCC.length * 2);
+        dsNCC[soLuongNCC++] = ncc;
+        return true;
     }
 }

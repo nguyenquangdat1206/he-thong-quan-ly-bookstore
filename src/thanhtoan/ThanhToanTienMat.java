@@ -20,6 +20,11 @@ public class ThanhToanTienMat implements IThanhToan {
     //Ghi đè phương thức xuLyThanhToan
     @Override
     public boolean xuLyThanhToan(double soTien) {
+        if (!Double.isFinite(tienKhachDua) || tienKhachDua < 0
+                || !Double.isFinite(soTien) || soTien < 0) {
+            System.out.println("Số tiền thanh toán không hợp lệ!");
+            return false;
+        }
         if (tienKhachDua < soTien) {
             System.out.printf("Số tiền khách đưa không đủ! Cần %.0f, đưa %.0f%n", soTien, tienKhachDua);
             return false;

@@ -5,6 +5,7 @@ import interfaces.*;
 import mathang.*;
 import nhacungcap.DanhSachNCC;
 import nhacungcap.NhaCungCap;
+import nhanvien.NhanVienNhapKho;
 import tienich.TienIch;
 
 
@@ -29,12 +30,13 @@ public class PhieuNhap implements IGetMa, IQuanLy{
         chiTiet=new ChiTietPhieuNhap(LocalDate.now(), new NhaCungCap());
         soLuongNhap=0;
     }
-    public PhieuNhap(String ma, MatHang[] mh, TrangThaiPN tt, ChiTietPhieuNhap ct, int sl){
+    public PhieuNhap(String ma, MatHang[] mh, TrangThaiPN tt, ChiTietPhieuNhap ct, int sl, NhanVienNhapKho nvNhap){
         maPN=ma;
         this.dsMH=mh;
         trangThai=tt;
         chiTiet=ct;
         soLuongNhap=sl;
+
     }
 
 //getter
@@ -90,7 +92,18 @@ public class PhieuNhap implements IGetMa, IQuanLy{
             case 11: mhMoi = new Vo(); break;
             default: System.out.println("Chọn kh hợp lệ"); return null;
         }
-        mhMoi.nhap();
+        String tenNCC = getChiTiet().getNhaCungCap().getTenNCC();
+        if (mhMoi instanceof Sach) ((Sach) mhMoi).nhap(tenNCC);
+        if (mhMoi instanceof TieuThuyet)  ((TieuThuyet) mhMoi).nhap(tenNCC);;
+        if (mhMoi instanceof SachGiaoKhoa)  ((SachGiaoKhoa) mhMoi).nhap(tenNCC);;
+        if (mhMoi instanceof Truyen)  ((Truyen) mhMoi).nhap(tenNCC);
+        if (mhMoi instanceof VanPhongPham)  ((VanPhongPham) mhMoi).nhap(tenNCC);;
+        if (mhMoi instanceof BaoTapChi)  ((BaoTapChi) mhMoi).nhap(tenNCC);;
+        if (mhMoi instanceof SPKhac)  ((SPKhac) mhMoi).nhap(tenNCC);;
+        if (mhMoi instanceof DoChoi)  ((DoChoi) mhMoi).nhap(tenNCC);;
+        if (mhMoi instanceof DungCuHocTap)  ((DungCuHocTap) mhMoi).nhap(tenNCC);;
+        if (mhMoi instanceof TrangTri) ((TrangTri) mhMoi).nhap(tenNCC);;
+        if (mhMoi instanceof Vo) ((Vo) mhMoi).nhap(tenNCC);;
         return mhMoi;
     }
     @Override 
@@ -99,10 +112,6 @@ public class PhieuNhap implements IGetMa, IQuanLy{
         while (true) {
             mhMoi = nhapMH();
             if (mhMoi == null) return;
-            if (mhMoi.getSoLuong() <= 0) {
-                System.out.println("Số lượng mặt hàng nhập phải lớn hơn 0. Vui lòng nhập lại.");
-                continue;
-            }
             if (TienIch.timKiemViTri(dsMH, soLuongNhap, mhMoi.getMa()) == -1) break;
             System.out.println("Mã mặt hàng đã có trong phiếu! Vui lòng nhập lại.");
         }
@@ -226,13 +235,7 @@ public class PhieuNhap implements IGetMa, IQuanLy{
         }
     }
 
-    /** Tự sinh mã NCC và tái sử dụng NCC cùng tên; không tạo bản ghi trùng. */
-    public NhaCungCap taoNCC(String tenNCC, DanhSachNCC dsncc) {
-        return dsncc.timHoacTaoTheoTen(tenNCC);
-    }
-
     public void suaNCC(DanhSachNCC dsncc){
-        String tenMoi = TienIch.nhapChuoi("Tên nhà cung cấp mới: ");
-        chiTiet.setNhaCC(taoNCC(tenMoi, dsncc));
+        dsncc.sua();
     }
 }

@@ -1,114 +1,147 @@
 package phieunhap;
-
-import interfaces.IQuanLy;
-import mathang.*;
-import nhacungcap.*;
-import phieunhap.PhieuNhap.TrangThaiPN;
-
 import java.io.BufferedReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.charset.StandardCharsets;
-import java.time.format.DateTimeParseException;
-import java.time.format.ResolverStyle;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
+import java.time.format.ResolverStyle;
 
 import interfaces.IFileIO;
-import tienich.*;
+import interfaces.IQuanLy;
 import kho.Kho;
+import mathang.BaoTapChi;
+import mathang.DoChoi;
+import mathang.DungCuHocTap;
+import mathang.MatHang;
+import mathang.SPKhac;
+import mathang.Sach;
+import mathang.SachGiaoKhoa;
+import mathang.TieuThuyet;
+import mathang.TrangTri;
+import mathang.Truyen;
+import mathang.VanPhongPham;
+import mathang.Vo;
+import nhacungcap.DanhSachNCC;
+import tienich.TienIch;
+import phieunhap.PhieuNhap.TrangThaiPN;
 
-public class DanhSachPhieuNhap implements IQuanLy, IFileIO{
-    private PhieuNhap[] dsPN;
-    private int soLuongPN;
-    private DanhSachNCC dsNCC;
+public class DanhSachPhieuNhap implements IFileIO, IQuanLy{
 
-    public DanhSachPhieuNhap() { this(new DanhSachNCC()); }
-    // Cho Main truyền danh sách NCC dùng chung thay vì tạo một danh sách thứ hai.
-    public DanhSachPhieuNhap(DanhSachNCC ncc) {
+    private PhieuNhap dsPN[];
+    private int slPN;
+    private DanhSachNCC dsNcc;
+
+    public DanhSachPhieuNhap(){
+        this(new DanhSachNCC());
+    }
+
+    //tiết kiệm bộ nhớ vs n pn biết trước
+    public DanhSachPhieuNhap(int n){
+        dsPN = new PhieuNhap [n];
+        slPN=0;
+        dsNcc = new DanhSachNCC();
+    }
+
+    //truyền nhà cung cấp
+    public DanhSachPhieuNhap(DanhSachNCC dsncc){
         dsPN = new PhieuNhap[1000];
-        soLuongPN = 0;
-        dsNCC = ncc;
+        slPN=0;
+        this.dsNcc=dsncc;
     }
 
-    public DanhSachNCC getDanhSachNCC() { return dsNCC; }
+    public DanhSachNCC getDanhSachNCC(){return dsNcc;}
+    public int getSLpn(){return slPN;}
+    public PhieuNhap[] getMangPhieuNhap() { return dsPN; }
 
-    public int getSoLuongPN() { return soLuongPN; }
-    public PhieuNhap timPhieu(String ma) {
-        int vt = TienIch.timKiemViTri(dsPN, soLuongPN, ma);
-        return vt < 0 ? null : dsPN[vt];
+    public boolean them(PhieuNhap pn) {
+        if (pn == null || pn.getMa() == null || pn.getMa().isBlank() || timPhieu(pn.getMa()) != null)
+            return false;
+        if (slPN == dsPN.length) dsPN = java.util.Arrays.copyOf(dsPN, Math.max(1, dsPN.length * 2));
+        dsPN[slPN++] = pn;
+        return true;
     }
 
-    @Override 
+    public PhieuNhap timPhieu(String ma){
+        int vt = TienIch.timKiemViTri(dsPN, slPN, ma);
+        return vt==-1 ? null:dsPN[vt];
+    }
+
+    @Override
     public void nhap(){
-        int n=TienIch.nhapSoNguyenDuong("Nhập số lượng phiếu nhập: ");
+        int n= TienIch.nhapSoNguyenDuong("Nhập số lượng phiếu nhập cần nhập tay: ");
         for(int i=0;i<n;i++){
-            System.out.println("======Nhập phiếu nhập thứ"+(i+1)+"======");
+            System.out.println("Nhập phiếu thứ "+ i+1);
             them();
         }
+
     }
-    @Override 
-    public void xuat(){
-        if(soLuongPN==0){ 
-            System.out.println("Danh sách phiếu nhập đang trống!");
-            return;
-        }    
-        System.out.println("\n======DANH SÁCH PHIẾU NHẬP======");
-        System.out.printf("%-15s %-15s %-25s %-15s%n", "Mã Phiếu", "Ngày Nhập", "Nhà Cung Cấp", "Trạng thái");
-        System.out.println("--------------------------------------------------------");
-        for(int i=0;i<soLuongPN;i++){
-            PhieuNhap pn = dsPN[i];
-            String ngay = TienIch.ngaytoString(pn.getChiTiet().getNgayNhap());
-            System.out.printf("%-15s %-15s %-25s %-15s%n", pn.getMa(), ngay,
-                    pn.getChiTiet().getNhaCungCap().getTenNCC(), pn.getTrangThai());
-            System.out.println("Thông tin hàng nhập: ");
-            pn.xuat();
-        }
-    }
-    @Override 
+
+    @Override
     public void them(){
-        if(soLuongPN==dsPN.length){
-            PhieuNhap[] mangMoi = new PhieuNhap[dsPN.length*2];
-            for(int i=0;i<dsPN.length;i++){
+        if(slPN==dsPN.length){
+            PhieuNhap[] mangMoi= new PhieuNhap[dsPN.length*2];
+            for(int i=0; i<dsPN.length;i++){
                 mangMoi[i]=dsPN[i];
             }
             dsPN=mangMoi;
-            System.out.println("Đã tự động tăng sức chứa mảng lên: "+ dsPN.length);
+            System.out.println("Đã tự động tăng kích thước mảng lên "+ dsPN.length);
         }
-
         PhieuNhap pn = new PhieuNhap();
-        pn.setMaPN(TienIch.nhapMa(dsPN, soLuongPN, "Nhập mã phiếu nhập mới: "));
-        LocalDate ngay = TienIch.nhapNgay("Ngày nhập (dd/MM/yyyy; Enter để lấy hôm nay): ", true);
-        pn.getChiTiet().setNgayNhap(ngay == null ? LocalDate.now() : ngay);
-        String tenNCC = TienIch.nhapChuoi("Tên nhà cung cấp: ");
-        if (tenNCC.trim().isEmpty()) {
-            System.out.println("Không tạo phiếu: thiếu tên NCC."); return;
-        }
-        pn.getChiTiet().setNhaCC(pn.taoNCC(tenNCC, dsNCC));
+
+        pn.setMaPN(TienIch.nhapMa(dsPN, slPN, "Nhập mã phiếu nhập"));
+
+        LocalDate ngay = TienIch.nhapNgay("Nhập ngày (dd/MM/yyyy) nhập hàng: (bấm Enter để lấy ngày hôm nay)", true);
+        pn.getChiTiet().setNgayNhap(ngay==null? LocalDate.now():ngay);
+
+        String tenNcc = TienIch.nhapChuoi("Nhập tên nhà cung cấp cho phiếu nhập này: ");
+        pn.getChiTiet().setNhaCC(dsNcc.timHoacTaoTheoTen(tenNcc));
+
         pn.nhap();
-        if (pn.getSoLuongNhap() == 0) {
-            System.out.println("Không lưu phiếu trống."); return;
-        }
-        dsPN[soLuongPN++]=pn;
-        System.out.println("Thêm thành công phiếu: "+pn.getMa());
+
+        dsPN[slPN++]=pn;
+        System.out.println("Thêm thành công phiếu nhập "+pn.getMa());
     }
-    @Override 
+
+    @Override
+    public void xoa(){
+        if(slPN==0){
+            System.out.println("Chưa có phiếu nhập nào!");
+            return;
+        }
+        String ma = TienIch.nhapChuoi("Nhập mã phiếu nhập cần xóa: ");
+        int vt = TienIch.timKiemViTri(dsPN, slPN, ma);
+        if(vt==-1){
+            System.out.println("Không có mã phiếu nhập tương ứng trong danh sách!");
+            return;
+        }
+        if (dsPN[vt].getTrangThai() == TrangThaiPN.DA_DUYET) {
+            System.out.println("Phiếu đã nhập kho, không thể xóa.");
+            return;
+        }
+        for(int i = vt;i<slPN-1;i++){
+            dsPN[i]=dsPN[i+1];
+        }
+        dsPN[--slPN]=null;
+        System.out.println("Đã xóa thành công phiếu "+ma);
+    }
+
+    @Override
     public void sua(){
-        if(soLuongPN==0){
-            System.out.println("Danh sách phiếu nhập đang trống!");
+        if(slPN==0){
+            System.out.println("Chưa có phiếu nhập nào!");
             return;
         }
-        String maCanSua=TienIch.nhapChuoi("Nhập mã phiếu cần sửa: ");
-        int vitri=TienIch.timKiemViTri(dsPN, soLuongPN, maCanSua);
-        if(vitri==-1){
-            System.out.println("Không tìm thấy phiếu có mã: "+ maCanSua);
+        String ma = TienIch.nhapChuoi("Nhập mã phiếu nhập cần sửa: ");
+        int vt = TienIch.timKiemViTri(dsPN, slPN, ma);
+        if(vt==-1){
+            System.out.println("Không có mã phiếu nhập tương ứng trong danh sách!");
             return;
         }
-        if (dsPN[vitri].getTrangThai() != TrangThaiPN.CHO_DUYET) {
-            System.out.println("Phiếu đã xử lý, không thể sửa.");
+        if (dsPN[vt].getTrangThai() == TrangThaiPN.DA_DUYET) {
+            System.out.println("Phiếu đã nhập kho, không thể sửa.");
             return;
         }
         System.out.println("=======MENU SỬA======");
@@ -116,154 +149,210 @@ public class DanhSachPhieuNhap implements IQuanLy, IFileIO{
         System.out.println("2. Sửa thông tin phiếu nhập(mã phiếu nhập, ngày nhập, ncc,...");
         System.out.println("3. Sửa trạng thái phiếu nhập");
         System.out.println("4. Thoát");
-        boolean tieptuc=true;
+        boolean tieptuc = true;
         while(tieptuc){
-            int n = TienIch.nhapSoNguyenKhongAm("Nhập lựa chọn của bạn: ");
+            int n = TienIch.nhapSoNguyenDuong("Nhập lựa chọn: ");
             switch(n){
-                case 1:
-                    dsPN[vitri].sua();
-                    break;
+                case 1: dsPN[vt].sua(); break;
+
                 case 2:
-                    System.out.println("Nhập mã phiếu mới (Enter để giữ nguyên): ");
-                    String maMoi = TienIch.sc.nextLine().trim();
-                    if (!maMoi.isEmpty()) {
-                        int viTriTrung = TienIch.timKiemViTri(dsPN, soLuongPN, maMoi);
-                        if (viTriTrung >= 0 && viTriTrung != vitri) {
-                            System.out.println("Mã phiếu đã tồn tại!");
-                            break;
-                        }
-                        dsPN[vitri].setMaPN(maMoi);
+                //sửa mã
+                while(true){
+                    String lc = TienIch.nhapChuoi("Đổi mã phiếu? (Y/N): ");
+                    if(lc.equalsIgnoreCase("Y")){
+                        String maMoi = TienIch.nhapMa(dsPN, slPN, "Nhập mã mới: ");
+                        dsPN[vt].setMaPN(maMoi);
+                        break;
                     }
-                    dsPN[vitri].getChiTiet().setNgayNhap(TienIch.nhapNgay("Nhập ngày nhập mới: "));
-                    dsPN[vitri].suaNCC(dsNCC);
-                    break;
+                    if(lc.equalsIgnoreCase("N")) break;
+                    System.out.println("Chỉ nhập Y hoặc N!");
+                }
+                //sửa ngày
+                while(true){
+                    String lc = TienIch.nhapChuoi("Đổi ngày nhập? (Y/N): ");
+                    if(lc.equalsIgnoreCase("Y")){
+                        LocalDate ngay = TienIch.nhapNgay("Nhập ngày nhập mới: ", true);
+                        dsPN[vt].getChiTiet().setNgayNhap(ngay==null? LocalDate.now():ngay);
+                        break;
+                    }
+                    if(lc.equalsIgnoreCase("N")) break;
+                    System.out.println("Chỉ nhập Y hoặc N!");
+                }
+                //sửa ncc
+                while(true){
+                    String lc = TienIch.nhapChuoi("Đổi nhà cung cấp? (Y/N): ");
+                    if(lc.equalsIgnoreCase("Y")){
+                        String tenNCC= TienIch.nhapChuoi("Nhập tên nhà cung cấp mới:  ");
+                        dsPN[vt].getChiTiet().setNhaCC(dsNcc.timHoacTaoTheoTen(tenNCC));
+                        break;
+                    }
+                    if(lc.equalsIgnoreCase("N")) break;
+                    System.out.println("Chỉ nhập Y hoặc N!");
+                }
+                break;
+
                 case 3:
                     System.out.println("Chọn trạng thái mới của phiếu: ");
                     System.out.println("1. Chờ duyệt\n 2. Đã duyệt\n 3.Đã hủy");
-                    int chon=TienIch.nhapSoNguyenKhongAm("Nhập chọn: ");
-                    switch(chon){
-                        case 1:
-                            if (dsPN[vitri].getTrangThai() != TrangThaiPN.CHO_DUYET)
-                                System.out.println("Không thể mở lại phiếu đã xử lý.");
-                            break;
-                        case 2:
-                            System.out.println("Hãy dùng chức năng nhập hàng vào kho để duyệt phiếu.");
-                            break;
-                        case 3:
-                            if (dsPN[vitri].getTrangThai() == TrangThaiPN.CHO_DUYET)
-                                dsPN[vitri].setTrangThai(TrangThaiPN.DA_HUY);
-                            else System.out.println("Phiếu đã xử lý, không thể đổi trạng thái.");
-                            break;
+                    while(true){
+                    int lc = TienIch.nhapSoNguyenDuong("Nhập lựa chọn: ");
+                    if(lc == 1){
+                        dsPN[vt].setTrangThai(TrangThaiPN.CHO_DUYET);
+                        break;
+                    }
+                    if(lc==2){
+                        System.out.println("Hãy nhập hàng vào kho để duyệt phiếu.");
+                        break;
+                    }
+                    if(lc==3){
+                        dsPN[vt].setTrangThai(TrangThaiPN.DA_HUY);
+                        break;
+                    }
+                    System.out.println("Vui lòng chọn lại!");
                     }
                     break;
-                case 4:
-                    tieptuc=false;
-                    break;
-                default: System.out.println("Lựa chọn không hợp lệ!");
 
+                case 4: System.out.println("Đã thoát"); tieptuc=false; break;
+
+                default: System.out.println("Vui lòng chọn lại!");
             }
         }
     }
-    @Override 
-    public void xoa(){
-        if(soLuongPN==0){
-            System.out.println("Danh sách phiếu nhập đang trống!");
-            return;
-        }
-        String maCanXoa=TienIch.nhapChuoi("Nhập mã phiếu cần xóa: ");
-        int vitri=TienIch.timKiemViTri(dsPN, soLuongPN, maCanXoa);
-        if(vitri==-1){
-            System.out.println("Không tìm thấy phiếu có mã: "+ maCanXoa);
-            return;
-        }
-        for(int i=vitri;i<soLuongPN-1;i++){
-            dsPN[i]=dsPN[i+1];
-        }
-        dsPN[soLuongPN-1]=null;
-        soLuongPN--;
-        System.out.println("Xóa thành công phiếu mã "+maCanXoa);
-    }
-
-    private static final DateTimeFormatter NGAY_FILE =
-            DateTimeFormatter.ofPattern("dd-MM-uuuu").withResolverStyle(ResolverStyle.STRICT);
 
     @Override
-    public void ghiFile(String duongDan) {
+    public void xuat(){
+        if(slPN==0){
+            System.out.println("Danh sách đang trống!");
+            return;
+        }
+        System.out.println("\n======DANH SÁCH PHIẾU NHẬP======");
+        System.out.printf("%-15s %-15s %-25s %-15s%n", "Mã Phiếu", "Ngày Nhập", "Nhà Cung Cấp", "Trạng thái");
+        System.out.println("--------------------------------------------------------");
+
+        for(int i =0; i<slPN;i++){
+            PhieuNhap pn = dsPN[i];
+            String ngay = TienIch.ngaytoString(pn.getChiTiet().getNgayNhap());
+            System.out.printf("%-15s %-15s %-25s %-15s%n", pn.getMa(), ngay, pn.getChiTiet().getNhaCungCap().getTenNCC(), pn.getTrangThai());
+            System.out.println("Thông tin hàng nhập: ");
+            pn.xuat();
+            System.out.println("=======================");
+        }
+    }
+
+    //thống nhất format ngày nhập cho đọc file và ghi file
+    private static final DateTimeFormatter NGAY_FILE = DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT);
+
+    @Override
+    public void ghiFile(String duongDan){
         int dong = 0;
-        try (PrintWriter pw = new PrintWriter(Files.newBufferedWriter(Path.of(duongDan), StandardCharsets.UTF_8))) {
-            for (int i = 0; i < soLuongPN; i++) {
+        try(PrintWriter pw = new PrintWriter(Files.newBufferedWriter(Path.of(duongDan), StandardCharsets.UTF_8))){
+            for(int i = 0;i<slPN;i++){
                 PhieuNhap pn = dsPN[i];
-                for (int j = 0; j < pn.getSoLuongNhap(); j++) {
-                    pw.println(pn.getMa() + ";" + pn.getChiTiet().getNgayNhap().format(NGAY_FILE)
-                            + ";" + pn.getDSMH()[j].toString() + ";" + pn.getTrangThai()
-                            + ";NCC=" + pn.getChiTiet().getNhaCungCap().getTenNCC());
+                for(int j=0;j<pn.getSoLuongNhap();j++){
+                    pw.println(pn.getMa() + ";" + pn.getChiTiet().getNgayNhap().format(NGAY_FILE) + ";" + dongMatHang(pn, j) + ";" + pn.getTrangThai());
                     dong++;
                 }
             }
-            System.out.println("Đã ghi " + soLuongPN + " phiếu / " + dong + " dòng vào file.");
-        } catch (IOException e) {
-            System.out.println("Không ghi được file phiếu nhập: " + e.getMessage());
+            System.out.println("Đã ghi " + slPN + " phiếu / " + dong + " dòng vào file.");
+        }catch (IOException e){
+            System.out.println("Không ghi được file "+e.getMessage());
         }
     }
 
-    private static LocalDate phanTichNgay(String value) {
-        String s = value.trim();
-        try { return LocalDate.parse(s, NGAY_FILE); }
-        catch (DateTimeParseException ignored) { }
-        try { return LocalDate.parse(s, DateTimeFormatter.ofPattern("dd/MM.uuuu").withResolverStyle(ResolverStyle.STRICT)); }
-        catch (DateTimeParseException ignored) { }
-        return LocalDate.parse(s); // Định dạng yyyy-MM-dd
+    /** Ghi riêng các phiếu đã được nhập kho thành công. */
+    public void ghiFileDaNhapKho(String duongDan){
+        int soPhieu = 0, soDong = 0;
+        try(PrintWriter pw = new PrintWriter(Files.newBufferedWriter(Path.of(duongDan), StandardCharsets.UTF_8))){
+            for(int i = 0; i < slPN; i++){
+                PhieuNhap pn = dsPN[i];
+                if(pn.getTrangThai() != TrangThaiPN.DA_DUYET) continue;
+                soPhieu++;
+                for(int j = 0; j < pn.getSoLuongNhap(); j++){
+                    pw.println(pn.getMa() + ";" + pn.getChiTiet().getNgayNhap().format(NGAY_FILE)
+                            + ";" + dongMatHang(pn, j) + ";" + pn.getTrangThai());
+                    soDong++;
+                }
+            }
+            System.out.println("Đã ghi " + soPhieu + " phiếu đã nhập kho / " + soDong
+                    + " dòng vào file " + duongDan);
+        }catch(IOException e){
+            System.out.println("Không ghi được danh sách phiếu đã nhập kho: " + e.getMessage());
+        }
     }
 
-    /** Kiểm tra cấu trúc trước khi thay đổi mảng để một dòng lỗi không tạo phiếu/NCC rác. */
+    /** Tự nhập tất cả phiếu đang chờ vào kho, rồi lưu danh sách phiếu đã duyệt. */
+    public void tuDongNhapTatCaVaoKho(Kho kho, String duongDanGhi){
+        if(kho == null){
+            System.out.println("Kho rỗng");
+            return;
+        }
+        int thanhCong = 0, thatBai = 0;
+        for(int i = 0; i < slPN; i++){
+            PhieuNhap pn = dsPN[i];
+            if(pn.getTrangThai() != TrangThaiPN.CHO_DUYET) continue;
+            if(kho.nhapHangTuPhieu(pn)) thanhCong++;
+            else thatBai++;
+        }
+        System.out.println("Hoàn tất: nhập thành công " + thanhCong + " phiếu, thất bại " + thatBai + " phiếu.");
+        ghiFileDaNhapKho(duongDanGhi);
+    }
+
+    private static String dongMatHang(PhieuNhap pn, int viTri) {
+        MatHang mh = pn.getDSMH()[viTri];
+        String[] cot = mh.toString().split(";", -1);
+        int viTriNcc = mh instanceof Sach ? 6 : cot.length - 1;
+        cot[viTriNcc] = pn.getChiTiet().getNhaCungCap().getTenNCC();
+        return String.join(";", cot);
+    }
+
+    private static MatHang taoMatHangTuDong(String[]p){
+        String loai = p[2].trim(), ma = p[3].trim(), ten=p[4].trim();
+        if(ma.isEmpty()||ten.isEmpty()) throw new IllegalArgumentException("thiếu mã hoặc tên hàng");
+        double gia = Double.parseDouble(p[5].trim());
+        int sl = Integer.parseInt(p[6].trim());
+        if(!Double.isFinite(gia) || gia<0 || sl<=0) throw new IllegalArgumentException("giá/số lượng kh hợp lệ");
+        switch(loai){
+            case "Sách":
+                if (p.length != 11) throw new IllegalArgumentException("sai số cột của Sách");
+                return new Sach(ma, ten, gia, sl, p[7].trim(), p[8].trim(), p[9].trim());
+            case "Tiểu thuyết":
+                if (p.length != 11) throw new IllegalArgumentException("sai số cột Tiểu thuyết");
+                return new TieuThuyet(ma, ten, gia, sl, p[7].trim(), p[8].trim(), p[9].trim());
+            case "Sách giáo khoa":
+                if (p.length != 10) throw new IllegalArgumentException("sai số cột Sách giáo khoa");
+                return new SachGiaoKhoa(ma, ten, gia, sl, p[7].trim(), p[8].trim());
+            case "Truyện":
+                if (p.length != 11) throw new IllegalArgumentException("sai số cột Truyện");
+                return new Truyen(ma, ten, gia, sl, p[7].trim(), p[8].trim(), p[9].trim());
+            case "Văn phòng phẩm":
+                if (p.length != 10) throw new IllegalArgumentException("sai số cột Văn phòng phẩm");
+                return new VanPhongPham(ma, ten, gia, sl, p[8].trim(), p[7].trim());
+            case "Báo tạp chí":
+                if (p.length != 10) throw new IllegalArgumentException("sai số cột Báo tạp chí");
+                return new BaoTapChi(ma, ten, gia, sl, p[8].trim(), p[7].trim());
+            case "Khác":
+                if (p.length != 9) throw new IllegalArgumentException("sai số cột Khác");
+                return new SPKhac(ma, ten, gia, sl, p[7].trim());
+            case "Đồ chơi":
+                if (p.length != 10) throw new IllegalArgumentException("sai số cột Đồ chơi");
+                return new DoChoi(ma, ten, gia, sl, p[8].trim(), Integer.parseInt(p[7].trim()));
+            case "Dụng cụ học tập":
+                if (p.length != 10) throw new IllegalArgumentException("sai số cột Dụng cụ học tập");
+                return new DungCuHocTap(ma, ten, gia, sl, p[8].trim(), p[7].trim());
+            case "Trang trí":
+                if (p.length != 9) throw new IllegalArgumentException("sai số cột Trang trí");
+                return new TrangTri(ma, ten, gia, sl, p[7].trim());
+            case "Vở":
+                if (p.length != 10) throw new IllegalArgumentException("sai số cột Vở");
+                return new Vo(ma, ten, gia, sl, Integer.parseInt(p[7].trim()), p[8].trim());
+            default: throw new IllegalArgumentException("danh mục không hỗ trợ: " + loai);
+        }
+    }
+
     private static MatHang matHangTuDong(String[] p) {
         MatHang mh = taoMatHangTuDong(p);
         mh.setMa(mh.getMa()); // mã phải đúng định dạng của loại mặt hàng, sai thì ném IllegalArgumentException
         return mh;
-    }
-
-    private static MatHang taoMatHangTuDong(String[] p) {
-        String loai = p[2].trim(), ma = p[3].trim(), ten = p[4].trim();
-        if (ma.isEmpty() || ten.isEmpty()) throw new IllegalArgumentException("thiếu mã hoặc tên mặt hàng");
-        double gia = Double.parseDouble(p[5].trim());
-        int so = Integer.parseInt(p[6].trim());
-        if (!Double.isFinite(gia) || gia < 0 || so <= 0) throw new IllegalArgumentException("giá/số lượng không hợp lệ");
-        switch (loai) {
-            case "Sách":
-                if (p.length != 11) throw new IllegalArgumentException("sai số cột của Sách");
-                return new Sach(ma, ten, gia, so, p[7].trim(), p[8].trim(), p[9].trim());
-            case "Tiểu thuyết":
-                if (p.length != 11) throw new IllegalArgumentException("sai số cột Tiểu thuyết");
-                return new TieuThuyet(ma, ten, gia, so, p[7].trim(), p[8].trim(), p[9].trim());
-            case "Sách giáo khoa":
-                if (p.length != 10) throw new IllegalArgumentException("sai số cột Sách giáo khoa");
-                return new SachGiaoKhoa(ma, ten, gia, so, p[7].trim(), p[8].trim());
-            case "Truyện":
-                if (p.length != 11) throw new IllegalArgumentException("sai số cột Truyện");
-                return new Truyen(ma, ten, gia, so, p[7].trim(), p[8].trim(), p[9].trim());
-            case "Văn phòng phẩm":
-                if (p.length != 10) throw new IllegalArgumentException("sai số cột Văn phòng phẩm");
-                return new VanPhongPham(ma, ten, gia, so, p[8].trim(), p[7].trim());
-            case "Báo tạp chí":
-                if (p.length != 10) throw new IllegalArgumentException("sai số cột Báo tạp chí");
-                return new BaoTapChi(ma, ten, gia, so, p[8].trim(), p[7].trim());
-            case "Khác":
-                if (p.length != 9) throw new IllegalArgumentException("sai số cột Khác");
-                return new SPKhac(ma, ten, gia, so, p[7].trim());
-            case "Đồ chơi":
-                if (p.length != 10) throw new IllegalArgumentException("sai số cột Đồ chơi");
-                return new DoChoi(ma, ten, gia, so, p[8].trim(), Integer.parseInt(p[7].trim()));
-            case "Dụng cụ học tập":
-                if (p.length != 10) throw new IllegalArgumentException("sai số cột Dụng cụ học tập");
-                return new DungCuHocTap(ma, ten, gia, so, p[8].trim(), p[7].trim());
-            case "Trang trí":
-                if (p.length != 9) throw new IllegalArgumentException("sai số cột Trang trí");
-                return new TrangTri(ma, ten, gia, so, p[7].trim());
-            case "Vở":
-                if (p.length != 10) throw new IllegalArgumentException("sai số cột Vở");
-                return new Vo(ma, ten, gia, so, Integer.parseInt(p[7].trim()), p[8].trim());
-            default: throw new IllegalArgumentException("danh mục không hỗ trợ: " + loai);
-        }
     }
 
     private static String layTenNCC(MatHang mh) {
@@ -282,81 +371,77 @@ public class DanhSachPhieuNhap implements IQuanLy, IFileIO{
     }
 
     @Override
-    public void docFile(String duongDan) {
+    public void docFile(String duongDan){
         int them = 0, boQua = 0, dongSo = 0, khacNCC = 0;
-        try (BufferedReader br = Files.newBufferedReader(Path.of(duongDan), StandardCharsets.UTF_8)) {
+        try(BufferedReader br = Files.newBufferedReader(Path.of(duongDan), StandardCharsets.UTF_8)){
             String dong;
-            while ((dong = br.readLine()) != null) {
+            while((dong = br.readLine())!=null){
                 dongSo++;
-                if (dong.isBlank()) continue;
-                try {
-                    String[] cot = dong.replace("\uFEFF", "").split(";", -1);
-                    String nccChinh = null;
-                    if (cot[cot.length - 1].startsWith("NCC=")) {
-                        nccChinh = cot[cot.length - 1].substring(4).trim();
-                        cot = Arrays.copyOf(cot, cot.length - 1);
-                        if (nccChinh.isEmpty()) throw new IllegalArgumentException("thiếu NCC chính");
-                    }
-                    String[] p = cot;
-                    if (p.length < 9) throw new IllegalArgumentException("dòng thiếu cột");
-                    String maPN = p[0].trim();
-                    if (maPN.isEmpty()) throw new IllegalArgumentException("thiếu mã phiếu");
-                    LocalDate ngay = phanTichNgay(p[1]);
-                    TrangThaiPN tt = TrangThaiPN.valueOf(p[p.length - 1].trim());
-                    MatHang mh = matHangTuDong(p);
-                    String tenNCCDong = layTenNCC(mh);
-                    if (tenNCCDong == null || tenNCCDong.trim().isEmpty())
-                        throw new IllegalArgumentException("thiếu tên nhà cung cấp/nhà xuất bản");
-                    boolean nccChinhDuocLuu = nccChinh != null;
-                    if (nccChinh == null) nccChinh = tenNCCDong;
+                if(dong.isBlank()) continue;
+                try{
+                    String [] p = dong.replace("\uFEFF", "").split(";");
 
-                    int vt = TienIch.timKiemViTri(dsPN, soLuongPN, maPN);
-                    PhieuNhap pn = vt < 0 ? null : dsPN[vt];
-                    if (pn != null) {
-                        if (!pn.getChiTiet().getNgayNhap().equals(ngay) || pn.getTrangThai() != tt)
+                    if(p.length < 9)
+                        throw new IllegalArgumentException("Thiếu cột dữ liệu");
+
+                    String maPn = p[0].trim();
+                    LocalDate ngayNhap= LocalDate.parse(p[1].trim(),NGAY_FILE);
+                    MatHang mh = matHangTuDong(p);
+                    String tenNcc = layTenNCC(mh);
+                    TrangThaiPN tt = TrangThaiPN.valueOf(p[p.length-1].trim());
+
+                    PhieuNhap pn = timPhieu(maPn);
+
+                    if(pn!=null){
+                        if (!pn.getChiTiet().getNgayNhap().equals(ngayNhap) || pn.getTrangThai() != tt)
                             throw new IllegalArgumentException("trùng mã phiếu nhưng khác ngày/trạng thái");
-                        if (nccChinhDuocLuu
-                                && !pn.getChiTiet().getNhaCungCap().getTenNCC().equalsIgnoreCase(nccChinh))
+
+                        if (!pn.getChiTiet().getNhaCungCap().getTenNCC().equals(tenNcc)){
+                            khacNCC++;
                             throw new IllegalArgumentException("trùng mã phiếu nhưng khác NCC chính");
-                        boolean daCo = false;
-                        for (int i = 0; i < pn.getSoLuongNhap(); i++)
-                            if (pn.getDSMH()[i].getMa().equalsIgnoreCase(mh.getMa())) { daCo = true; break; }
-                        if (daCo) { boQua++; continue; } // Đọc lại file không nhân đôi dòng hàng
+                        }
+
+                        boolean daCoMH=false;
+                        for(int i=0;i<pn.getSoLuongNhap();i++){
+                            if(pn.getDSMH()[i].getMa().equals(mh.getMa())){
+                                daCoMH=true;
+                                break;
+                            }
+                        }
+                        if(daCoMH) {boQua++; continue;}
                     }
-                    if (pn == null) {
-                        if (soLuongPN == dsPN.length) {
-                            PhieuNhap[] moi = new PhieuNhap[dsPN.length * 2];
-                            System.arraycopy(dsPN, 0, moi, 0, soLuongPN); dsPN = moi;
+
+                    if(pn==null){
+                        if(slPN==dsPN.length){
+                            PhieuNhap[] moi = new PhieuNhap[dsPN.length*2];
+                            for(int i=0;i<slPN;i++)
+                                moi[i]=dsPN[i];
+                            dsPN=moi;
                         }
                         pn = new PhieuNhap();
-                        pn.setMaPN(maPN);
-                        pn.setChiTiet(new ChiTietPhieuNhap(ngay, pn.taoNCC(nccChinh, dsNCC)));
+                        pn.setMaPN(maPn);
+                        pn.setChiTiet(new ChiTietPhieuNhap(ngayNhap, dsNcc.timHoacTaoTheoTen(tenNcc)));
                         pn.setTrangThai(tt);
-                        dsPN[soLuongPN++] = pn;
+                        dsPN[slPN++]=pn;
                     }
-                    NhaCungCap ncc = pn.taoNCC(tenNCCDong, dsNCC);
-                    // Mỗi phiếu hiện có một trường NCC. Không ghi đè tên NCC của dòng trước.
-                    if (!pn.getChiTiet().getNhaCungCap().getMaNCC().equals(ncc.getMaNCC())) {
-                        khacNCC++;
-                        System.out.println("Cảnh báo dòng " + dongSo + ": phiếu " + maPN
-                                + " có nhiều NCC; giữ NCC của dòng đầu, NCC bổ sung vẫn có trong danh sách.");
-                    }
+
                     pn.them(mh);
                     them++;
-                } catch (IllegalArgumentException | java.time.DateTimeException | ArrayIndexOutOfBoundsException e) {
+
+                }catch (IllegalArgumentException | java.time.DateTimeException e) {
                     boQua++;
                     System.out.println("Bỏ qua phiếu nhập dòng " + dongSo + ": " + e.getMessage());
                 }
             }
             System.out.println("Đọc phiếu nhập: thêm " + them + " dòng, bỏ qua " + boQua
                     + ", cảnh báo nhiều NCC " + khacNCC + ".");
-        } catch (IOException e) {
-            System.out.println("Lỗi đọc file phiếu nhập: " + e.getMessage());
+        } catch (IOException e){
+            System.out.println("Lỗi không đọc được file "+ e.getMessage());
         }
     }
 
     public void nhapKho(Kho kho){
-        for(int i=0;i<soLuongPN;i++){
+        for(int i=0;i<slPN;i++){
             if (dsPN[i].getTrangThai() != TrangThaiPN.CHO_DUYET) {
                 System.out.println("Phiếu " + dsPN[i].getMa() + " đã xử lý trước đó, bỏ qua.");
                 continue;

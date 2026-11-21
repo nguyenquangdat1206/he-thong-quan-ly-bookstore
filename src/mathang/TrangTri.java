@@ -35,8 +35,9 @@ public class TrangTri extends MatHang{
     public void setnhaSX(String nhaSX) { this.nhaSX = nhaSX; }
 
     @Override
-    public double tinhGiaBan(){
-        return getGiaNhap() * (1 + loinhuan/100)*(1+thue/100);
+    public double tinhGiaBan() {
+        double giaBan = getGiaNhap() * (1 + loinhuan / 100.0) * (1 + thue / 100.0);
+        return Math.round(giaBan * 100.0) / 100.0;
     }
 
     @Override
@@ -61,6 +62,27 @@ public class TrangTri extends MatHang{
 
     }
 
+    // nhập truyền tên nhà cung cấp từ phiếu nhập lên
+    public void nhap(String tenNCC) {
+        while (true) {
+            try {
+                setMa(TienIch.nhapChuoi("Nhập mã (TTRxxxx): "));
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        setTen(TienIch.nhapChuoi("Nhập tên: "));
+
+        nhaSX = tenNCC;
+
+        setGiaNhap(TienIch.nhapGiaTien("Giá nhập hàng: "));
+
+        setSoLuong(TienIch.nhapSoNguyenKhongAm("Nhập số lượng: "));
+
+    }
+
     @Override
     // Xuat
     public void xuat() {
@@ -78,6 +100,11 @@ public class TrangTri extends MatHang{
     @Override 
     public String getDanhMuc(){
         return "Trang trí";
+    }
+
+    @Override
+    public void suathuoctinhrieng() {
+        nhaSX = TienIch.nhapChuoi("Nhập lại nhà sản xuất: ");
     }
 
     @Override 

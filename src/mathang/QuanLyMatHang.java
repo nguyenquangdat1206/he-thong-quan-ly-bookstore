@@ -3,48 +3,50 @@ import kho.*;
 import tienich.TienIch;
 
 public class QuanLyMatHang {
-    private static void HienMenu(){
-        System.out.println();
-        System.out.println("========== QUẢN LÝ CỬA HÀNG ==========");
-        System.out.println("1. Xem số lượng hàng mặt hàng được bày bán ");
-        System.out.println("2. Nhập hàng loạt mặt hàng từ kho lên");
-        System.out.println("3. Nhập một mặt hàng cụ thể từ kho lên");
-        System.out.println("4. Xuất danh sách mặt hàng");
-        System.out.println("5. Thêm một mặt hàng cụ thể");
-        System.out.println("6. Xóa mặt hàng");
-        System.out.println("7. Sửa mặt hàng");
-        System.out.println("8. Tìm kiếm mặt hàng");
-        System.out.println("9. Bộ lọc nâng cao");
-        System.out.println("10. Đọc kho từ data/kho_input.txt");
-        System.out.println("0. Thoát");
-        System.out.println("=================================");
+    static Kho kho = new Kho();
+    static DanhSachMatHang dsmh = new DanhSachMatHang(kho);
+
+    static String hoiFile(String macDinh) {
+        System.out.print("Đường dẫn file (Enter hoặc . để dùng '" + macDinh + "'): ");
+        String s = TienIch.sc.nextLine().trim();
+        return (s.isEmpty() || s.equals(".")) ? macDinh : s;
     }
-
-    public static void main(String[] args){
+    public static void main(String[] args) {
         TienIch.cauHinhUnicodeConsole();
-        Kho kho = new Kho(); // tạo kho riêng, không gọi menu kho
-        DanhSachMatHang dsmh = new DanhSachMatHang(kho);
-
-        int choice;
+        int chon;
         do {
-            HienMenu();
-            choice = TienIch.nhapSoNguyenKhongAm("Nhập lựa chọn: ");
-
-            switch(choice){
+            System.out.println("\n---------- MẶT HÀNG (CỬA HÀNG) ----------");
+            System.out.println("1. Xem số lượng mặt hàng đang bày bán");
+            System.out.println("2. Nhập 1 mặt hàng cụ thể từ kho lên");
+            System.out.println("3. Nhập hàng loạt từ kho lên");
+            System.out.println("4. Trả hàng từ kệ về kho");
+            System.out.println("5. Xuất danh sách mặt hàng");
+            System.out.println("6. Xóa mặt hàng");
+            System.out.println("7. Sửa mặt hàng");
+            System.out.println("8. Tìm kiếm theo mã");
+            System.out.println("9. Bộ lọc nâng cao");
+            System.out.println("10. Ghi mặt hàng ra file");
+            System.out.println("11. Thống kê hàng trong kho chưa lên kệ bán");
+            System.out.println("0. Quay lại");
+            chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
+            switch (chon) {
                 case 1: System.out.println("Số mặt hàng: " + dsmh.getSoMH()); break;
-                case 2: dsmh.nhapHangLoat(kho); break;
-                case 3: dsmh.nhap(); break;
-                case 4: dsmh.xuat(); break;
-                case 5: dsmh.them(); break;
+                case 2: dsmh.nhap(); break;
+                case 3: {
+                    dsmh.nhapHangLoat(kho);
+                    break;
+                }
+                case 4: dsmh.traHangVeKho(kho); break;
+                case 5: dsmh.xuat(); break;
                 case 6: dsmh.xoa(); break;
                 case 7: dsmh.sua(); break;
-                case 8: dsmh.timkiem(); break;
+                case 8: dsmh.timKiem(); break;
                 case 9: dsmh.timkiem_nangcao(); break;
-                case 10: kho.docFile("data/kho_input.txt"); break;
-                case 0: System.out.println("Thoát chương trình."); break;
+                case 10: dsmh.ghiFile(hoiFile("data/mathang_output.txt")); break;
+                case 11: dsmh.thongKeHangChuaLenKe(kho); break;
+                case 0: break;
                 default: System.out.println("Lựa chọn không hợp lệ!");
             }
-        } while(choice != 0);
-
+        } while (chon != 0);
     }
 }

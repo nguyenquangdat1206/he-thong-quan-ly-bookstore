@@ -181,7 +181,7 @@ public class HoaDon {
 
     // Chỉ dùng khi nạp hóa đơn đã thanh toán từ file (không trừ hàng lần nữa)
     // Phải gọi SAU khi đã thêm đủ chi tiết, vì thêm chi tiết bị chặn khi đã thanh toán
-    void danhDauDaThanhToan() {
+    public void danhDauDaThanhToan() {
         this.daThanhToan = true;
     }
 

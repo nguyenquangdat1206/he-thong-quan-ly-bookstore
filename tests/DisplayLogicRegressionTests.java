@@ -3,7 +3,7 @@ import giohang.GioHang;
 import hoadon.ChiTietHoaDon;
 import hoadon.DanhSachHoaDon;
 import hoadon.HoaDon;
-import interfaces.IThaoTacThucThe;
+import interfaces.IQuanLyMatHang;
 import khachhang.DanhSachKhachHang;
 import khachhang.KhachHang;
 import kho.HangTonKho;
@@ -149,9 +149,9 @@ public class DisplayLogicRegressionTests {
         test("UI-10 edit and search prompts are punctuated", () -> {
             DanhSachMatHang catalog = new DanhSachMatHang();
             String edit = capture(() -> withInput("MISSING\n", catalog::sua));
-            String search = capture(() -> withInput("MISSING\n", catalog::timkiem));
-            check(edit.contains("Nhập mã cần sửa: "), "edit prompt");
-            check(search.contains("Nhập mã hàng cần tìm: "), "search prompt");
+            String search = capture(() -> withInput("MISSING\n", catalog::timKiem));
+            check(edit.contains("Nhập mã mặt hàng cần điều chỉnh: "), "edit prompt");
+            check(search.contains("Nhập mã mặt hàng cần tìm: "), "search prompt");
         });
 
         test("LG-01 transfer to shelf copies product metadata", () -> {
@@ -159,7 +159,7 @@ public class DisplayLogicRegressionTests {
             Sach original = book("SCH0101", 0);
             warehouse.tangTonKho(original, 20);
             DanhSachMatHang shelf = new DanhSachMatHang();
-            capture(() -> shelf.nhapTuKho(warehouse, "SCH0101", 5));
+            capture(() -> shelf.nhaptukho(warehouse, "SCH0101", 5));
             MatHang onShelf = shelf.timKiem_hang("SCH0101");
             HangTonKho inWarehouse = warehouse.getDanhSachTon()[0];
             check(onShelf != inWarehouse.getMatHang(), "shared object after single transfer");
@@ -199,27 +199,28 @@ public class DisplayLogicRegressionTests {
             check(out.contains("lớn hơn 0"), "invalid positive value had no feedback");
         });
 
-        test("LG-03 zero pages, age and new warehouse quantity are rejected", () -> {
+        test("LG-03 zero pages and age are rejected; warehouse uses product quantity", () -> {
             Vo notebook = new Vo();
             capture(() -> withInput("VO0101\nNotebook\n0\n96\nMaker\n100\n1\n", notebook::nhap));
             check(notebook.getSotrang() == 96, "zero pages accepted");
             DoChoi toy = new DoChoi();
             capture(() -> withInput("DCH0101\nToy\nMaker\n0\n6\n100\n1\n", toy::nhap));
             check(toy.getdotuoi() == 6, "zero age accepted");
-            HangTonKho stock = new HangTonKho();
-            final HangTonKho[] created = {null};
-            String input = "1\nSCH0101\nBook\nGenre\nAuthor\nPublisher\n100\n0\n0\n7\n";
-            capture(() -> withInput(input, () -> created[0] = stock.taoHangTonMoi()));
-            check(created[0] != null && created[0].getSoLuong() == 7, "zero warehouse intake accepted");
+            Kho stock = new Kho();
+            String input = "1\nSCH0101\nBook\nGenre\nAuthor\nPublisher\n100\n7\n";
+            capture(() -> withInput(input, stock::them));
+            check(stock.getSoLuongTon() == 1 && stock.getTongSoLuongTon() == 7, "warehouse intake quantity");
         });
 
-        test("LG-03 purchase note rejects a zero-quantity item", () -> {
+        test("LG-04 purchase note inherits the supplier without another prompt", () -> {
             PhieuNhap note = new PhieuNhap();
-            String input = "1\nSCH0101\nBook\nGenre\nAuthor\nPublisher\n100\n0\n"
-                    + "1\nSCH0102\nBook 2\nGenre\nAuthor\nPublisher\n100\n2\n";
-            capture(() -> withInput(input, note::them));
+            note.getChiTiet().setNhaCC(new nhacungcap.DanhSachNCC().timHoacTaoTheoTen("Publisher"));
+            String input = "1\nSCH0101\nBook\nGenre\nAuthor\n100\n2\n";
+            String out = capture(() -> withInput(input, note::them));
             check(note.getSoLuongNhap() == 1 && note.getDSMH()[0].getSoLuong() == 2,
-                    "zero-quantity item stored in purchase note");
+                    "purchase quantity not stored");
+            check("Publisher".equals(((Sach)note.getDSMH()[0]).getNhaXuatBan()), "supplier not inherited");
+            check(!out.contains("Nhà xuất bản:"), "supplier asked twice");
         });
 
         test("OOP-01 cart uses ChiTietGioHang and preserves unit price", () -> {
@@ -237,10 +238,10 @@ public class DisplayLogicRegressionTests {
                     "invoice did not preserve cart price");
         });
 
-        test("OOP-02 legacy entity interface has a real implementation", () -> {
+        test("OOP-02 product management interface searches and deletes", () -> {
             DanhSachMatHang catalog = new DanhSachMatHang();
-            catalog.themTuFile(book("SCH0101", 2));
-            IThaoTacThucThe operations = catalog;
+            TestSupport.stockShelf(catalog, book("SCH0101", 2));
+            IQuanLyMatHang operations = catalog;
             check(capture(() -> operations.timKiem("SCH0101")).contains("Book"), "interface search failed");
             capture(() -> operations.xoa("SCH0101"));
             check(catalog.getSoMH() == 0, "interface deletion failed");

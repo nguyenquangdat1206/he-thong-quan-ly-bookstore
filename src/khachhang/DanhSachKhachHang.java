@@ -194,6 +194,14 @@ public class DanhSachKhachHang implements IQuanLy,IFileIO{
 
     // Getter, Setter
     public int getSoLuong() { return soLuong; }
+    public boolean them(KhachHang kh) {
+        if (kh == null || kh.getMaKH() == null || kh.getMaKH().isBlank()
+                || kh.getTenKH() == null || kh.getTenKH().isBlank() || kh.getSoDienThoai() == null
+                || timkiem_khachhang(kh.getMaKH()) != null) return false;
+        if (soLuong == ds.length) tangKichThuoc();
+        ds[soLuong++] = kh;
+        return true;
+    }
     public KhachHang[] getDs() { return ds; }
 
     // Ghi dữ liệu ra file

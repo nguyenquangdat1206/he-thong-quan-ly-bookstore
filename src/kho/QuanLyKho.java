@@ -3,38 +3,35 @@ package kho;
 import tienich.*;
  
 public class QuanLyKho {
- 
-    private static final String FILE_NHAP_MAC_DINH = "data/kho_input.txt";
-    private static final String FILE_XUAT_MAC_DINH = "data/kho_output.txt";
- 
-    private static void hienMenu(){
-        System.out.println();
-        System.out.println("========== QUẢN LÝ KHO ==========");
-        System.out.println("1. Xem hàng tồn trong kho");
-        System.out.println("2. Thêm 1 mặt hàng vào kho");
-        System.out.println("3. Nhập nhiều mặt hàng vào kho");
-        System.out.println("4. Sửa số lượng tồn");
-        System.out.println("5. Xóa mặt hàng khỏi kho");
-        System.out.println("6. Tra cứu chi tiết theo mã");
-        System.out.println("7. Kiểm tra sức chứa");
-        System.out.println("8. Đọc kho từ file");
-        System.out.println("9. Ghi kho ra file");
-        System.out.println("0. Thoát");
-        System.out.println("=================================");
-    }
- 
-    private static String hoiDuongDan(String macDinh){
-        String s = TienIch.nhapChuoi("Nhập đường dẫn file (gõ . để dùng mặc định '" + macDinh + "'): ").trim();
+    static String hoiFile(String macDinh) {
+        System.out.print("Đường dẫn file (Enter hoặc . để dùng '" + macDinh + "'): ");
+        String s = TienIch.sc.nextLine().trim();
         return (s.isEmpty() || s.equals(".")) ? macDinh : s;
     }
-    public static void main(String[] args){
+
+    static Kho kho = new Kho();
+
+    public static void main(String[] args) {
         TienIch.cauHinhUnicodeConsole();
-        Kho kho = new Kho();
+        menuKho();
+    }
+
+    public static void menuKho() {
         int chon;
-        do{
-            hienMenu();
+        do {
+            System.out.println("\n---------- KHO ----------");
+            System.out.println("1. Xem hàng tồn");
+            System.out.println("2. Thêm 1 mặt hàng vào kho");
+            System.out.println("3. Nhập nhiều mặt hàng vào kho");
+            System.out.println("4. Sửa số lượng tồn");
+            System.out.println("5. Xóa mặt hàng khỏi kho");
+            System.out.println("6. Tra cứu theo mã");
+            System.out.println("7. Kiểm tra sức chứa");
+            System.out.println("8. Ghi kho ra file");
+            System.out.println("9. Thống kê tồn kho theo danh mục");
+            System.out.println("0. Quay lại");
             chon = TienIch.nhapSoNguyenKhongAm("Chọn: ");
-            switch(chon){
+            switch (chon) {
                 case 1: kho.xuat(); break;
                 case 2: kho.them(); break;
                 case 3: kho.nhap(); break;
@@ -42,11 +39,11 @@ public class QuanLyKho {
                 case 5: kho.xoa(); break;
                 case 6: kho.timHangTon(); break;
                 case 7: kho.kiemTraSucChua(); break;
-                case 8: kho.docFile(hoiDuongDan(FILE_NHAP_MAC_DINH)); break;
-                case 9: kho.ghiFile(hoiDuongDan(FILE_XUAT_MAC_DINH)); break;
-                case 0: System.out.println("Tạm biệt!"); break;
-                default: System.out.println("Lựa chọn không hợp lệ, nhập lại!");
+                case 8: kho.ghiFile(hoiFile("data/kho_output.txt")); break;
+                case 9: kho.thongKeTheoDanhMuc(); break;
+                case 0: break;
+                default: System.out.println("Lựa chọn không hợp lệ!");
             }
-        } while(chon != 0);
+        } while (chon != 0);
     }
 }

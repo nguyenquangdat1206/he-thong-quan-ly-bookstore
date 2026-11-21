@@ -40,8 +40,9 @@ public class Vo extends MatHang{
     public void setSotrang(int sotrang) {this.sotrang = sotrang;}
 
     @Override
-    public double tinhGiaBan(){
-        return getGiaNhap() * (1 + loinhuan/100)*(1+thue/100);
+    public double tinhGiaBan() {
+        double giaBan = getGiaNhap() * (1 + loinhuan / 100.0) * (1 + thue / 100.0);
+        return Math.round(giaBan * 100.0) / 100.0;
     }
 
     @Override
@@ -69,6 +70,30 @@ public class Vo extends MatHang{
 
     }
 
+    // nhập truyền tên nhà cung cấp từ phiếu nhập lên
+    public void nhap(String tenNCC) {
+
+        while (true) {
+            try {
+                setMa(TienIch.nhapChuoi("Nhập mã (VOxxxx): "));
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        setTen(TienIch.nhapChuoi("Nhập tên: "));
+
+        sotrang = TienIch.nhapSoNguyenDuong("Nhập số trang: ");
+
+        nhaSX = tenNCC;
+
+        setGiaNhap(TienIch.nhapGiaTien("Giá nhập hàng: "));
+
+        setSoLuong(TienIch.nhapSoNguyenKhongAm("Nhập số lượng: "));
+
+    }
+
     @Override
     // Xuat
     public void xuat() {
@@ -88,6 +113,20 @@ public class Vo extends MatHang{
     @Override 
     public String getDanhMuc(){
         return "Vở";
+    }
+
+    @Override
+    public void suathuoctinhrieng() {
+        System.out.println("\n Lựa chọn thuộc tính riêng");
+        System.out.println("1. Số trang");
+        System.out.println("2. Nhà sản xuất");
+        System.out.println("0. Quay lại");
+        switch (TienIch.nhapSoNguyenKhongAm("Nhập lựa chọn: ")) {
+            case 0: break;
+            case 1: sotrang = TienIch.nhapSoNguyenDuong("Nhập lại số trang: "); break;
+            case 2: nhaSX = TienIch.nhapChuoi("Nhập lại nhà sản xuất: "); break;
+            default: System.out.println("Lựa chọn không hợp lệ.");
+        }
     }
 
     @Override 

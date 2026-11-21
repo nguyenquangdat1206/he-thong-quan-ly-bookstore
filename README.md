@@ -2,6 +2,14 @@
 
 Ứng dụng quản lý nhà sách bằng **Java 17+**, chạy trong terminal với menu tiếng Việt. Dự án không dùng Maven, Gradle, cơ sở dữ liệu hay thư viện ngoài JDK. Dữ liệu được đọc và ghi qua các tệp TXT mã hóa UTF-8.
 
+## Cập nhật 21/11/2026
+
+- Quản lý nhiều chi nhánh: mỗi chi nhánh có kệ và hóa đơn riêng, dùng chung kho, khách hàng và nhà cung cấp.
+- Nhân viên dùng `data/nhanvien_cn.txt` với 8 cột; cột cuối là mã chi nhánh. Danh sách chi nhánh nằm trong `data/chinhanh.txt`.
+- Khi thoát bình thường, chương trình lưu dữ liệu nghiệp vụ vào `data/phien.properties` và khôi phục ở lần mở tiếp theo. Tệp này được tạo trên máy chạy và không đưa vào Git.
+- Chạy `test.bat` để thực thi đủ 11 bộ kiểm thử: **197 PASS, 0 FAIL** trên bản cập nhật này. Lệnh trả mã khác 0 nếu biên dịch hoặc kiểm thử thất bại.
+- Chi tiết lỗi đã sửa và phạm vi xác minh: [báo cáo kiểm thử](docs/FUNCTIONAL_AUDIT_2026-11-21.txt).
+
 Luồng nghiệp vụ chính:
 
 ```text

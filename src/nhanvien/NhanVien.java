@@ -3,6 +3,7 @@ package nhanvien;
 public abstract class NhanVien extends Nguoi {
     private String caLamViec;
     private double luongCoBan;
+    private String maChiNhanh = "";
 
     public NhanVien() {
         super();
@@ -23,9 +24,16 @@ public abstract class NhanVien extends Nguoi {
     // Phương thức trừu tượng CỰC KỲ QUAN TRỌNG ĐỂ PHÂN QUYỀN
     public abstract String getQuyen();
 
+    // Chi nhánh làm việc. Admin (QuanLy) và nhân viên kho dùng chung kho nên không thuộc chi nhánh nào.
+    public boolean thuocChiNhanh() { return true; }
+    public String getMaChiNhanh() { return maChiNhanh; }
+    public void setMaChiNhanh(String maChiNhanh) { this.maChiNhanh = maChiNhanh == null ? "" : maChiNhanh.trim(); }
+
     @Override
     public void xuatThongTin() {
         super.xuatThongTin(); // In Mã, Tên, SĐT từ lớp Nguoi
         System.out.printf("Ca làm: %-8s | Lương CB: %-10.2f | ", caLamViec, luongCoBan);
+        if (thuocChiNhanh())
+            System.out.printf("Chi nhánh: %-6s | ", maChiNhanh.isEmpty() ? "(chưa)" : maChiNhanh);
     }
 }

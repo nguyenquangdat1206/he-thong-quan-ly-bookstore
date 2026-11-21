@@ -4,23 +4,23 @@ ROOT=Path(__file__).resolve().parent.parent
 
 scenarios=[
  ('admin imports PN, views auto-suppliers',
-  ['1','ADMIN','admin123','2','8','.','10','1','0','0','0'],
-  ['Đọc phiếu nhập: thêm 10 dòng','DANH SÁCH NHÀ CUNG CẤP','Kim Đồng','Hồng Hà','PN004'], []),
+  ['1','ADMIN','admin123','CN01','2','8','.','10','1','0','0','0'],
+  ['Đọc phiếu nhập: thêm 10 dòng','DANH SÁCH NHÀ CUNG CẤP','Kim Đồng','Trẻ','PN004'], []),
  ('warehouse role imports PN and supplier listing',
   ['1','KHO01','kho123','2','8','.','10','0','0','0'],
   ['=== NHÂN VIÊN NHẬP KHO ===','NCC0','Giáo Dục','Tạm biệt!'], ['=== ADMIN / TOÀN QUYỀN ===']),
  ('admin double imports without duplication',
-  ['1','ADMIN','admin123','2','8','.','8','.','1','0','0','0'],
+  ['1','ADMIN','admin123','CN01','2','8','.','8','.','1','0','0','0'],
   ['Đọc phiếu nhập: thêm 10 dòng','Đọc phiếu nhập: thêm 0 dòng','PN004'], []),
  ('admin writes and reloads PN',
-  ['1','ADMIN','admin123','2','8','.','9','.','0','0','0'],
+  ['1','ADMIN','admin123','CN01','2','8','.','9','.','0','0','0'],
   ['Đã ghi 4 phiếu / 10 dòng','Tạm biệt!'], []),
  ('read nonexistent PN file does not crash',
-  ['1','ADMIN','admin123','2','8','nonexistent_zz_OOP.txt','0','0','0'],
-  ['Lỗi đọc file phiếu nhập:', 'Tạm biệt!'], []),
+  ['1','ADMIN','admin123','CN01','2','8','nonexistent_zz_OOP.txt','0','0','0'],
+  ['Lỗi không đọc được file', 'Tạm biệt!'], []),
  ('manually add PN from menu',
-  ['1','ADMIN','admin123','2','2','PNCUSTOM','15/10/2026','Nhà Xuất Bản A','1','7','SPK0101','Bìa bọc','NSX A','5000','10','10','1','0','0','0'],
-  ['Thêm thành công phiếu: PNCUSTOM', 'Nhà Xuất Bản A', 'PNCUSTOM'], []),
+  ['1','ADMIN','admin123','CN01','2','2','PNCUSTOM','15/10/2026','Nhà Xuất Bản A','1','7','SPK0101','Bìa bọc','5000','10','10','1','0','0','0'],
+  ['Thêm thành công phiếu nhập PNCUSTOM', 'Nhà Xuất Bản A', 'PNCUSTOM'], []),
  ('sales does not expose warehouse PN menu',
   ['1','BH01','bh123','7','0','0'],
   ['Không được phép truy cập chức năng này.','Tạm biệt!'], ['---------- PHIẾU NHẬP ----------']),
@@ -32,7 +32,7 @@ for name,inputs,expected,forbidden in scenarios:
   (dest/'data').mkdir(parents=True,exist_ok=True)
   for filename,sub in [('kho_input.txt','kho'),('khachhang.txt','khachhang'),('phieunhap_input.txt','phieunhap'),('hoadon.txt','hoadon')]:
    shutil.copy2(ROOT/'tests'/'fixtures'/sub/filename,dest/'data'/filename)
-  shutil.copy2(ROOT/'tests'/'fixtures'/'nhanvien_demo.txt',dest/'data'/'nhanvien.txt')
+  shutil.copy2(ROOT/'tests'/'fixtures'/'nhanvien_demo.txt',dest/'data'/'nhanvien_cn.txt')
   run=subprocess.run(['java','-Dfile.encoding=UTF-8','-Dstdout.encoding=UTF-8','-Dstderr.encoding=UTF-8','-cp',str(ROOT/'build'),'Main'],
     input='\n'.join(inputs)+'\n',text=True,encoding='utf8',capture_output=True,cwd=dest,timeout=20)
   out=run.stdout+'\n'+run.stderr

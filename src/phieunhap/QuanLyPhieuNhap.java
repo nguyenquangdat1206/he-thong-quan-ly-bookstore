@@ -5,7 +5,11 @@ import tienich.TienIch;
 
 public class QuanLyPhieuNhap {
 
-    private static final String FILE_MAC_DINH = "data/phieunhap_input.txt";
+    static String hoiFile(String macDinh) {
+        System.out.print("Đường dẫn file (Enter hoặc . để dùng '" + macDinh + "'): ");
+        String s = TienIch.sc.nextLine().trim();
+        return (s.isEmpty() || s.equals(".")) ? macDinh : s;
+    }
 
     private static void hienMenu(){
         System.out.println();
@@ -19,15 +23,11 @@ public class QuanLyPhieuNhap {
         System.out.println("7. Xem hàng tồn trong kho");
         System.out.println("8. Đọc phiếu nhập từ file");
         System.out.println("9. Ghi phiếu nhập ra file");
+        System.out.println("10. Xem danh sách nhà cung cấp trong lần nhập này");
+        System.out.println("11. Tự động nhập tất cả phiếu chờ vào kho và ghi danh sách đã nhập");
         System.out.println("0. Thoát");
         System.out.println("========================================");
     }
-
-    private static String hoiDuongDan(String macDinh){
-        String s = TienIch.nhapChuoi("Nhập đường dẫn file (gõ . để dùng mặc định '" + macDinh + "'): ");
-        return s.equals(".") ? macDinh : s;
-    }
-
 
     public static void main(String[] args){
         TienIch.cauHinhUnicodeConsole();
@@ -45,8 +45,10 @@ public class QuanLyPhieuNhap {
                 case 5:  ds.xoa(); break;
                 case 6:  ds.nhapKho(kho); break;
                 case 7:  kho.xuat(); break;
-                case 8: ds.docFile(hoiDuongDan(FILE_MAC_DINH)); break;
-                case 9: ds.ghiFile(hoiDuongDan("data/phieunhap_output.txt")); break;
+                case 8: ds.docFile(hoiFile("data/phieunhap_input.txt")); break;
+                case 9: ds.ghiFile(hoiFile("data/phieunhap_output.txt")); break;
+                case 10: ds.getDanhSachNCC().xuat();break;
+                case 11: ds.tuDongNhapTatCaVaoKho(kho, hoiFile("data/phieunhap_danhan.txt")); break;
                 case 0:  System.out.println("Tạm biệt!"); break;
                 default: System.out.println("Lựa chọn không hợp lệ, nhập lại!");
             }

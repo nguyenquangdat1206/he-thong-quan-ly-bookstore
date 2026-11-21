@@ -1,10 +1,17 @@
 build/
 build-test/
 .idea/workspace.xml
+/.idea/
+/.venv/
+/out/
+/temp/
+*.iml
 *.class
 
 # Dữ liệu sinh ra khi thao tác / test
 /data/*_output.txt
+/data/phien.properties
+/data/phien-*.tmp
 /tests/*.log
 __pycache__/
 *.pyc

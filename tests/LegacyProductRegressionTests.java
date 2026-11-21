@@ -2,7 +2,7 @@ import interfaces.IThaoTacThucThe;
 import mathang.*;
 import kho.*;
 import phieunhap.*;
-import tichhop.LuuTruMatHang;
+
 import tienich.TienIch;
 import java.io.ByteArrayInputStream;
 import java.nio.file.*;
@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 import java.util.Scanner;
 import java.util.Arrays;
 
-/** Regression tests for source types restored byte-for-byte from Git HEAD/src/model. */
+/** Regression tests for product subtypes and the current warehouse/receipt APIs. */
 public class LegacyProductRegressionTests {
     static int passed=0, failed=0;
     @FunctionalInterface interface Test { void run() throws Exception; }
@@ -56,20 +56,21 @@ public class LegacyProductRegressionTests {
             check("Trang trí;TTR0101;Tranh;100.0;5;MakerT".equals(a[2].toString()),"decor TXT format");
             check("Vở;VO0101;Vo 96;100.0;6;96;MakerV".equals(a[3].toString()),"notebook TXT format");
         });
-        run("TXT save and reload all four restored product types", ()->{
+        run("shelf transfer and TXT export preserve all four product types", ()->{
             Path f=Files.createTempFile("oop-v5-products-", ".txt");
             try {
                 DanhSachMatHang list=new DanhSachMatHang();
-                for(MatHang p:products()) check(list.themTuFile(p),"add product");
-                check(LuuTruMatHang.ghiFile(list,f.toString())==4,"save count");
-                DanhSachMatHang loaded=new DanhSachMatHang();
-                check(LuuTruMatHang.docFile(loaded,f.toString())==4,"load count");
-                check(loaded.timKiem_hang("DCH0101") instanceof DoChoi,"toy reload");
-                check(loaded.timKiem_hang("DCT0101") instanceof DungCuHocTap,"tool reload");
-                check(loaded.timKiem_hang("TTR0101") instanceof TrangTri,"decor reload");
-                check(loaded.timKiem_hang("VO0101") instanceof Vo,"notebook reload");
-                for(MatHang p:products())check(p.toString().equals(loaded.timKiem_hang(p.getMa()).toString()),"data lost: "+p.getMa());
-                check(LuuTruMatHang.docFile(loaded,f.toString())==0,"no duplicates on reread");
+                for(MatHang p:products()) TestSupport.stockShelf(list,p);
+                list.ghiFile(f.toString());
+                var rows=Files.readAllLines(f,StandardCharsets.UTF_8);
+                check(rows.size()==4,"save count");
+                int i=0;
+                for(MatHang p:products()) {
+                    MatHang copied=list.timKiem_hang(p.getMa());
+                    check(copied.getClass()==p.getClass(),"shelf subtype");
+                    check(p.toString().equals(copied.toString()),"data lost: "+p.getMa());
+                    check(rows.get(i++).equals(p.toString()),"export fields: "+p.getMa());
+                }
             }finally{Files.deleteIfExists(f);}
         });
         run("warehouse stock persistence preserves all four product types and counts", ()->{
@@ -79,21 +80,10 @@ public class LegacyProductRegressionTests {
                 for(MatHang p:products()) check(warehouse.tangTonKho(p,p.getSoLuong()),"stock add");
                 check(warehouse.getTongSoLuongTon()==18,"total warehouse count");
                 warehouse.ghiFile(f.toString());
-                Kho loaded=new Kho(); loaded.docFile(f.toString());
-                check(loaded.getSoLuongTon()==4 && loaded.getTongSoLuongTon()==18,"stock reload count");
-                for(MatHang p:products()){
-                    boolean found=false;
-                    for(HangTonKho h:loaded.getDanhSachTon()){
-                        if(h==null)continue;
-                        if(h.getMatHang().getMa().equals(p.getMa())){
-                            check(h.getMatHang().getClass()==p.getClass(),"stock class "+p.getMa());
-                            check(h.getSoLuong()==p.getSoLuong(),"stock quantity "+p.getMa());
-                            check(h.getMatHang().toString().equals(p.toString()),"stock extra fields "+p.getMa());
-                            found=true;break;
-                        }
-                    }
-                    check(found,"missing stock "+p.getMa());
-                }
+                var rows=Files.readAllLines(f,StandardCharsets.UTF_8);
+                check(rows.size()==4,"four warehouse rows");
+                int i=0;
+                for(MatHang p:products()) check(rows.get(i++).equals(p.toString()),"warehouse export: "+p.getMa());
             }finally{Files.deleteIfExists(f);}
         });
         run("purchase-note import/export supports all four types and supplier mapping", ()->{
@@ -101,10 +91,10 @@ public class LegacyProductRegressionTests {
             Path out=Files.createTempFile("oop-v5-export-", ".txt");
             try {
                 StringBuilder lines=new StringBuilder();int i=1;
-                for(MatHang p:products())lines.append("PN").append(i++).append(";01-11-2026;").append(p).append(";CHO_DUYET\n");
+                for(MatHang p:products())lines.append("PN").append(i++).append(";01/11/2026;").append(p).append(";CHO_DUYET\n");
                 Files.writeString(in,lines,StandardCharsets.UTF_8);
                 DanhSachPhieuNhap notes=new DanhSachPhieuNhap(); notes.docFile(in.toString());
-                check(notes.getSoLuongPN()==4,"four purchase notes");
+                check(notes.getSLpn()==4,"four purchase notes");
                 for(int k=1;k<=4;k++){
                     PhieuNhap pn=notes.timPhieu("PN"+k);
                     check(pn!=null && pn.getSoLuongNhap()==1,"purchase entry "+k);
@@ -112,7 +102,7 @@ public class LegacyProductRegressionTests {
                 }
                 notes.ghiFile(out.toString());
                 DanhSachPhieuNhap loaded=new DanhSachPhieuNhap();loaded.docFile(out.toString());
-                check(loaded.getSoLuongPN()==4,"four notes roundtripped");
+                check(loaded.getSLpn()==4,"four notes roundtripped");
                 i=1;for(MatHang p:products()){
                     MatHang r=loaded.timPhieu("PN"+(i++)).getDSMH()[0];
                     check(r.getClass()==p.getClass(),"note class "+p.getMa());
@@ -121,12 +111,14 @@ public class LegacyProductRegressionTests {
             }finally{Files.deleteIfExists(in);Files.deleteIfExists(out);}
         });
         run("manual inventory menu creates restored toy and notebook", ()->{
-            useInput("8\nDCH0102\nLego2\nMaker2\n6\n100\n2\n7\n",()->{
-                HangTonKho row=new HangTonKho().taoHangTonMoi();
+            useInput("8\nDCH0102\nLego2\nMaker2\n6\n100\n7\n",()->{
+                Kho warehouse=new Kho(); warehouse.them();
+                check(warehouse.getSoLuongTon()==1,"one manual product");
+                HangTonKho row=warehouse.getDanhSachTon()[0];
                 check(row.getMatHang() instanceof DoChoi,"manual toy");
                 check(row.getSoLuong()==7,"toy warehouse count");
             });
-            useInput("11\nVO0102\nVo 200\n200\nMaker2\n100\n2\n",()->{
+            useInput("11\nVO0102\nVo 200\n200\n100\n2\n",()->{
                 MatHang mh=new PhieuNhap().nhapMH();
                 check(mh instanceof Vo && ((Vo)mh).getSotrang()==200,"manual notebook");
             });

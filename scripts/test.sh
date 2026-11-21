@@ -8,7 +8,10 @@ java -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8 -Dfile.encoding=UTF-8 -cp b
 java -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8 -Dfile.encoding=UTF-8 -cp build FeatureNCCPhieuNhapTests
 java -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8 -Dfile.encoding=UTF-8 -cp build LegacyProductRegressionTests
 java -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8 -Dfile.encoding=UTF-8 -cp build DisplayLogicRegressionTests
+java -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8 -Dfile.encoding=UTF-8 -cp build FullFunctionalAuditTests
+java -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8 -Dfile.encoding=UTF-8 -cp build PersistenceRegressionTests
 python3 tests/test_console.py
 python3 tests/test_console_pn.py
 python3 tests/test_legacy_runtime.py
 python3 tests/test_console_unicode.py
+python3 tests/test_full_console_audit.py

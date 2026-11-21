@@ -40,8 +40,9 @@ public class VanPhongPham extends MatHang {
     public void setLoaiVPP(String loaiVPP){ this.loaiVPP = loaiVPP; }
 
     @Override
-    public double tinhGiaBan(){
-        return getGiaNhap() * (1 + loinhuan/100)*(1+thue/100);
+    public double tinhGiaBan() {
+        double giaBan = getGiaNhap() * (1 + loinhuan / 100.0) * (1 + thue / 100.0);
+        return Math.round(giaBan * 100.0) / 100.0;
     }
 
     @Override
@@ -68,6 +69,30 @@ public class VanPhongPham extends MatHang {
 
     }
 
+    // nhập truyền tên nhà cung cấp từ phiếu nhập lên
+    public void nhap(String tenNCC) {
+
+        while (true) {
+            try {
+                setMa(TienIch.nhapChuoi("Nhập mã (VPPxxxx): "));
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        setTen(TienIch.nhapChuoi("Nhập tên: "));
+
+        loaiVPP = TienIch.nhapChuoi("Loại văn phòng phẩm: ");
+
+        nhaSX = tenNCC;
+
+        setGiaNhap(TienIch.nhapGiaTien("Giá nhập hàng: "));
+
+        setSoLuong(TienIch.nhapSoNguyenKhongAm("Nhập số lượng: "));
+
+    }
+
     @Override
     public void xuat() {
         System.out.println("Mã: " + getMa());
@@ -86,6 +111,20 @@ public class VanPhongPham extends MatHang {
     @Override 
     public String getDanhMuc(){
         return "Văn phòng phẩm";
+    }
+
+    @Override
+    public void suathuoctinhrieng() {
+        System.out.println("\n Lựa chọn thuộc tính riêng");
+        System.out.println("1. Loại văn phòng phẩm");
+        System.out.println("2. Nhà sản xuất");
+        System.out.println("0. Quay lại");
+        switch (TienIch.nhapSoNguyenKhongAm("Nhập lựa chọn: ")) {
+            case 0: break;
+            case 1: loaiVPP = TienIch.nhapChuoi("Nhập lại loại văn phòng phẩm: "); break;
+            case 2: nhaSX = TienIch.nhapChuoi("Nhập lại nhà sản xuất: "); break;
+            default: System.out.println("Lựa chọn không hợp lệ.");
+        }
     }
 
     @Override 

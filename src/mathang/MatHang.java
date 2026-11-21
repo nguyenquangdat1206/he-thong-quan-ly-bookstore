@@ -99,6 +99,11 @@ public abstract class MatHang implements IGetMa, Cloneable {
         return " ";
     }
 
+    //Hàm thuộc tính riêng
+    public void suathuoctinhrieng(){
+        System.out.println("Loại hàng này không có thuộc tính riêng");
+    }
+
     
     //ghi mặt hàng ra thành String để ghi File
     public String toString(){

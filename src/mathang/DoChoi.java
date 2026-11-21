@@ -41,8 +41,9 @@ public class DoChoi extends MatHang{
     public int getdotuoi() {return dotuoi;}
 
     @Override
-    public double tinhGiaBan(){
-        return getGiaNhap() * (1 + loinhuan/100)*(1+thue/100);
+    public double tinhGiaBan() {
+        double giaBan = getGiaNhap() * (1 + loinhuan / 100.0) * (1 + thue / 100.0);
+        return Math.round(giaBan * 100.0) / 100.0;
     }
 
     @Override
@@ -61,6 +62,29 @@ public class DoChoi extends MatHang{
         setTen(TienIch.nhapChuoi("Nhập tên: "));
 
         nhaSX = TienIch.nhapChuoi("Nhà sản xuất: ");
+
+        dotuoi = TienIch.nhapSoNguyenDuong("Nhập độ tuổi: ");
+
+        setGiaNhap(TienIch.nhapGiaTien("Giá nhập hàng: "));
+
+        setSoLuong(TienIch.nhapSoNguyenKhongAm("Nhập số lượng: "));
+    }
+
+    // nhập truyền tên nhà cung cấp từ phiếu nhập lên
+    public void nhap(String tenNCC) {
+
+        while (true) {
+            try {
+                setMa(TienIch.nhapChuoi("Nhập mã (DCHxxxx): "));
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        setTen(TienIch.nhapChuoi("Nhập tên: "));
+
+        nhaSX = tenNCC;
 
         dotuoi = TienIch.nhapSoNguyenDuong("Nhập độ tuổi: ");
 
@@ -88,6 +112,20 @@ public class DoChoi extends MatHang{
     @Override 
     public String getDanhMuc(){
         return "Đồ chơi";
+    }
+
+    @Override
+    public void suathuoctinhrieng() {
+        System.out.println("\n Lựa chọn thuộc tính riêng");
+        System.out.println("1. Nhà sản xuất");
+        System.out.println("2. Độ tuổi");
+        System.out.println("0. Quay lại");
+        switch (TienIch.nhapSoNguyenKhongAm("Nhập lựa chọn: ")) {
+            case 0: break;
+            case 1: nhaSX = TienIch.nhapChuoi("Nhập lại nhà sản xuất: "); break;
+            case 2: dotuoi = TienIch.nhapSoNguyenDuong("Nhập lại độ tuổi: "); break;
+            default: System.out.println("Lựa chọn không hợp lệ.");
+        }
     }
 
     @Override 

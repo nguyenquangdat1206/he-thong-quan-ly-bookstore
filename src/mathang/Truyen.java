@@ -21,7 +21,6 @@ public class Truyen extends Sach {
     public double getThue() { return thue; }
     @Override
     public double getLoinhuan() { return loinhuan; }
-    @Override public double getLoiNhuan() { return loinhuan; }
 
     @Override
     public void nhap() {
@@ -49,6 +48,33 @@ public class Truyen extends Sach {
 
     }
 
+    // nhập truyền tên nhà cung cấp từ phiếu nhập lên
+    @Override
+    public void nhap(String tenNCC) {
+
+        while (true) {
+            try {
+                setMa(TienIch.nhapChuoi("Nhập mã (TRUxxxx): "));
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        setTen(TienIch.nhapChuoi("Nhập tên: "));
+
+        setTheloai(TienIch.nhapChuoi("Nhập thể loại: "));
+
+        setTacGia(TienIch.nhapChuoi("Nhập tác giả: "));
+
+        setNhaXuatBan(tenNCC);
+
+        setGiaNhap(TienIch.nhapGiaTien("Giá nhập hàng: "));
+
+        setSoLuong(TienIch.nhapSoNguyenKhongAm("Nhập số lượng: "));
+
+    }
+
     @Override
     public void xuat() {
         System.out.println("Mã: " + getMa());
@@ -68,7 +94,8 @@ public class Truyen extends Sach {
 
     @Override
     public double tinhGiaBan() {
-        return getGiaNhap() * (1 + loinhuan / 100) * (1 + thue / 100);
+        double giaBan = getGiaNhap() * (1 + loinhuan / 100.0) * (1 + thue / 100.0);
+        return Math.round(giaBan * 100.0) / 100.0;
     }
 
     @Override 

@@ -1,0 +1,230 @@
+CẬP NHẬT SAU KHI SỬA LỖI — 21/11/2026
+
+KẾT LUẬN HIỆN TẠI
+Đã xử lý các lỗi F01–F09 và bổ sung lưu/khôi phục phiên cho F10.
+Đã chạy trọn test.bat trên mã sau khi sửa: 197 PASS, 0 FAIL,
+11 bộ kiểm thử được thực thi, mã thoát 0, ALL TEST SUITES PASSED.
+VS Code không còn Problems tại thời điểm kiểm tra.
+
+KẾT QUẢ SAU KHI SỬA
+IntegrationTests                    23 PASS, 0 FAIL
+FeatureNCCPhieuNhapTests            26 PASS, 0 FAIL
+LegacyProductRegressionTests        6 PASS, 0 FAIL
+DisplayLogicRegressionTests         15 PASS, 0 FAIL
+FullFunctionalAuditTests            55 PASS, 0 FAIL
+PersistenceRegressionTests          11 PASS, 0 FAIL
+test_console.py                      9 PASS, 0 FAIL
+test_console_pn.py                   7 PASS, 0 FAIL
+test_legacy_runtime.py               1 PASS, 0 FAIL
+test_console_unicode.py              5 PASS, 0 FAIL
+test_full_console_audit.py          39 PASS, 0 FAIL
+TỔNG                              197 PASS, 0 FAIL
+
+CÁC THAY ĐỔI CHÍNH
+- F01/F02: chọn mã phiếu đang có bằng nhập chuỗi, trả về ngay khi
+  không tìm thấy; sửa/xóa không còn kẹt ở kiểm tra mã trùng hoặc crash.
+- F03: menu sửa hàng trong phiếu chấp nhận 0 để thoát.
+- F04: khi xuất phiếu, dùng tên NCC hiện tại của phiếu để giữ đúng
+  quan hệ sau khi đổi tên rồi đọc lại, không sửa tồn kho/mặt hàng gốc.
+- F05: kiểm tra tổng số lượng bằng long và đối chiếu mặt hàng thật
+  đang nằm trong giỏ trước khi cộng, tránh tràn int và vượt tồn.
+- F06/F09: giá và tiền thanh toán phải hữu hạn, đúng miền giá trị;
+  NaN/Infinity/số âm không được dùng để thanh toán và trừ hàng.
+- F07: đọc hóa đơn theo từng bản ghi; kiểm tra đầu phiếu, số dòng,
+  trạng thái và chi tiết. Bản ghi lỗi bị bỏ qua, đồng bộ lại tại đầu
+  hóa đơn tiếp theo; không bỏ mất hóa đơn hợp lệ phía sau.
+- F08: chặn số lượng chuyển âm/không hợp lệ ngay tại API kệ; kiểm tra
+  trước khi thay đổi số lượng để không làm sai tồn kho khi từ chối.
+- F10: thêm src/tienich/LuuTruPhien.java và src/mathang/DuLieuMatHang.java,
+  tự lưu/khôi phục kho, khách hàng, NCC, phiếu nhập, chi nhánh, kệ và
+  hóa đơn vào data/phien.properties. Dữ liệu nhân viên vẫn theo cơ chế
+  hiện có và giữ bảo vệ file định dạng cũ.
+- Phiếu đã nhập kho bị khóa sửa/xóa; trạng thái đã duyệt chỉ được
+  xác nhận bằng nhập kho. Sửa trạng thái hủy không còn lặp vô hạn.
+- Khôi phục các thông báo tiếng Việt có dấu để các test console cũ
+  kiểm tra đúng nội dung giao diện.
+
+ĐỘ TOÀN VẸN CỦA BẢN LƯU PHIÊN
+- Ghi vào file tạm cùng thư mục rồi thay thế nguyên tử sau khi ghi xong.
+- Kiểm tra khả năng khôi phục toàn bộ dữ liệu trước khi thay bản lưu cũ.
+- Nạp vào các đối tượng riêng; chỉ đưa vào chương trình khi đọc thành công.
+- Phiên lỗi không được tự ghi đè. Nếu lưu phiên mới thất bại, chương
+  trình báo lỗi và tiếp tục ở menu để người dùng có thể thử lại.
+- Khôi phục trạng thái hóa đơn đã trả tiền không chạy thanh toán hoặc
+  trừ hàng lần nữa; đơn chưa trả tiền trỏ đúng kệ của chi nhánh.
+- Giữ đủ 11 loại mặt hàng, đơn giá đã chốt và các trường có Unicode,
+  dấu chấm phẩy, xuống dòng trong bản lưu phiên.
+- Giữ lịch sử khách hàng/NCC đã xóa hoặc có mã được tái sử dụng.
+- Các file đầu vào dùng cho nhập dữ liệu không bị ghi đè bởi lưu phiên.
+
+LỆNH KIỂM TRA
+Chạy .\test.bat từ thư mục gốc project.
+Lệnh đã bao gồm các bộ Java/console mở rộng và kiểm tra lưu phiên;
+các bộ sau vẫn chạy khi có bộ trước thất bại để hiển thị đủ kết quả.
+Mã thoát: 0 khi tất cả bộ đạt; khác 0 nếu biên dịch/test thất bại;
+2 nếu thiếu Python launcher và chưa thể chạy các bộ console.
+
+Đã kiểm chứng riêng bằng giả lập mã trả về của tiến trình con:
+- Biên dịch/Java/Python đều thành công: mã 0.
+- Biên dịch trả mã 7: giữ mã lỗi 7.
+- Một bộ Java trả mã 7: lệnh chung trả mã 1.
+- Một bộ Python trả mã 7: lệnh chung trả mã 1.
+Các kiểm tra mã thoát này không cộng vào 197 ca nghiệp vụ bên trên.
+
+PHẠM VI XÁC NHẬN
+Windows, javac/JDK 20.0.2 trên PATH, Python 3.14.3.
+Các kịch bản chạy với dữ liệu riêng trong thư mục tạm.
+scripts/test.sh đã được đồng bộ danh sách test; chưa chạy trên Linux.
+Thanh toán thẻ là mô phỏng của ứng dụng, không kết nối ngân hàng thật.
+Kết quả xác nhận phạm vi các ca đã chạy, không phải cam kết cho mọi
+đầu vào hoặc tình huống mất điện/dừng tiến trình bất thường.
+
+====================================================================
+BẢN GHI LỊCH SỬ TRƯỚC KHI SỬA (KHÔNG PHẢI TRẠNG THÁI HIỆN TẠI)
+====================================================================
+
+KIEM THU CHUC NANG BOOKSTORE - 21/11/2026
+
+KET LUAN
+Chua the ket luan tat ca chuc nang hoat dong on dinh. Luong thong thuong
+phan quyen, tach chi nhanh, nhap kho/len ke, tao don va thanh toan dat;
+kiem thu mo rong tai hien cac loi ben duoi. Day la kiem thu, chua sua
+ma nghiep vu trong dot nay.
+
+PHAM VI VA MOI TRUONG
+- Ma nguon hien tai trong src/, bao gom nhung thay doi khoi dong Main
+  sau lan kiem thu 92 ca truoc do.
+- Bien dich bang javac dang co tren PATH, JDK 20.0.2; console dung
+  Python 3.14.3. Khong dung thu vien kiem thu ben ngoai.
+- Du lieu giao dich cho cac test chay trong thu muc tam. Khong chay
+  Main voi thu muc data that cua project lam thu muc lam viec.
+- Khong kiem thu ket noi ngan hang that: ThanhToanThe chi mo phong.
+- Khong phai chung minh cho moi dau vao/co du lieu co the co; khong
+  co kiem thu hieu nang hay bao mat toan dien.
+
+KET QUA DA CHAY
+IntegrationTests                    23 PASS,  0 FAIL
+FeatureNCCPhieuNhapTests            26 PASS,  0 FAIL
+LegacyProductRegressionTests        6 PASS,  0 FAIL
+DisplayLogicRegressionTests         15 PASS,  0 FAIL
+FullFunctionalAuditTests            45 PASS, 10 FAIL
+test_full_console_audit.py          34 PASS,  5 FAIL
+test_console_unicode.py             5 PASS,  0 FAIL
+
+94 ca moi: 79 PASS, 15 FAIL. So FAIL la so ca kiem thu, khong phai
+15 nguyen nhan doc lap. Mot so ca Java va console tai hien cung loi.
+
+Ba script console cu cung da chay rieng:
+- test_console.py: dung tai ca dau vi mong doi 'Tam biet!' co dau,
+  Main hien tai in chu khong dau.
+- test_console_pn.py: ca dau PASS, ca thu hai FAIL cung thong bao thoat.
+- test_legacy_runtime.py: FAIL tai thong bao bao ve luu nhan vien da doi
+  sang khong dau. Khong dung FAIL thong bao nay de ket luan du lieu
+  cu da bi ghi de. Cac kiem tra tiep theo trong script chua duoc chay.
+- Vi cac script cu dung som, khong cong ca chua chay vao tong PASS.
+
+CAC PHAN DA XAC MINH DAT
+- Chi nhanh: them/trung/khong hop le, tang mang, xoa chi nhanh rong,
+  chan xoa chi nhanh con nhan vien/ke/hoa don, doc/ghi UTF-8, doi chi
+  nhanh, cung SKU va cung ma hoa don nhung tach du lieu theo chi nhanh.
+- Nhan vien: 4 vai tro, dang nhap sai/dung, gan/chuyen chi nhanh,
+  them/sua/xoa, chan xoa admin dang dang nhap va admin cuoi,
+  luong khong hop le, file 8 cot, ket thuc phien khi import nhan vien.
+- Phan quyen: Admin, quan ly CN, ban hang, nhap kho, khach vang lai;
+  tai khoan gan CN sai bi tu choi; quan ly chi xem kho chung.
+- Kho/ke: suc chua bien, nhap qua phieu, chong nhap lap phieu da xu ly,
+  nhap le/hang loat, tra hang, sao chep metadata, tim kiem, loc,
+  thong ke, ghi so ton kho dung voi so tren ke.
+- Khach hang/NCC: them/sua/xoa/tim kiem, du lieu loi/trung/BOM,
+  doc/ghi UTF-8 va sinh ma NCC sau khi xoa.
+- Mat hang: 11 loai, thuoc tinh, gia/loi nhuan/thue, chuyen kho/ke,
+  dinh dang TXT va luong nhap thu cong theo cac test hien co.
+- Gio hang/hoa don: tang mang, cong/xoa/doi so luong, gia luc chot,
+  chan vuot ton, hai don cho cung ton, chot don, sua/xoa truoc TT,
+  chan sua/xoa sau TT, tien mat/thanh toan the mo phong,
+  khong tru kho hai lan, giu don gia/trang thai sau doc lai hoa don.
+- Bao cao: doanh thu da thu, tien cho TT, top KH va hang ban chay,
+  loc hoa don theo trang thai, nhan vien va khoang ngay.
+- UTF-8: 4 diem vao console va luong standalone phieu nhap/kho.
+
+LOI CHUC NANG DA TAI HIEN QUA MENU
+
+F01 - Khong chon duoc phieu dang co de sua/xoa.
+Vi tri: src/phieunhap/DanhSachPhieuNhap.java:105 va :124.
+Hai ham dung TienIch.nhapMa, ham chi chap nhan ma CHUA ton tai.
+Tai hien: dang nhap Admin, chon CN01, Phieu nhap > Doc file > '.',
+sau do Sua/Xoa > PN001. Chuong trinh bao 'Ma trung!' va yeu cau lai.
+
+F02 - Xoa phieu khong ton tai lam chuong trinh dung bat thuong.
+Vi tri: src/phieunhap/DanhSachPhieuNhap.java:109-115.
+Tai hien: cung danh sach tren, Xoa > MISSING.
+Ket qua: ArrayIndexOutOfBoundsException, vi tri -1. Can return ngay
+sau khi khong tim thay; khong dich mang/giam so luong phieu.
+
+F03 - Khong thoat duoc menu sua mat hang trong phieu bang 0.
+Vi tri: src/phieunhap/PhieuNhap.java:183.
+Ham nhap so duong tu choi 0 du menu co muc 0. Da tai hien bang goi
+editor voi mat hang hop le, nhap 0: tiep tuc hoi thay vi thoat.
+
+F04 - Doi ten NCC bi mat khi xuat/nap lai phieu nhap.
+Vi tri: src/phieunhap/DanhSachPhieuNhap.java, ghiFile/layTenNCC.
+Tai hien: tao phieu voi NCC Publisher, sua ten NCC thanh Renamed,
+xuat phieu, nap vao danh sach moi: ten NCC quay ve Publisher.
+NCC tren phieu va chuoi NCC/NSX trong mat hang chua dong bo.
+
+F05 - Gio hang tran so nguyen khi cong so luong qua lon.
+Vi tri: src/giohang/GioHang.java:47-52.
+Tai hien API: hang co 5, them 2, tiep tuc them 2147483647.
+Tong gio thanh so am thay vi tu choi. Menu cho phep nhap gia tri int
+nay, nhung ca tai hien hien tai goi truc tiep cung API cua menu.
+Kiem tra ton truoc cong hoac dung long. Hoa don tu choi so luong am,
+nen test nay khong khang dinh da thanh toan/thay doi ton bang so am.
+
+F06 - Nhap gia Infinity van duoc chap nhan.
+Vi tri: src/tienich/TienIch.java:46-58.
+Tai hien: nhap Infinity o prompt gia. Dieu kien num > 0 chap nhan
+gia vo cuc. Menu tao/sua mat hang deu dung ham nay. Can kiem tra
+Double.isFinite cung dieu kien gia.
+
+F07 - Doc hoa don dung ca file khi gap mot dong loi.
+Vi tri: src/hoadon/DanhSachHoaDon.java:378-459.
+Tai hien: file co 'BROKEN' truoc mot hoa don hop le HDFILE/HDVALID;
+doc file xong khong nap duoc hoa don hop le phia sau. Da xac minh
+bang API va qua menu Main.
+
+THIEU KIEM TRA DAU VAO O CAP API
+
+F08 - Chuyen so luong am tu kho len ke lam sai ton.
+Vi tri: src/mathang/DanhSachMatHang.java:58.
+Kho co 5, goi nhaptukho(kho, ma, -2): kho tang len 7, ke co -2.
+Menu hien tai dung nhap so duong nen chan duoc dau vao nay; API
+van can bao ve de cac caller khac khong lam hong ton.
+
+F09 - Tien mat NaN co the danh dau hoa don da thanh toan.
+Vi tri: src/thanhtoan/ThanhToanTienMat.java:22.
+Tai hien: setHinhThucThanhToan(new ThanhToanTienMat(Double.NaN)),
+sau do thanhToan(): tra true va tru hang. Main.nhapSoTienKhongAm
+da chan NaN/Infinity, vi vay chua tai hien qua menu Main.
+
+GIOI HAN LUU VA KHOI PHUC PHIEN
+
+F10 - Thoat/mo lai binh thuong khong khoi phuc ke va hoa don.
+Vi tri: src/Main.java:631-670 (khoiTaoDuLieu/luuDuLieu).
+Tai hien: nhap phieu, dua 10 SCH0001 len CN01, tao va thanh toan
+HDAUDIT, thoat, mo lai cung thu muc tam. Ke: 0 mat hang; khong co
+hoa don. Ham luu luc thoat chi luu chi nhanh va nhan vien; cac module
+con lai doi hoi xuat/nap thu cong neu co chuc nang tuong ung.
+Day la gioi han chuc nang quan trong neu mong muon luu phien tu dong,
+khong khang dinh cac file da xuat thu cong bi xoa.
+
+CHAY LAI
+Tu thu muc goc project:
+1. test.bat (bien dich va bo hoi quy cu; hien dung o mismatch thong bao)
+2. java "-Dfile.encoding=UTF-8" -cp build FullFunctionalAuditTests
+3. py -3 -X utf8 tests/test_full_console_audit.py
+Hai bo audit co chu y tra exit code 1 khi con bat ky FAIL nao.
+
+CAC FILE DUOC THEM TRONG DOT KIEM THU
+tests/FullFunctionalAuditTests.java
+tests/test_full_console_audit.py
+docs/FUNCTIONAL_AUDIT_2026-11-21.txt

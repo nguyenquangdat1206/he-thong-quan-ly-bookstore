@@ -49,8 +49,9 @@ public class TienIch {
             try{
                 System.out.println(thongbao);
                 num=Double.parseDouble(sc.nextLine());
-                if(num>0)
+                if(Double.isFinite(num) && num>0)
                     break;
+                System.out.println("LỖI: Giá tiền phải là số hữu hạn lớn hơn 0!");
             } 
             catch(NumberFormatException e){
                 System.out.println("LỖI: Vui lòng nhập lại giá tiền!");

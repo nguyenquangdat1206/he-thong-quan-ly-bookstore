@@ -1,0 +1,7 @@
+NCC0;NXB Trẻ;161B Lý Chính Thắng, Quận 3, TP.HCM;02839316289;contact@nxbtre.example
+NCC1;Thiên Long;Số 6 Nguyễn Văn Vĩnh, Quận 4, TP.HCM;02838654070;info@thienlong.example
+NCC2;Campus;Khu công nghiệp Tân Bình, TP.HCM;02838153900;support@campus.example
+NCC3;NXB Kim Đồng;55 Quang Trung, Hai Bà Trưng, Hà Nội;02439434730;info@nxbkimdong.example
+NCC4;NXB Giáo Dục;81 Trần Hưng Đạo, Hoàn Kiếm, Hà Nội;02438220801;contact@nxbgd.example
+NCC5;Hồng Hà;25 Lý Thường Kiệt, Hoàn Kiếm, Hà Nội;02439426386;info@hongha.example
+NCC6;NXB Thanh Niên;64 Bà Triệu, Hoàn Kiếm, Hà Nội;02439433363;contact@thanhnien.example

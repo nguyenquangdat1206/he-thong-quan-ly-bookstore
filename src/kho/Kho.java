@@ -1,6 +1,5 @@
 package kho;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
@@ -9,12 +8,11 @@ import java.nio.file.Path;
 
 import phieunhap.*;
 import mathang.*;
-import interfaces.IFileIO;
 import interfaces.IQuanLy;
 import tienich.*;
 
 
-public class Kho implements IFileIO, IQuanLy  {
+public class Kho implements IQuanLy  {
     private static final int sucChuaToiDa = 10000;
     private HangTonKho[] dsTonKho;
     private int soLuongMatHang;
@@ -53,6 +51,45 @@ public class Kho implements IFileIO, IQuanLy  {
         System.out.println("Không gian còn trống: " + getConTrong());
 
     }
+
+    public void thongKeTheoDanhMuc(){
+        String[] danhMuc = {
+            "Sách", "Sách giáo khoa", "Tiểu thuyết", "Truyện",
+            "Văn phòng phẩm", "Báo tạp chí", "Khác", "Đồ chơi",
+            "Dụng cụ học tập", "Trang trí", "Vở"
+        };
+        System.out.println("\n--- THỐNG KÊ TỒN KHO THEO DANH MỤC ---");
+        for(int i = 0; i < danhMuc.length; i++)
+            System.out.println((i + 1) + ". " + danhMuc[i]);
+        int chon = TienIch.nhapSoNguyenKhongAm("Chọn danh mục (0 để quay lại): ");
+        if(chon == 0) return;
+        if(chon > danhMuc.length){
+            System.out.println("Danh mục không hợp lệ.");
+            return;
+        }
+
+        String mucChon = danhMuc[chon - 1];
+        int soMatHang = 0;
+        int tongSoLuong = 0;
+        System.out.println("===== HÀNG TỒN KHO: " + mucChon.toUpperCase() + " =====");
+        System.out.printf("|%-20s|%-40s|%-15s|%-20s|%-20s|%n",
+                "Mã", "Tên", "Giá Nhập", "Số Lượng", "Giá Bán");
+        for(int i = 0; i < soLuongMatHang; i++){
+            HangTonKho htk = dsTonKho[i];
+            if(htk.getMatHang() != null && mucChon.equals(htk.getMatHang().getDanhMuc())){
+                htk.xuat();
+                soMatHang++;
+                tongSoLuong += htk.getSoLuong();
+            }
+        }
+        if(soMatHang == 0){
+            System.out.println("Kho không có mặt hàng thuộc danh mục này.");
+            return;
+        }
+        System.out.println("Số mặt hàng: " + soMatHang);
+        System.out.println("Tổng số lượng tồn: " + tongSoLuong);
+    }
+
 //tự động tăng kích thước mảng
     public void tangKichThuocMang(){
         HangTonKho[] mangMoi= new HangTonKho[dsTonKho.length *2];
@@ -112,9 +149,36 @@ public class Kho implements IFileIO, IQuanLy  {
         dsTonKho[vtMH].xuat();
     }
 
+    private static HangTonKho taoHangTonMoi(){
+        System.out.println("1. Sách  2. SGK  3. Tiểu thuyết  4. Truyện");
+        System.out.println("5. Văn phòng phẩm  6. Báo tạp chí  7. Sản phẩm khác");
+        System.out.println("8. Đồ chơi  9. Dụng cụ học tập  10. Trang trí  11. Vở");
+        int loai = TienIch.nhapSoNguyenDuong("Nhập loại mặt hàng muốn nhập vào kho: ");
+        HangTonKho htk;
+        MatHang mh;
+        switch(loai){
+            case 1: mh=new Sach(); break;
+            case 2: mh = new SachGiaoKhoa(); break;
+            case 3: mh = new TieuThuyet(); break;
+            case 4: mh = new Truyen(); break;
+            case 5: mh = new VanPhongPham(); break;
+            case 6: mh = new BaoTapChi(); break;
+            case 7: mh = new SPKhac(); break;
+            case 8: mh = new DoChoi(); break;
+            case 9: mh = new DungCuHocTap(); break;
+            case 10: mh = new TrangTri(); break;
+            case 11: mh = new Vo(); break;
+            default: System.out.println("Chọn kh hợp lệ"); return null;
+        }
+        mh.nhap();
+        int sl = mh.getSoLuong();
+        htk = new HangTonKho(mh,sl);
+        return htk;
+    }
+
     @Override
     public void them(){ //thêm 1 hàng vào kho
-        HangTonKho htMoi = new HangTonKho().taoHangTonMoi();
+        HangTonKho htMoi = taoHangTonMoi();
         if (htMoi == null) {
             System.out.println("Tạo hàng tồn thất bại!");
             return;
@@ -197,7 +261,6 @@ public class Kho implements IFileIO, IQuanLy  {
         }
     }
 
-    @Override
     public void ghiFile(String duongDan){
         try(PrintWriter pw = new PrintWriter(Files.newBufferedWriter(Path.of(duongDan), StandardCharsets.UTF_8))){
             for(int i = 0; i < soLuongMatHang; i++){
@@ -210,146 +273,6 @@ public class Kho implements IFileIO, IQuanLy  {
             System.out.println("Đã ghi " + soLuongMatHang + " dòng tồn kho vào file: " + duongDan);
         } catch(IOException e){
             System.out.println("LỖI ghi file: " + e.getMessage());
-        }
-    }
- 
-    // Dùng khi đọc file: mã phải đúng định dạng của loại mặt hàng (setMa ném lỗi nếu sai)
-    private boolean tangTonKhoTuFile(String dong, MatHang mh, int soLuong){
-        try{
-            mh.setMa(mh.getMa());
-        } catch(IllegalArgumentException e){
-            System.out.println("Bỏ qua dòng \"" + dong + "\": " + e.getMessage());
-            return false;
-        }
-        if (mh.getTen() == null || mh.getTen().isBlank() || mh.getGiaNhap() <= 0
-                || !Double.isFinite(mh.getGiaNhap()) || soLuong < 0) {
-            System.out.println("Bỏ qua dòng \"" + dong + "\": tên, giá hoặc số lượng không hợp lệ.");
-            return false;
-        }
-        if (TienIch.timKiemViTri(dsTonKho, soLuongMatHang, mh.getMa()) >= 0) {
-            System.out.println("Bỏ qua mã kho đã có: " + mh.getMa());
-            return false;
-        }
-        return tangTonKho(mh, soLuong);
-    }
-
-    @Override
-    public void docFile(String duongDan){
-        
-        try(BufferedReader br=Files.newBufferedReader(Path.of(duongDan), StandardCharsets.UTF_8)){
-
-            String dong;
-            while((dong=br.readLine()) != null){
-                if(dong.trim().isEmpty()) continue;
-                try {
-                String[] phan= dong.split(";", -1);
-                if (phan.length < 5) throw new IllegalArgumentException("thiếu cột");
-                String danhmuc=phan[0].trim();
-                String ma = phan[1].trim();
-                String ten= phan[2].trim();
-                double gianhap= Double.parseDouble(phan[3].trim());
-
-                int soLuong;
-                try{
-                    soLuong = Integer.parseInt(phan[4].trim());
-                } catch(NumberFormatException e){
-                    System.out.println("Dòng: " + dong + " lỗi số lượng!");
-                    continue;
-                }
-                
-                int vtMH = TienIch.timKiemViTri(dsTonKho, soLuongMatHang, ma);
-                if(vtMH!=-1){
-                    System.out.println("Bỏ qua mã kho đã có: " + ma);
-                }
-                else{
-                    switch(danhmuc){
-                        case "Sách":
-                            String tacGiaSach=phan[5].trim();
-                            String nhaXuatBanSach=phan[6].trim();
-                            String theLoaiSach=phan[7].trim();
-                            Sach themSach = new Sach(ma, ten, gianhap, soLuong ,tacGiaSach, nhaXuatBanSach, theLoaiSach);
-                            if(tangTonKhoTuFile(dong, themSach, soLuong)){
-                                System.out.println("Thêm thành công Sách "+ ten);
-                            }     
-                            break;                       
-                        case "Tiểu thuyết":
-                            String tacGiaTieuThuyet=phan[5].trim();
-                            String nhaXuatBanTieuThuyet=phan[6].trim();
-                            String theLoaiTieuThuyet=phan[7].trim();
-                            TieuThuyet themTieuThuyet = new TieuThuyet(ma, ten, gianhap, soLuong ,tacGiaTieuThuyet, nhaXuatBanTieuThuyet, theLoaiTieuThuyet);
-                            if(tangTonKhoTuFile(dong, themTieuThuyet, soLuong)){
-                                System.out.println("Thêm thành công Tiểu thuyết "+ ten);
-                            }
-                            break;
-                        case "Sách giáo khoa":
-                            String monHoc = phan[5].trim();
-                            String nhaXuatBan= phan[6].trim();
-                            SachGiaoKhoa themSGK = new SachGiaoKhoa(ma, ten, gianhap, soLuong, monHoc, nhaXuatBan);
-                            if(tangTonKhoTuFile(dong, themSGK, soLuong)){
-                                System.out.println("Thêm thành công SGK "+ ten);
-                            }
-                            break;
-                        case "Truyện":
-                            String tacGiaTruyen=phan[5].trim();
-                            String nhaXuatBanTruyen=phan[6].trim();
-                            String theLoaiTruyen=phan[7].trim(); 
-                            Truyen themTruyen = new Truyen(ma, ten, gianhap, soLuong ,tacGiaTruyen, nhaXuatBanTruyen, theLoaiTruyen);
-                            if(tangTonKhoTuFile(dong, themTruyen, soLuong)){
-                                System.out.println("Thêm thành công Truyện "+ ten);
-                            }     
-                            break;   
-                        case "Văn phòng phẩm":
-                            String loaiVPP=phan[5].trim();
-                            String nhaSXVPP=phan[6].trim();
-                            VanPhongPham themVPP = new VanPhongPham(ma, ten, gianhap, soLuong, nhaSXVPP, loaiVPP);
-                            if(tangTonKhoTuFile(dong, themVPP, soLuong)){
-                                System.out.println("Thêm thành công Văn phòng phẩm "+ ten);
-                            }
-                            break;
-                        case "Báo tạp chí":
-                            String theLoaiBao=phan[5].trim();
-                            String nhaXuatBanBao=phan[6].trim();
-                            BaoTapChi themBao = new BaoTapChi(ma, ten, gianhap, soLuong, nhaXuatBanBao, theLoaiBao);
-                            if(tangTonKhoTuFile(dong, themBao, soLuong)){
-                                System.out.println("Thêm thành công Báo tạp chí "+ ten);
-                            }
-                            break;
-                        case "Đồ chơi":
-                            if (tangTonKhoTuFile(dong, new DoChoi(ma,ten,gianhap,soLuong,phan[6].trim(),Integer.parseInt(phan[5].trim())), soLuong))
-                                System.out.println("Thêm thành công Đồ chơi " + ten);
-                            break;
-                        case "Dụng cụ học tập":
-                            if (tangTonKhoTuFile(dong, new DungCuHocTap(ma,ten,gianhap,soLuong,phan[6].trim(),phan[5].trim()), soLuong))
-                                System.out.println("Thêm thành công Dụng cụ học tập " + ten);
-                            break;
-                        case "Trang trí":
-                            if (tangTonKhoTuFile(dong, new TrangTri(ma,ten,gianhap,soLuong,phan[5].trim()), soLuong))
-                                System.out.println("Thêm thành công Trang trí " + ten);
-                            break;
-                        case "Vở":
-                            if (tangTonKhoTuFile(dong, new Vo(ma,ten,gianhap,soLuong,Integer.parseInt(phan[5].trim()),phan[6].trim()), soLuong))
-                                System.out.println("Thêm thành công Vở " + ten);
-                            break;
-                        case "Khác":
-                            String nhaSX = phan[5].trim();
-                            SPKhac themKhac = new SPKhac(ma, ten, gianhap, soLuong, nhaSX);
-                            if(tangTonKhoTuFile(dong, themKhac, soLuong)){
-                                System.out.println("Thêm thành công Khác "+ten);
-                            }
-                            break;
-                        default:
-                            System.out.println("Bỏ qua danh mục kho không hỗ trợ: " + danhmuc);
-                            break;
-                    }
-                }
-                } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
-                    System.out.println("Bỏ qua dòng kho \"" + dong + "\": " + e.getMessage());
-                }
-
-            }
-            System.out.println("ĐỌC XONG");
-        } catch(IOException e){
-            System.out.println("LỖI đọc file: " + e.getMessage());
         }
     }
 }
