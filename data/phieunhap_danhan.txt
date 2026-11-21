@@ -1,0 +1,389 @@
+PN001;27/07/2026;Sách;SCH2001;Tuổi trẻ đáng giá bao nhiêu;56000.0;10;Rosie Nguyễn;NXB Trẻ;Kỹ năng sống;DA_DUYET
+PN001;27/07/2026;Tiểu thuyết;TTH2001;Rừng Na Uy;98000.0;3;Haruki Murakami;NXB Trẻ;Lãng mạn;DA_DUYET
+PN001;27/07/2026;Truyện;TRU2001;Thần đồng đất Việt;14000.0;21;Lê Linh;NXB Trẻ;Hài hước;DA_DUYET
+PN002;03/07/2026;Văn phòng phẩm;VPP2001;Bút bi xanh;3500.0;27;Bút;Thiên Long;DA_DUYET
+PN003;28/01/2026;Dụng cụ học tập;DCT2001;Compa;25000.0;20;Dụng cụ đo;Campus;DA_DUYET
+PN003;28/01/2026;Vở;VO2001;Vở 4 ô ly;14000.0;6;120;Campus;DA_DUYET
+PN004;14/09/2026;Tiểu thuyết;TTH2002;Tắt đèn;45000.0;23;Ngô Tất Tố;NXB Kim Đồng;Hiện thực;DA_DUYET
+PN004;14/09/2026;Truyện;TRU2002;Doraemon tập 1;14000.0;15;Fujiko F. Fujio;NXB Kim Đồng;Hài hước;DA_DUYET
+PN005;16/11/2026;Sách giáo khoa;SGK2001;Địa lý 10;21000.0;15;Địa lý;NXB Giáo Dục;DA_DUYET
+PN005;16/11/2026;Sách giáo khoa;SGK2002;Hóa học 10;24000.0;12;Hóa học;NXB Giáo Dục;DA_DUYET
+PN005;16/11/2026;Sách giáo khoa;SGK2004;Tiếng Anh 11;27000.0;13;Tiếng Anh;NXB Giáo Dục;DA_DUYET
+PN006;15/10/2026;Vở;VO2002;Vở kẻ ngang 96 trang;12000.0;11;96;Campus;DA_DUYET
+PN007;18/03/2026;Sách giáo khoa;SGK2003;Toán 10;22000.0;13;Toán;NXB Giáo Dục;DA_DUYET
+PN008;18/11/2026;Dụng cụ học tập;DCT2003;Bảng mica;44000.0;18;Bảng học tập;Hồng Hà;DA_DUYET
+PN011;03/03/2026;Vở;VO2004;Vở ô ly 5mm 80 trang;11000.0;38;80;Campus;DA_DUYET
+PN012;12/05/2026;Sách giáo khoa;SGK2005;Vật lý 11;25000.0;39;Vật lý;NXB Giáo Dục;DA_DUYET
+PN013;24/09/2026;Báo tạp chí;BTC2005;Kiến Thức Ngày Nay;24000.0;16;Khoa học;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN014;05/11/2026;Sách;SCH2002;Atomic Habits;95000.0;21;James Clear;NXB Trẻ;Kỹ năng sống;DA_DUYET
+PN014;05/11/2026;Sách;SCH2003;Đắc nhân tâm;60000.0;21;Dale Carnegie;NXB Trẻ;Tâm lý;DA_DUYET
+PN014;05/11/2026;Sách;SCH2004;Cha giàu cha nghèo;70000.0;13;Robert Kiyosaki;NXB Trẻ;Kinh tế;DA_DUYET
+PN014;05/11/2026;Sách;SCH2005;Sapiens - Lược sử loài người;180000.0;8;Yuval Noah Harari;NXB Trẻ;Lịch sử;DA_DUYET
+PN014;05/11/2026;Tiểu thuyết;TTH2004;Bố già;105000.0;7;Mario Puzo;NXB Trẻ;Trinh thám;DA_DUYET
+PN014;05/11/2026;Tiểu thuyết;TTH2005;Cánh đồng bất tận;55000.0;15;Nguyễn Ngọc Tư;NXB Trẻ;Hiện thực;DA_DUYET
+PN015;08/11/2026;Tiểu thuyết;TTH2003;Hoàng tử bé;60000.0;33;Antoine de Saint-Exupéry;NXB Kim Đồng;Phiêu lưu;DA_DUYET
+PN015;08/11/2026;Truyện;TRU2003;Dế Mèn phiêu lưu ký;45000.0;29;Tô Hoài;NXB Kim Đồng;Phiêu lưu;DA_DUYET
+PN015;08/11/2026;Truyện;TRU2004;Thạch Sanh;18000.0;16;Dân gian;NXB Kim Đồng;Cổ tích;DA_DUYET
+PN015;08/11/2026;Truyện;TRU2005;Tấm Cám;18000.0;4;Dân gian;NXB Kim Đồng;Cổ tích;DA_DUYET
+PN016;10/11/2026;Văn phòng phẩm;VPP2002;Gôm tẩy;4000.0;26;Gôm - tẩy;Thiên Long;DA_DUYET
+PN016;10/11/2026;Văn phòng phẩm;VPP2003;Kẹp giấy;12000.0;24;Kẹp - ghim;Thiên Long;DA_DUYET
+PN016;10/11/2026;Văn phòng phẩm;VPP2005;Thước kẻ 30cm;7000.0;29;Thước;Thiên Long;DA_DUYET
+PN016;10/11/2026;Dụng cụ học tập;DCT2002;Hộp đựng bút vải;45000.0;16;Hộp đựng;Thiên Long;DA_DUYET
+PN017;12/11/2026;Báo tạp chí;BTC2001;Tuổi Trẻ Cuối Tuần;14000.0;40;Đời sống;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN017;12/11/2026;Báo tạp chí;BTC2002;Thanh Niên;6000.0;28;Thời sự;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN017;12/11/2026;Báo tạp chí;BTC2003;Forbes Việt Nam;65000.0;21;Kinh tế;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN017;12/11/2026;Báo tạp chí;BTC2004;Thế Giới Phụ Nữ;20000.0;31;Đời sống;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN018;14/11/2026;Đồ chơi;DCH2001;Búp bê;65000.0;26;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN018;14/11/2026;Đồ chơi;DCH2002;Búp bê thời trang;85000.0;38;6;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN018;14/11/2026;Đồ chơi;DCH2003;Rubik 3x3;35000.0;28;8;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN018;14/11/2026;Đồ chơi;DCH2004;Gấu bông;70000.0;11;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN019;15/11/2026;Khác;SPK2001;Ly giữ nhiệt;135000.0;7;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN019;15/11/2026;Khác;SPK2002;Túi vải canvas;22000.0;38;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN019;15/11/2026;Khác;SPK2003;Ô gấp gọn;75000.0;19;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN019;15/11/2026;Khác;SPK2004;Bình nước thể thao;65000.0;30;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN019;15/11/2026;Trang trí;TTR2001;Nến thơm;45000.0;9;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN019;15/11/2026;Trang trí;TTR2002;Tranh canvas;79000.0;8;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN019;15/11/2026;Trang trí;TTR2003;Đồng hồ treo;65000.0;22;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN019;15/11/2026;Trang trí;TTR2004;Đèn led dây;45000.0;24;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN020;12/10/2026;Tiểu thuyết;TTH2005;Cánh đồng bất tận;55500.0;36;Nguyễn Ngọc Tư;NXB Trẻ;Hiện thực;DA_DUYET
+PN020;12/10/2026;Tiểu thuyết;TTH2011;Cô gái đến từ hôm qua;57000.0;33;Nguyễn Nhật Ánh;NXB Trẻ;Lãng mạn;DA_DUYET
+PN020;12/10/2026;Sách;SCH2004;Cha giàu cha nghèo;67000.0;10;Robert Kiyosaki;NXB Trẻ;Kinh tế;DA_DUYET
+PN020;12/10/2026;Sách;SCH2010;Lược sử thời gian;79500.0;11;Stephen Hawking;NXB Trẻ;Khoa học;DA_DUYET
+PN020;12/10/2026;Tiểu thuyết;TTH2010;Tôi thấy hoa vàng trên cỏ xanh;69500.0;36;Nguyễn Nhật Ánh;NXB Trẻ;Hiện thực;DA_DUYET
+PN020;12/10/2026;Truyện;TRU2001;Thần đồng đất Việt;14500.0;23;Lê Linh;NXB Trẻ;Hài hước;DA_DUYET
+PN021;20/09/2026;Sách giáo khoa;SGK2030;Tiếng Anh 6;25000.0;21;Tiếng Anh;NXB Giáo Dục;DA_DUYET
+PN021;20/09/2026;Sách giáo khoa;SGK2012;Hóa học 11;25000.0;47;Hóa học;NXB Giáo Dục;DA_DUYET
+PN021;20/09/2026;Sách giáo khoa;SGK2026;Giáo dục công dân 10;16500.0;28;Giáo dục công dân;NXB Giáo Dục;DA_DUYET
+PN021;20/09/2026;Sách giáo khoa;SGK2013;Địa lý 11;23500.0;49;Địa lý;NXB Giáo Dục;DA_DUYET
+PN022;11/10/2026;Sách;SCH2017;Bí mật của may mắn;37500.0;37;Alex Rovira;NXB Trẻ;Kỹ năng sống;DA_DUYET
+PN022;11/10/2026;Truyện;TRU2018;Thần đồng đất Việt tập 2;14500.0;48;Lê Linh;NXB Trẻ;Hài hước;DA_DUYET
+PN022;11/10/2026;Tiểu thuyết;TTH2001;Rừng Na Uy;104000.0;30;Haruki Murakami;NXB Trẻ;Lãng mạn;DA_DUYET
+PN022;11/10/2026;Sách;SCH2020;Lịch sử Việt Nam bằng tranh;40500.0;21;Trần Bạch Đằng;NXB Trẻ;Lịch sử;DA_DUYET
+PN022;11/10/2026;Sách;SCH2003;Đắc nhân tâm;63500.0;35;Dale Carnegie;NXB Trẻ;Tâm lý;DA_DUYET
+PN022;11/10/2026;Sách;SCH2019;Từ tốt đến vĩ đại;105000.0;6;Jim Collins;NXB Trẻ;Kinh tế;DA_DUYET
+PN022;11/10/2026;Tiểu thuyết;TTH2009;Cho tôi xin một vé đi tuổi thơ;58500.0;13;Nguyễn Nhật Ánh;NXB Trẻ;Hiện thực;DA_DUYET
+PN023;29/08/2026;Trang trí;TTR2002;Tranh canvas;84000.0;8;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN023;29/08/2026;Trang trí;TTR2014;Tranh dán tường;41000.0;19;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN023;29/08/2026;Trang trí;TTR2007;Đèn ngủ để bàn;123500.0;27;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN023;29/08/2026;Khác;SPK2004;Bình nước thể thao;69500.0;39;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN023;29/08/2026;Trang trí;TTR2008;Thảm trải sàn;144000.0;17;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN023;29/08/2026;Trang trí;TTR2005;Khung ảnh gỗ;36000.0;14;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN023;29/08/2026;Khác;SPK2014;Hộp quà giấy;15000.0;37;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN025;03/09/2026;Sách giáo khoa;SGK2026;Giáo dục công dân 10;17500.0;73;Giáo dục công dân;NXB Giáo Dục;DA_DUYET
+PN025;03/09/2026;Sách giáo khoa;SGK2017;Lịch sử 11;20500.0;34;Lịch sử;NXB Giáo Dục;DA_DUYET
+PN025;03/09/2026;Sách giáo khoa;SGK2009;Lịch sử 10;21000.0;62;Lịch sử;NXB Giáo Dục;DA_DUYET
+PN025;03/09/2026;Sách giáo khoa;SGK2015;Tiếng Anh 10;24500.0;11;Tiếng Anh;NXB Giáo Dục;DA_DUYET
+PN025;03/09/2026;Sách giáo khoa;SGK2006;Ngữ văn 10 tập 1;21500.0;67;Ngữ văn;NXB Giáo Dục;DA_DUYET
+PN025;03/09/2026;Sách giáo khoa;SGK2014;Ngữ văn 11 tập 1;24500.0;20;Ngữ văn;NXB Giáo Dục;DA_DUYET
+PN025;03/09/2026;Sách giáo khoa;SGK2024;Địa lý 12;23500.0;35;Địa lý;NXB Giáo Dục;DA_DUYET
+PN026;21/03/2026;Tiểu thuyết;TTH2003;Hoàng tử bé;61500.0;36;Antoine de Saint-Exupéry;NXB Kim Đồng;Phiêu lưu;DA_DUYET
+PN026;21/03/2026;Truyện;TRU2012;Cây khế;16500.0;18;Dân gian;NXB Kim Đồng;Cổ tích;DA_DUYET
+PN026;21/03/2026;Truyện;TRU2003;Dế Mèn phiêu lưu ký;45500.0;40;Tô Hoài;NXB Kim Đồng;Phiêu lưu;DA_DUYET
+PN026;21/03/2026;Truyện;TRU2016;Truyện cổ Andersen;45500.0;48;Hans Christian Andersen;NXB Kim Đồng;Cổ tích;DA_DUYET
+PN026;21/03/2026;Truyện;TRU2015;Bạch Tuyết và bảy chú lùn;21000.0;42;Anh em nhà Grimm;NXB Kim Đồng;Cổ tích;DA_DUYET
+PN026;21/03/2026;Truyện;TRU2006;Doraemon tập 2;13500.0;36;Fujiko F. Fujio;NXB Kim Đồng;Hài hước;DA_DUYET
+PN027;18/03/2026;Báo tạp chí;BTC2010;Mực Tím;8600.0;10;Đời sống;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN027;18/03/2026;Báo tạp chí;BTC2014;Bóng Đá;10500.0;34;Thể thao;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN027;18/03/2026;Báo tạp chí;BTC2007;Người Lao Động;5800.0;13;Thời sự;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN029;25/01/2026;Sách;SCH2002;Atomic Habits;99000.0;17;James Clear;NXB Trẻ;Kỹ năng sống;DA_DUYET
+PN029;25/01/2026;Sách;SCH2009;Quẳng gánh lo đi và vui sống;55000.0;6;Dale Carnegie;NXB Trẻ;Kỹ năng sống;DA_DUYET
+PN029;25/01/2026;Tiểu thuyết;TTH2011;Cô gái đến từ hôm qua;51500.0;38;Nguyễn Nhật Ánh;NXB Trẻ;Lãng mạn;DA_DUYET
+PN029;25/01/2026;Sách;SCH2006;Nghĩ giàu và làm giàu;71500.0;38;Napoleon Hill;NXB Trẻ;Kinh tế;DA_DUYET
+PN029;25/01/2026;Tiểu thuyết;TTH2008;Mắt biếc;69000.0;13;Nguyễn Nhật Ánh;NXB Trẻ;Lãng mạn;DA_DUYET
+PN030;06/06/2026;Sách;SCH2011;Súng, vi trùng và thép;151500.0;34;Jared Diamond;NXB Thanh Niên;Lịch sử;DA_DUYET
+PN030;06/06/2026;Tiểu thuyết;TTH2014;Nhà giả kim;62000.0;31;Paulo Coelho;NXB Thanh Niên;Phiêu lưu;DA_DUYET
+PN030;06/06/2026;Sách;SCH2014;Khởi nghiệp tinh gọn;92000.0;16;Eric Ries;NXB Thanh Niên;Kinh tế;DA_DUYET
+PN030;06/06/2026;Tiểu thuyết;TTH2019;Ông già và biển cả;50500.0;35;Ernest Hemingway;NXB Thanh Niên;Hiện thực;DA_DUYET
+PN030;06/06/2026;Tiểu thuyết;TTH2018;Kiêu hãnh và định kiến;94000.0;38;Jane Austen;NXB Thanh Niên;Lãng mạn;DA_DUYET
+PN030;06/06/2026;Sách;SCH2012;Dám bị ghét;73500.0;22;Kishimi Ichiro;NXB Thanh Niên;Tâm lý;DA_DUYET
+PN030;06/06/2026;Sách;SCH2007;Tư duy nhanh và chậm;136500.0;18;Daniel Kahneman;NXB Thanh Niên;Tâm lý;DA_DUYET
+PN030;06/06/2026;Sách;SCH2018;Tâm lý học đám đông;76500.0;10;Gustave Le Bon;NXB Thanh Niên;Tâm lý;DA_DUYET
+PN031;22/03/2026;Đồ chơi;DCH2011;Bộ bác sĩ nhí;72000.0;39;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN031;22/03/2026;Đồ chơi;DCH2014;Robot biến hình;133500.0;22;6;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN031;22/03/2026;Đồ chơi;DCH2018;Bộ tô màu và vẽ;45500.0;18;4;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN031;22/03/2026;Đồ chơi;DCH2006;Xe ô tô điều khiển từ xa;182000.0;22;6;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN031;22/03/2026;Đồ chơi;DCH2001;Búp bê;67000.0;13;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN031;22/03/2026;Đồ chơi;DCH2012;Bộ nấu ăn mini;61000.0;21;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN031;22/03/2026;Đồ chơi;DCH2020;Mô hình khủng long;56000.0;32;4;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN032;29/10/2026;Sách;SCH2007;Tư duy nhanh và chậm;125500.0;25;Daniel Kahneman;NXB Thanh Niên;Tâm lý;DA_DUYET
+PN032;29/10/2026;Sách;SCH2018;Tâm lý học đám đông;75500.0;21;Gustave Le Bon;NXB Thanh Niên;Tâm lý;DA_DUYET
+PN032;29/10/2026;Sách;SCH2011;Súng, vi trùng và thép;149000.0;31;Jared Diamond;NXB Thanh Niên;Lịch sử;DA_DUYET
+PN032;29/10/2026;Sách;SCH2008;Nhà đầu tư thông minh;159000.0;21;Benjamin Graham;NXB Thanh Niên;Kinh tế;DA_DUYET
+PN032;29/10/2026;Sách;SCH2014;Khởi nghiệp tinh gọn;93500.0;5;Eric Ries;NXB Thanh Niên;Kinh tế;DA_DUYET
+PN032;29/10/2026;Tiểu thuyết;TTH2018;Kiêu hãnh và định kiến;88500.0;20;Jane Austen;NXB Thanh Niên;Lãng mạn;DA_DUYET
+PN032;29/10/2026;Tiểu thuyết;TTH2019;Ông già và biển cả;48000.0;12;Ernest Hemingway;NXB Thanh Niên;Hiện thực;DA_DUYET
+PN033;20/01/2026;Tiểu thuyết;TTH2009;Cho tôi xin một vé đi tuổi thơ;56500.0;18;Nguyễn Nhật Ánh;NXB Trẻ;Hiện thực;DA_DUYET
+PN033;20/01/2026;Sách;SCH2017;Bí mật của may mắn;40500.0;32;Alex Rovira;NXB Trẻ;Kỹ năng sống;DA_DUYET
+PN033;20/01/2026;Sách;SCH2016;Việt Nam sử lược;118500.0;12;Trần Trọng Kim;NXB Trẻ;Lịch sử;DA_DUYET
+PN033;20/01/2026;Tiểu thuyết;TTH2001;Rừng Na Uy;101000.0;37;Haruki Murakami;NXB Trẻ;Lãng mạn;DA_DUYET
+PN033;20/01/2026;Tiểu thuyết;TTH2010;Tôi thấy hoa vàng trên cỏ xanh;72000.0;21;Nguyễn Nhật Ánh;NXB Trẻ;Hiện thực;DA_DUYET
+PN033;20/01/2026;Tiểu thuyết;TTH2011;Cô gái đến từ hôm qua;54000.0;27;Nguyễn Nhật Ánh;NXB Trẻ;Lãng mạn;DA_DUYET
+PN034;02/08/2026;Sách;SCH2020;Lịch sử Việt Nam bằng tranh;40500.0;39;Trần Bạch Đằng;NXB Trẻ;Lịch sử;DA_DUYET
+PN034;02/08/2026;Sách;SCH2001;Tuổi trẻ đáng giá bao nhiêu;60000.0;17;Rosie Nguyễn;NXB Trẻ;Kỹ năng sống;DA_DUYET
+PN034;02/08/2026;Sách;SCH2015;Vũ trụ trong vỏ hạt dẻ;91000.0;12;Stephen Hawking;NXB Trẻ;Khoa học;DA_DUYET
+PN034;02/08/2026;Sách;SCH2016;Việt Nam sử lược;104000.0;12;Trần Trọng Kim;NXB Trẻ;Lịch sử;DA_DUYET
+PN034;02/08/2026;Tiểu thuyết;TTH2013;Án mạng trên chuyến tàu tốc hành Phương Đông;80000.0;13;Agatha Christie;NXB Trẻ;Trinh thám;DA_DUYET
+PN034;02/08/2026;Sách;SCH2004;Cha giàu cha nghèo;70500.0;24;Robert Kiyosaki;NXB Trẻ;Kinh tế;DA_DUYET
+PN034;02/08/2026;Tiểu thuyết;TTH2011;Cô gái đến từ hôm qua;51000.0;13;Nguyễn Nhật Ánh;NXB Trẻ;Lãng mạn;DA_DUYET
+PN036;31/10/2026;Truyện;TRU2008;Thám tử lừng danh Conan tập 1;16000.0;12;Aoyama Gosho;NXB Kim Đồng;Trinh thám;DA_DUYET
+PN036;31/10/2026;Truyện;TRU2003;Dế Mèn phiêu lưu ký;46000.0;42;Tô Hoài;NXB Kim Đồng;Phiêu lưu;DA_DUYET
+PN036;31/10/2026;Truyện;TRU2005;Tấm Cám;19000.0;31;Dân gian;NXB Kim Đồng;Cổ tích;DA_DUYET
+PN036;31/10/2026;Tiểu thuyết;TTH2015;Đảo giấu vàng;71500.0;25;Robert Louis Stevenson;NXB Kim Đồng;Phiêu lưu;DA_DUYET
+PN036;31/10/2026;Truyện;TRU2015;Bạch Tuyết và bảy chú lùn;18500.0;10;Anh em nhà Grimm;NXB Kim Đồng;Cổ tích;DA_DUYET
+PN038;24/08/2026;Dụng cụ học tập;DCT2007;Thước đo góc;6000.0;40;Dụng cụ đo;Hồng Hà;DA_DUYET
+PN038;24/08/2026;Văn phòng phẩm;VPP2021;Keo dán nước;7400.0;99;Keo - hồ;Hồng Hà;DA_DUYET
+PN038;24/08/2026;Dụng cụ học tập;DCT2009;Bảng viết bút lông nhỏ;52500.0;50;Bảng học tập;Hồng Hà;DA_DUYET
+PN038;24/08/2026;Vở;VO2010;Vở tập viết lớp 2;6900.0;82;48;Hồng Hà;DA_DUYET
+PN039;13/02/2026;Đồ chơi;DCH2017;Đàn organ đồ chơi;111000.0;21;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN039;13/02/2026;Đồ chơi;DCH2014;Robot biến hình;132000.0;11;6;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN039;13/02/2026;Đồ chơi;DCH2002;Búp bê thời trang;92000.0;6;6;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN039;13/02/2026;Đồ chơi;DCH2006;Xe ô tô điều khiển từ xa;181000.0;24;6;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN040;13/02/2026;Dụng cụ học tập;DCT2010;Bảng con học sinh;24500.0;45;Bảng học tập;Hồng Hà;DA_DUYET
+PN040;13/02/2026;Vở;VO2010;Vở tập viết lớp 2;6700.0;25;48;Hồng Hà;DA_DUYET
+PN040;13/02/2026;Vở;VO2009;Vở tập viết lớp 1;7300.0;44;48;Hồng Hà;DA_DUYET
+PN040;13/02/2026;Văn phòng phẩm;VPP2019;Giấy A4 70gsm (ream);64500.0;94;Giấy;Hồng Hà;DA_DUYET
+PN040;13/02/2026;Văn phòng phẩm;VPP2014;Gôm tẩy trắng lớn;5800.0;93;Gôm - tẩy;Hồng Hà;DA_DUYET
+PN041;07/11/2026;Sách giáo khoa;SGK2007;Ngữ văn 10 tập 2;24500.0;55;Ngữ văn;NXB Giáo Dục;DA_DUYET
+PN041;07/11/2026;Sách giáo khoa;SGK2024;Địa lý 12;24000.0;78;Địa lý;NXB Giáo Dục;DA_DUYET
+PN041;07/11/2026;Sách giáo khoa;SGK2021;Tiếng Anh 12;26500.0;76;Tiếng Anh;NXB Giáo Dục;DA_DUYET
+PN041;07/11/2026;Sách giáo khoa;SGK2001;Địa lý 10;19500.0;50;Địa lý;NXB Giáo Dục;DA_DUYET
+PN041;07/11/2026;Sách giáo khoa;SGK2028;Ngữ văn 9 tập 1;18000.0;30;Ngữ văn;NXB Giáo Dục;DA_DUYET
+PN043;06/09/2026;Văn phòng phẩm;VPP2017;Ghim bấm số 3;8400.0;38;Kẹp - ghim;Hồng Hà;DA_DUYET
+PN043;06/09/2026;Văn phòng phẩm;VPP2014;Gôm tẩy trắng lớn;5900.0;97;Gôm - tẩy;Hồng Hà;DA_DUYET
+PN043;06/09/2026;Dụng cụ học tập;DCT2007;Thước đo góc;6100.0;32;Dụng cụ đo;Hồng Hà;DA_DUYET
+PN044;22/08/2026;Văn phòng phẩm;VPP2005;Thước kẻ 30cm;6800.0;37;Thước;Thiên Long;DA_DUYET
+PN044;22/08/2026;Văn phòng phẩm;VPP2026;Ruột bút chì 0.5;5200.0;42;Bút;Thiên Long;DA_DUYET
+PN044;22/08/2026;Văn phòng phẩm;VPP2025;Bút chì bấm 0.5;9400.0;99;Bút;Thiên Long;DA_DUYET
+PN044;22/08/2026;Văn phòng phẩm;VPP2009;Bút lông bảng;8700.0;77;Bút;Thiên Long;DA_DUYET
+PN044;22/08/2026;Văn phòng phẩm;VPP2016;Ghim bấm số 10;5700.0;130;Kẹp - ghim;Thiên Long;DA_DUYET
+PN045;26/07/2026;Văn phòng phẩm;VPP2015;Kẹp bướm 25mm;14500.0;138;Kẹp - ghim;Thiên Long;DA_DUYET
+PN045;26/07/2026;Dụng cụ học tập;DCT2013;Hộp bút 2 tầng;38000.0;54;Hộp đựng;Thiên Long;DA_DUYET
+PN045;26/07/2026;Dụng cụ học tập;DCT2008;Bộ compa kim loại;40500.0;58;Dụng cụ đo;Thiên Long;DA_DUYET
+PN045;26/07/2026;Văn phòng phẩm;VPP2024;Bút xóa nước;12500.0;124;Bút;Thiên Long;DA_DUYET
+PN046;07/03/2026;Khác;SPK2013;Quạt mini cầm tay;44000.0;12;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN046;07/03/2026;Khác;SPK2007;Gối tựa cổ;82500.0;33;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN046;07/03/2026;Khác;SPK2005;Móc khóa gấu;24000.0;39;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN046;07/03/2026;Khác;SPK2015;Gương bỏ túi;18500.0;19;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN046;07/03/2026;Trang trí;TTR2009;Gương treo tường;87500.0;9;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN046;07/03/2026;Trang trí;TTR2004;Đèn led dây;45500.0;8;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN048;06/01/2026;Báo tạp chí;BTC2013;Doanh Nhân Sài Gòn;31000.0;18;Kinh tế;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN048;06/01/2026;Báo tạp chí;BTC2006;Tuổi Trẻ;5800.0;51;Thời sự;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN050;08/06/2026;Vở;VO2012;Sổ lò xo A4;37500.0;86;100;Campus;DA_DUYET
+PN050;08/06/2026;Vở;VO2015;Sổ caro A5 80 trang;20500.0;91;80;Campus;DA_DUYET
+PN050;08/06/2026;Vở;VO2001;Vở 4 ô ly;13000.0;23;120;Campus;DA_DUYET
+PN051;29/04/2026;Tiểu thuyết;TTH2003;Hoàng tử bé;64000.0;26;Antoine de Saint-Exupéry;NXB Kim Đồng;Phiêu lưu;DA_DUYET
+PN051;29/04/2026;Tiểu thuyết;TTH2016;Robinson Crusoe;73000.0;25;Daniel Defoe;NXB Kim Đồng;Phiêu lưu;DA_DUYET
+PN051;29/04/2026;Truyện;TRU2012;Cây khế;16500.0;26;Dân gian;NXB Kim Đồng;Cổ tích;DA_DUYET
+PN051;29/04/2026;Truyện;TRU2019;Truyện cười dân gian Việt Nam;30000.0;30;Dân gian;NXB Kim Đồng;Hài hước;DA_DUYET
+PN051;29/04/2026;Truyện;TRU2011;One Piece tập 1;19000.0;12;Eiichiro Oda;NXB Kim Đồng;Phiêu lưu;DA_DUYET
+PN052;07/07/2026;Báo tạp chí;BTC2001;Tuổi Trẻ Cuối Tuần;14500.0;22;Đời sống;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN052;07/07/2026;Báo tạp chí;BTC2016;Mẹ & Bé;24500.0;42;Đời sống;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN052;07/07/2026;Báo tạp chí;BTC2013;Doanh Nhân Sài Gòn;31500.0;35;Kinh tế;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN054;20/04/2026;Vở;VO2001;Vở 4 ô ly;13500.0;74;120;Campus;DA_DUYET
+PN054;20/04/2026;Vở;VO2003;Sổ lò xo A5;28000.0;87;100;Campus;DA_DUYET
+PN054;20/04/2026;Vở;VO2011;Sổ tay bìa da A6;33000.0;47;160;Campus;DA_DUYET
+PN054;20/04/2026;Vở;VO2012;Sổ lò xo A4;40000.0;54;100;Campus;DA_DUYET
+PN054;20/04/2026;Vở;VO2005;Vở kẻ ngang 200 trang;23000.0;82;200;Campus;DA_DUYET
+PN054;20/04/2026;Vở;VO2004;Vở ô ly 5mm 80 trang;10500.0;61;80;Campus;DA_DUYET
+PN054;20/04/2026;Dụng cụ học tập;DCT2001;Compa;24500.0;51;Dụng cụ đo;Campus;DA_DUYET
+PN054;20/04/2026;Vở;VO2015;Sổ caro A5 80 trang;19500.0;98;80;Campus;DA_DUYET
+PN055;15/03/2026;Báo tạp chí;BTC2005;Kiến Thức Ngày Nay;25000.0;52;Khoa học;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN055;15/03/2026;Báo tạp chí;BTC2017;Nhà Đẹp;38500.0;52;Đời sống;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN055;15/03/2026;Báo tạp chí;BTC2012;Thời báo Kinh tế Sài Gòn;15000.0;27;Kinh tế;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN056;28/03/2026;Khác;SPK2006;Khẩu trang vải;16500.0;16;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN056;28/03/2026;Khác;SPK2005;Móc khóa gấu;25500.0;31;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN056;28/03/2026;Khác;SPK2009;Balo mini;122500.0;36;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN056;28/03/2026;Trang trí;TTR2003;Đồng hồ treo;69500.0;5;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN056;28/03/2026;Trang trí;TTR2008;Thảm trải sàn;145000.0;21;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN056;28/03/2026;Khác;SPK2012;Ví da mini;63500.0;39;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN056;28/03/2026;Trang trí;TTR2015;Lịch để bàn;28000.0;26;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN056;28/03/2026;Khác;SPK2015;Gương bỏ túi;18500.0;14;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN057;04/01/2026;Đồ chơi;DCH2017;Đàn organ đồ chơi;107500.0;21;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN057;04/01/2026;Đồ chơi;DCH2002;Búp bê thời trang;82500.0;6;6;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN057;04/01/2026;Đồ chơi;DCH2016;Bóng rổ mini;47500.0;17;5;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN059;05/08/2026;Truyện;TRU2012;Cây khế;15500.0;23;Dân gian;NXB Kim Đồng;Cổ tích;DA_DUYET
+PN059;05/08/2026;Truyện;TRU2008;Thám tử lừng danh Conan tập 1;18500.0;50;Aoyama Gosho;NXB Kim Đồng;Trinh thám;DA_DUYET
+PN059;05/08/2026;Truyện;TRU2019;Truyện cười dân gian Việt Nam;31000.0;45;Dân gian;NXB Kim Đồng;Hài hước;DA_DUYET
+PN061;16/03/2026;Dụng cụ học tập;DCT2014;Thước cuộn 3m;20500.0;60;Dụng cụ đo;Hồng Hà;DA_DUYET
+PN061;16/03/2026;Văn phòng phẩm;VPP2004;Bút highlight;11500.0;113;Bút;Hồng Hà;DA_DUYET
+PN061;16/03/2026;Vở;VO2010;Vở tập viết lớp 2;6900.0;81;48;Hồng Hà;DA_DUYET
+PN062;15/03/2026;Văn phòng phẩm;VPP2016;Ghim bấm số 10;6500.0;136;Kẹp - ghim;Thiên Long;DA_DUYET
+PN062;15/03/2026;Văn phòng phẩm;VPP2024;Bút xóa nước;12000.0;32;Bút;Thiên Long;DA_DUYET
+PN062;15/03/2026;Văn phòng phẩm;VPP2006;Bút bi đỏ;3700.0;103;Bút;Thiên Long;DA_DUYET
+PN062;15/03/2026;Văn phòng phẩm;VPP2005;Thước kẻ 30cm;7300.0;40;Thước;Thiên Long;DA_DUYET
+PN063;01/06/2026;Văn phòng phẩm;VPP2026;Ruột bút chì 0.5;5100.0;37;Bút;Thiên Long;DA_DUYET
+PN063;01/06/2026;Văn phòng phẩm;VPP2025;Bút chì bấm 0.5;9000.0;135;Bút;Thiên Long;DA_DUYET
+PN063;01/06/2026;Văn phòng phẩm;VPP2005;Thước kẻ 30cm;7100.0;118;Thước;Thiên Long;DA_DUYET
+PN063;01/06/2026;Văn phòng phẩm;VPP2010;Bút gel xanh;7300.0;136;Bút;Thiên Long;DA_DUYET
+PN064;20/07/2026;Văn phòng phẩm;VPP2004;Bút highlight;12000.0;85;Bút;Hồng Hà;DA_DUYET
+PN064;20/07/2026;Văn phòng phẩm;VPP2017;Ghim bấm số 3;7400.0;31;Kẹp - ghim;Hồng Hà;DA_DUYET
+PN064;20/07/2026;Dụng cụ học tập;DCT2007;Thước đo góc;6200.0;14;Dụng cụ đo;Hồng Hà;DA_DUYET
+PN064;20/07/2026;Vở;VO2013;Vở học sinh 72 trang;9400.0;86;72;Hồng Hà;DA_DUYET
+PN064;20/07/2026;Vở;VO2014;Vở vẽ A4 40 trang;15000.0;62;40;Hồng Hà;DA_DUYET
+PN064;20/07/2026;Văn phòng phẩm;VPP2012;Thước kẻ 15cm;3600.0;98;Thước;Hồng Hà;DA_DUYET
+PN065;24/07/2026;Vở;VO2004;Vở ô ly 5mm 80 trang;11500.0;60;80;Campus;DA_DUYET
+PN065;24/07/2026;Vở;VO2006;Vở kẻ ngang 120 trang;15000.0;82;120;Campus;DA_DUYET
+PN065;24/07/2026;Vở;VO2002;Vở kẻ ngang 96 trang;11500.0;43;96;Campus;DA_DUYET
+PN066;13/09/2026;Sách giáo khoa;SGK2004;Tiếng Anh 11;26500.0;14;Tiếng Anh;NXB Giáo Dục;DA_DUYET
+PN066;13/09/2026;Sách giáo khoa;SGK2019;Vật lý 12;26000.0;27;Vật lý;NXB Giáo Dục;DA_DUYET
+PN066;13/09/2026;Sách giáo khoa;SGK2016;Sinh học 11;22000.0;76;Sinh học;NXB Giáo Dục;DA_DUYET
+PN066;13/09/2026;Sách giáo khoa;SGK2029;Khoa học tự nhiên 6;24500.0;65;Khoa học tự nhiên;NXB Giáo Dục;DA_DUYET
+PN066;13/09/2026;Sách giáo khoa;SGK2013;Địa lý 11;23500.0;13;Địa lý;NXB Giáo Dục;DA_DUYET
+PN066;13/09/2026;Sách giáo khoa;SGK2028;Ngữ văn 9 tập 1;17500.0;76;Ngữ văn;NXB Giáo Dục;DA_DUYET
+PN066;13/09/2026;Sách giáo khoa;SGK2017;Lịch sử 11;20000.0;77;Lịch sử;NXB Giáo Dục;DA_DUYET
+PN066;13/09/2026;Sách giáo khoa;SGK2001;Địa lý 10;19500.0;57;Địa lý;NXB Giáo Dục;DA_DUYET
+PN068;15/10/2026;Vở;VO2002;Vở kẻ ngang 96 trang;12000.0;24;96;Campus;DA_DUYET
+PN068;15/10/2026;Vở;VO2015;Sổ caro A5 80 trang;19500.0;79;80;Campus;DA_DUYET
+PN069;16/02/2026;Đồ chơi;DCH2021;Xếp hình nam châm;121000.0;18;4;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN069;16/02/2026;Đồ chơi;DCH2002;Búp bê thời trang;78500.0;7;6;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN069;16/02/2026;Đồ chơi;DCH2007;Bộ đất nặn;40000.0;21;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN069;16/02/2026;Đồ chơi;DCH2016;Bóng rổ mini;46500.0;39;5;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN069;16/02/2026;Đồ chơi;DCH2020;Mô hình khủng long;57000.0;38;4;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN069;16/02/2026;Đồ chơi;DCH2010;Xe thăng bằng cho bé;405500.0;20;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN070;27/04/2026;Văn phòng phẩm;VPP2026;Ruột bút chì 0.5;5000.0;82;Bút;Thiên Long;DA_DUYET
+PN070;27/04/2026;Văn phòng phẩm;VPP2016;Ghim bấm số 10;5600.0;125;Kẹp - ghim;Thiên Long;DA_DUYET
+PN071;15/11/2026;Sách giáo khoa;SGK2015;Tiếng Anh 10;25000.0;35;Tiếng Anh;NXB Giáo Dục;DA_DUYET
+PN071;15/11/2026;Sách giáo khoa;SGK2022;Ngữ văn 12 tập 1;25000.0;53;Ngữ văn;NXB Giáo Dục;DA_DUYET
+PN072;08/03/2026;Sách giáo khoa;SGK2021;Tiếng Anh 12;28500.0;76;Tiếng Anh;NXB Giáo Dục;DA_DUYET
+PN072;08/03/2026;Sách giáo khoa;SGK2006;Ngữ văn 10 tập 1;24000.0;70;Ngữ văn;NXB Giáo Dục;DA_DUYET
+PN072;08/03/2026;Sách giáo khoa;SGK2015;Tiếng Anh 10;27500.0;29;Tiếng Anh;NXB Giáo Dục;DA_DUYET
+PN072;08/03/2026;Sách giáo khoa;SGK2003;Toán 10;22500.0;51;Toán;NXB Giáo Dục;DA_DUYET
+PN072;08/03/2026;Sách giáo khoa;SGK2001;Địa lý 10;20000.0;80;Địa lý;NXB Giáo Dục;DA_DUYET
+PN072;08/03/2026;Sách giáo khoa;SGK2012;Hóa học 11;23500.0;10;Hóa học;NXB Giáo Dục;DA_DUYET
+PN072;08/03/2026;Sách giáo khoa;SGK2027;Toán 9 tập 1;19000.0;21;Toán;NXB Giáo Dục;DA_DUYET
+PN074;30/10/2026;Tiểu thuyết;TTH2018;Kiêu hãnh và định kiến;97500.0;15;Jane Austen;NXB Thanh Niên;Lãng mạn;DA_DUYET
+PN074;30/10/2026;Sách;SCH2007;Tư duy nhanh và chậm;132000.0;37;Daniel Kahneman;NXB Thanh Niên;Tâm lý;DA_DUYET
+PN074;30/10/2026;Tiểu thuyết;TTH2019;Ông già và biển cả;55500.0;35;Ernest Hemingway;NXB Thanh Niên;Hiện thực;DA_DUYET
+PN074;30/10/2026;Sách;SCH2018;Tâm lý học đám đông;75000.0;13;Gustave Le Bon;NXB Thanh Niên;Tâm lý;DA_DUYET
+PN074;30/10/2026;Tiểu thuyết;TTH2017;Những người khốn khổ;175000.0;38;Victor Hugo;NXB Thanh Niên;Hiện thực;DA_DUYET
+PN074;30/10/2026;Sách;SCH2008;Nhà đầu tư thông minh;145500.0;31;Benjamin Graham;NXB Thanh Niên;Kinh tế;DA_DUYET
+PN074;30/10/2026;Sách;SCH2012;Dám bị ghét;75000.0;6;Kishimi Ichiro;NXB Thanh Niên;Tâm lý;DA_DUYET
+PN075;16/08/2026;Văn phòng phẩm;VPP2006;Bút bi đỏ;3300.0;103;Bút;Thiên Long;DA_DUYET
+PN075;16/08/2026;Văn phòng phẩm;VPP2018;Giấy note vàng 3x3;14000.0;37;Giấy;Thiên Long;DA_DUYET
+PN075;16/08/2026;Dụng cụ học tập;DCT2006;Túi đựng tài liệu A4;12500.0;27;Hộp đựng;Thiên Long;DA_DUYET
+PN075;16/08/2026;Văn phòng phẩm;VPP2001;Bút bi xanh;3500.0;133;Bút;Thiên Long;DA_DUYET
+PN079;21/04/2026;Đồ chơi;DCH2008;Bộ cờ vua;56000.0;35;6;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN079;21/04/2026;Đồ chơi;DCH2018;Bộ tô màu và vẽ;48500.0;15;4;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN079;21/04/2026;Đồ chơi;DCH2019;Máy bay đồ chơi;54500.0;17;5;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN079;21/04/2026;Đồ chơi;DCH2013;Xếp hình gỗ;59000.0;39;2;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN079;21/04/2026;Đồ chơi;DCH2012;Bộ nấu ăn mini;60500.0;11;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN079;21/04/2026;Đồ chơi;DCH2001;Búp bê;61000.0;30;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN079;21/04/2026;Đồ chơi;DCH2002;Búp bê thời trang;80000.0;27;6;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN079;21/04/2026;Đồ chơi;DCH2004;Gấu bông;71500.0;11;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN081;27/06/2026;Đồ chơi;DCH2020;Mô hình khủng long;59500.0;11;4;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN081;27/06/2026;Đồ chơi;DCH2006;Xe ô tô điều khiển từ xa;192000.0;40;6;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN081;27/06/2026;Đồ chơi;DCH2004;Gấu bông;73500.0;32;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN081;27/06/2026;Đồ chơi;DCH2003;Rubik 3x3;36500.0;13;8;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN082;01/09/2026;Tiểu thuyết;TTH2001;Rừng Na Uy;91500.0;8;Haruki Murakami;NXB Trẻ;Lãng mạn;DA_DUYET
+PN082;01/09/2026;Sách;SCH2020;Lịch sử Việt Nam bằng tranh;37500.0;32;Trần Bạch Đằng;NXB Trẻ;Lịch sử;DA_DUYET
+PN082;01/09/2026;Sách;SCH2003;Đắc nhân tâm;61500.0;21;Dale Carnegie;NXB Trẻ;Tâm lý;DA_DUYET
+PN082;01/09/2026;Truyện;TRU2018;Thần đồng đất Việt tập 2;14500.0;43;Lê Linh;NXB Trẻ;Hài hước;DA_DUYET
+PN082;01/09/2026;Tiểu thuyết;TTH2004;Bố già;101000.0;11;Mario Puzo;NXB Trẻ;Trinh thám;DA_DUYET
+PN082;01/09/2026;Sách;SCH2002;Atomic Habits;92500.0;15;James Clear;NXB Trẻ;Kỹ năng sống;DA_DUYET
+PN082;01/09/2026;Tiểu thuyết;TTH2012;Dấu bộ tứ;55500.0;14;Arthur Conan Doyle;NXB Trẻ;Trinh thám;DA_DUYET
+PN084;22/09/2026;Truyện;TRU2003;Dế Mèn phiêu lưu ký;43500.0;17;Tô Hoài;NXB Kim Đồng;Phiêu lưu;DA_DUYET
+PN084;22/09/2026;Tiểu thuyết;TTH2021;Hai vạn dặm dưới đáy biển;95500.0;20;Jules Verne;NXB Kim Đồng;Phiêu lưu;DA_DUYET
+PN084;22/09/2026;Truyện;TRU2017;Naruto tập 1;16500.0;22;Masashi Kishimoto;NXB Kim Đồng;Phiêu lưu;DA_DUYET
+PN084;22/09/2026;Truyện;TRU2013;Sọ Dừa;16500.0;31;Dân gian;NXB Kim Đồng;Cổ tích;DA_DUYET
+PN084;22/09/2026;Truyện;TRU2009;Thám tử lừng danh Conan tập 2;17500.0;56;Aoyama Gosho;NXB Kim Đồng;Trinh thám;DA_DUYET
+PN084;22/09/2026;Tiểu thuyết;TTH2016;Robinson Crusoe;80000.0;12;Daniel Defoe;NXB Kim Đồng;Phiêu lưu;DA_DUYET
+PN084;22/09/2026;Truyện;TRU2006;Doraemon tập 2;14500.0;35;Fujiko F. Fujio;NXB Kim Đồng;Hài hước;DA_DUYET
+PN085;20/08/2026;Báo tạp chí;BTC2015;Thể Thao & Văn Hóa;9100.0;32;Thể thao;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN085;20/08/2026;Báo tạp chí;BTC2013;Doanh Nhân Sài Gòn;27500.0;32;Kinh tế;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN085;20/08/2026;Báo tạp chí;BTC2011;Tia Sáng;27500.0;32;Khoa học;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN085;20/08/2026;Báo tạp chí;BTC2002;Thanh Niên;6300.0;60;Thời sự;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN085;20/08/2026;Báo tạp chí;BTC2006;Tuổi Trẻ;6000.0;33;Thời sự;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN085;20/08/2026;Báo tạp chí;BTC2007;Người Lao Động;5400.0;12;Thời sự;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN086;14/05/2026;Dụng cụ học tập;DCT2004;Thước dây;8500.0;55;Dụng cụ đo;Hồng Hà;DA_DUYET
+PN086;14/05/2026;Vở;VO2010;Vở tập viết lớp 2;6700.0;46;48;Hồng Hà;DA_DUYET
+PN086;14/05/2026;Vở;VO2013;Vở học sinh 72 trang;8600.0;29;72;Hồng Hà;DA_DUYET
+PN086;14/05/2026;Văn phòng phẩm;VPP2012;Thước kẻ 15cm;3300.0;32;Thước;Hồng Hà;DA_DUYET
+PN086;14/05/2026;Văn phòng phẩm;VPP2014;Gôm tẩy trắng lớn;6200.0;136;Gôm - tẩy;Hồng Hà;DA_DUYET
+PN086;14/05/2026;Dụng cụ học tập;DCT2010;Bảng con học sinh;23500.0;49;Bảng học tập;Hồng Hà;DA_DUYET
+PN086;14/05/2026;Văn phòng phẩm;VPP2019;Giấy A4 70gsm (ream);68500.0;33;Giấy;Hồng Hà;DA_DUYET
+PN086;14/05/2026;Văn phòng phẩm;VPP2021;Keo dán nước;6800.0;47;Keo - hồ;Hồng Hà;DA_DUYET
+PN087;06/02/2026;Đồ chơi;DCH2004;Gấu bông;74000.0;29;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN087;06/02/2026;Đồ chơi;DCH2003;Rubik 3x3;32500.0;33;8;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN087;06/02/2026;Đồ chơi;DCH2021;Xếp hình nam châm;140000.0;40;4;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN088;08/04/2026;Trang trí;TTR2010;Giá treo tường;59000.0;9;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN088;08/04/2026;Trang trí;TTR2013;Rèm cửa vải;135000.0;22;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN088;08/04/2026;Khác;SPK2010;Hộp cơm giữ nhiệt;104000.0;30;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN088;08/04/2026;Khác;SPK2014;Hộp quà giấy;15500.0;9;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN088;08/04/2026;Khác;SPK2012;Ví da mini;64500.0;31;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN088;08/04/2026;Trang trí;TTR2003;Đồng hồ treo;68500.0;19;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN088;08/04/2026;Trang trí;TTR2007;Đèn ngủ để bàn;122500.0;9;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN088;08/04/2026;Khác;SPK2015;Gương bỏ túi;19000.0;23;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN089;09/08/2026;Trang trí;TTR2011;Tượng gốm mini;75000.0;19;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN089;09/08/2026;Khác;SPK2005;Móc khóa gấu;25000.0;14;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN091;17/02/2026;Sách giáo khoa;SGK2003;Toán 10;22000.0;79;Toán;NXB Giáo Dục;DA_DUYET
+PN091;17/02/2026;Sách giáo khoa;SGK2009;Lịch sử 10;18500.0;38;Lịch sử;NXB Giáo Dục;DA_DUYET
+PN091;17/02/2026;Sách giáo khoa;SGK2018;Toán 12;26000.0;54;Toán;NXB Giáo Dục;DA_DUYET
+PN091;17/02/2026;Sách giáo khoa;SGK2008;Sinh học 10;23000.0;27;Sinh học;NXB Giáo Dục;DA_DUYET
+PN091;17/02/2026;Sách giáo khoa;SGK2007;Ngữ văn 10 tập 2;22000.0;34;Ngữ văn;NXB Giáo Dục;DA_DUYET
+PN091;17/02/2026;Sách giáo khoa;SGK2011;Toán 11;24000.0;25;Toán;NXB Giáo Dục;DA_DUYET
+PN091;17/02/2026;Sách giáo khoa;SGK2029;Khoa học tự nhiên 6;24500.0;70;Khoa học tự nhiên;NXB Giáo Dục;DA_DUYET
+PN092;31/08/2026;Sách giáo khoa;SGK2025;Lịch sử 12;22500.0;27;Lịch sử;NXB Giáo Dục;DA_DUYET
+PN092;31/08/2026;Sách giáo khoa;SGK2006;Ngữ văn 10 tập 1;23500.0;46;Ngữ văn;NXB Giáo Dục;DA_DUYET
+PN092;31/08/2026;Sách giáo khoa;SGK2012;Hóa học 11;26000.0;78;Hóa học;NXB Giáo Dục;DA_DUYET
+PN093;06/06/2026;Sách;SCH2017;Bí mật của may mắn;39500.0;11;Alex Rovira;NXB Trẻ;Kỹ năng sống;DA_DUYET
+PN093;06/06/2026;Sách;SCH2010;Lược sử thời gian;81000.0;12;Stephen Hawking;NXB Trẻ;Khoa học;DA_DUYET
+PN093;06/06/2026;Sách;SCH2013;Hiểu về trái tim;81500.0;31;Minh Niệm;NXB Trẻ;Tâm lý;DA_DUYET
+PN093;06/06/2026;Tiểu thuyết;TTH2004;Bố già;98000.0;25;Mario Puzo;NXB Trẻ;Trinh thám;DA_DUYET
+PN093;06/06/2026;Tiểu thuyết;TTH2011;Cô gái đến từ hôm qua;53000.0;13;Nguyễn Nhật Ánh;NXB Trẻ;Lãng mạn;DA_DUYET
+PN093;06/06/2026;Sách;SCH2002;Atomic Habits;102000.0;8;James Clear;NXB Trẻ;Kỹ năng sống;DA_DUYET
+PN094;04/10/2026;Vở;VO2005;Vở kẻ ngang 200 trang;23500.0;45;200;Campus;DA_DUYET
+PN094;04/10/2026;Dụng cụ học tập;DCT2011;Bộ dụng cụ hình học;29500.0;30;Dụng cụ đo;Campus;DA_DUYET
+PN094;04/10/2026;Vở;VO2002;Vở kẻ ngang 96 trang;11000.0;83;96;Campus;DA_DUYET
+PN094;04/10/2026;Vở;VO2012;Sổ lò xo A4;41000.0;72;100;Campus;DA_DUYET
+PN095;10/09/2026;Báo tạp chí;BTC2008;Sài Gòn Giải Phóng;5500.0;37;Thời sự;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN095;10/09/2026;Báo tạp chí;BTC2002;Thanh Niên;5600.0;51;Thời sự;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN095;10/09/2026;Báo tạp chí;BTC2006;Tuổi Trẻ;5800.0;33;Thời sự;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN095;10/09/2026;Báo tạp chí;BTC2014;Bóng Đá;9500.0;26;Thể thao;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN095;10/09/2026;Báo tạp chí;BTC2011;Tia Sáng;28000.0;43;Khoa học;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN095;10/09/2026;Báo tạp chí;BTC2010;Mực Tím;8800.0;35;Đời sống;Công ty Phát hành Báo chí Minh Phát;DA_DUYET
+PN096;30/08/2026;Văn phòng phẩm;VPP2003;Kẹp giấy;12500.0;123;Kẹp - ghim;Thiên Long;DA_DUYET
+PN096;30/08/2026;Dụng cụ học tập;DCT2006;Túi đựng tài liệu A4;11500.0;51;Hộp đựng;Thiên Long;DA_DUYET
+PN096;30/08/2026;Dụng cụ học tập;DCT2012;Ống đựng bút;21000.0;17;Hộp đựng;Thiên Long;DA_DUYET
+PN096;30/08/2026;Văn phòng phẩm;VPP2001;Bút bi xanh;3400.0;82;Bút;Thiên Long;DA_DUYET
+PN096;30/08/2026;Văn phòng phẩm;VPP2020;Hồ dán khô;8900.0;73;Keo - hồ;Thiên Long;DA_DUYET
+PN096;30/08/2026;Văn phòng phẩm;VPP2023;Bấm kim số 10;21000.0;74;Kẹp - ghim;Thiên Long;DA_DUYET
+PN096;30/08/2026;Văn phòng phẩm;VPP2002;Gôm tẩy;4000.0;22;Gôm - tẩy;Thiên Long;DA_DUYET
+PN096;30/08/2026;Văn phòng phẩm;VPP2026;Ruột bút chì 0.5;4700.0;141;Bút;Thiên Long;DA_DUYET
+PN098;19/06/2026;Đồ chơi;DCH2007;Bộ đất nặn;42500.0;22;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN098;19/06/2026;Đồ chơi;DCH2020;Mô hình khủng long;57000.0;34;4;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN098;19/06/2026;Đồ chơi;DCH2018;Bộ tô màu và vẽ;42500.0;19;4;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN098;19/06/2026;Đồ chơi;DCH2016;Bóng rổ mini;53500.0;31;5;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN098;19/06/2026;Đồ chơi;DCH2009;Bộ cờ tỷ phú;119500.0;34;8;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN098;19/06/2026;Đồ chơi;DCH2011;Bộ bác sĩ nhí;65000.0;22;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN098;19/06/2026;Đồ chơi;DCH2012;Bộ nấu ăn mini;68500.0;23;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN098;19/06/2026;Đồ chơi;DCH2004;Gấu bông;72000.0;7;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN099;10/06/2026;Truyện;TRU2009;Thám tử lừng danh Conan tập 2;16000.0;53;Aoyama Gosho;NXB Kim Đồng;Trinh thám;DA_DUYET
+PN099;10/06/2026;Truyện;TRU2005;Tấm Cám;17500.0;55;Dân gian;NXB Kim Đồng;Cổ tích;DA_DUYET
+PN099;10/06/2026;Truyện;TRU2017;Naruto tập 1;16500.0;18;Masashi Kishimoto;NXB Kim Đồng;Phiêu lưu;DA_DUYET
+PN099;10/06/2026;Tiểu thuyết;TTH2006;Số đỏ;48000.0;25;Vũ Trọng Phụng;NXB Kim Đồng;Hiện thực;DA_DUYET
+PN099;10/06/2026;Truyện;TRU2007;Doraemon tập 3;14500.0;30;Fujiko F. Fujio;NXB Kim Đồng;Hài hước;DA_DUYET
+PN099;10/06/2026;Truyện;TRU2011;One Piece tập 1;19500.0;26;Eiichiro Oda;NXB Kim Đồng;Phiêu lưu;DA_DUYET
+PN099;10/06/2026;Truyện;TRU2014;Cô bé Lọ Lem;20500.0;27;Charles Perrault;NXB Kim Đồng;Cổ tích;DA_DUYET
+PN099;10/06/2026;Truyện;TRU2008;Thám tử lừng danh Conan tập 1;15500.0;28;Aoyama Gosho;NXB Kim Đồng;Trinh thám;DA_DUYET
+PN100;09/10/2026;Đồ chơi;DCH2009;Bộ cờ tỷ phú;126000.0;30;8;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN100;09/10/2026;Đồ chơi;DCH2016;Bóng rổ mini;46000.0;30;5;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN100;09/10/2026;Đồ chơi;DCH2021;Xếp hình nam châm;139500.0;28;4;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN100;09/10/2026;Đồ chơi;DCH2015;Ghép hình puzzle 100 mảnh;44500.0;40;5;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN100;09/10/2026;Đồ chơi;DCH2017;Đàn organ đồ chơi;113500.0;40;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN100;09/10/2026;Đồ chơi;DCH2003;Rubik 3x3;32000.0;8;8;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN101;10/01/2026;Đồ chơi;DCH2002;Búp bê thời trang;79500.0;8;6;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN101;10/01/2026;Đồ chơi;DCH2011;Bộ bác sĩ nhí;66500.0;14;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN101;10/01/2026;Đồ chơi;DCH2005;Bộ xếp hình 500 mảnh;150000.0;19;6;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN101;10/01/2026;Đồ chơi;DCH2001;Búp bê;60000.0;33;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN101;10/01/2026;Đồ chơi;DCH2018;Bộ tô màu và vẽ;41500.0;7;4;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN101;10/01/2026;Đồ chơi;DCH2016;Bóng rổ mini;48500.0;37;5;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN101;10/01/2026;Đồ chơi;DCH2017;Đàn organ đồ chơi;109500.0;38;3;Công ty Đồ chơi Vui Việt;DA_DUYET
+PN103;04/05/2026;Sách;SCH2010;Lược sử thời gian;79000.0;24;Stephen Hawking;NXB Trẻ;Khoa học;DA_DUYET
+PN103;04/05/2026;Tiểu thuyết;TTH2005;Cánh đồng bất tận;50500.0;18;Nguyễn Ngọc Tư;NXB Trẻ;Hiện thực;DA_DUYET
+PN104;19/07/2026;Sách;SCH2015;Vũ trụ trong vỏ hạt dẻ;89000.0;10;Stephen Hawking;NXB Trẻ;Khoa học;DA_DUYET
+PN104;19/07/2026;Sách;SCH2006;Nghĩ giàu và làm giàu;79500.0;36;Napoleon Hill;NXB Trẻ;Kinh tế;DA_DUYET
+PN106;28/03/2026;Trang trí;TTR2009;Gương treo tường;95000.0;7;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN106;28/03/2026;Khác;SPK2006;Khẩu trang vải;18500.0;17;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN106;28/03/2026;Trang trí;TTR2004;Đèn led dây;43000.0;6;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN106;28/03/2026;Trang trí;TTR2008;Thảm trải sàn;158000.0;20;Công ty Quà tặng Hoa Mai;DA_DUYET
+PN106;28/03/2026;Trang trí;TTR2005;Khung ảnh gỗ;36000.0;8;Công ty Quà tặng Hoa Mai;DA_DUYET
