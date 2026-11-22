@@ -82,7 +82,7 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
     }
     //them (hàm riêng)
     public boolean them(HoaDon hd) {
-        if(hd == null || timKiem(hd.getMaHD()) != null ) return false;
+        if(hd == null || timKiem(hd.getMaHD()) != null/* ktra có tồn tại ma HD hoặc có bị trùng maHD không*/) return false;
         if(soLuong == ds.length) tangKichThuocHoaDon();
         ds[soLuong++] = hd;
         return true;
@@ -367,108 +367,110 @@ public class DanhSachHoaDon implements IQuanLy, IFileIO{
         }
     }
 
-    // Bắt buộc phải có hàm này để không bị lỗi Interface IFileIO
     @Override
     public void docFile(String duongDan) {
         docFile(duongDan,this.dskh, this.dsmh);
     }
 
-    // Hàm thực sự làm nhiệm vụ đọc file (Nạp chồng phương thức)
-    // Vẫn đọc được file cũ chỉ có 3 trường ở dòng đầu (khi đó coi là chưa thanh toán, không có nhân viên)
+    // Hàm thực sự làm nhiệm vụ đọc file
     public void docFile(String duongDan, DanhSachKhachHang dskh, DanhSachMatHang dsmh) {
         try {
-            String[] cacDong = Files.readAllLines(Path.of(duongDan), StandardCharsets.UTF_8).toArray(new String[0]);
-            for (int dong = 0; dong < cacDong.length;) {
-                String line = cacDong[dong++];
-                if (dong == 1 && line.startsWith("\uFEFF")) line = line.substring(1);
-                if (line.trim().isEmpty()) continue;
-                try {
-                    String[] info = line.split(";", -1);
-                    if (info.length < 3 || info[0].isBlank()) {
-                        throw new IllegalArgumentException("dòng đầu hóa đơn không hợp lệ");
+            // Đọc toàn bộ file vào mảng thường (tự tăng kích thước), không dùng ArrayList/List
+            String[] dong = new String[100];
+            int soDong = 0;
+            try (BufferedReader br = Files.newBufferedReader(Path.of(duongDan), StandardCharsets.UTF_8)) {
+                String s;
+                while ((s = br.readLine()) != null) {
+                    if (soDong == dong.length) {
+                        String[] moi = new String[dong.length * 2];
+                        for (int i = 0; i < soDong; i++) moi[i] = dong[i];
+                        dong = moi;
                     }
+                    dong[soDong++] = s;
+                }
+            }
+            int viTri = 0;
+            while (viTri < soDong) {
+                int dongDau = viTri + 1;
+                String header = dong[viTri++].replace("\uFEFF", "").trim();
+                if (header.isEmpty()) continue;
+                try {
+                    String[] info = header.split(";", -1);
+                    if ((info.length != 3 && info.length != 6) || info[0].isBlank() || info[2].isBlank())
+                        throw new IllegalArgumentException("Đầu hóa đơn không hợp lệ");
                     String maHD = info[0].trim();
                     LocalDate ngayLap = LocalDate.parse(info[1].trim());
-                    KhachHang kh = dskh.timkiem_khachhang(info[2]);
-
-                    // Luôn đọc hết các dòng chi tiết của hóa đơn này trước, để dù bỏ qua cũng không lệch dòng
-                    if (dong >= cacDong.length) throw new IllegalArgumentException("thiếu số dòng chi tiết");
-                    int soLuongCT = Integer.parseInt(cacDong[dong].trim());
-                    if (soLuongCT <= 0 || soLuongCT > cacDong.length - dong - 1) {
-                        throw new IllegalArgumentException("số dòng chi tiết không hợp lệ");
-                    }
-                    dong++;
+                    if (viTri >= soDong || laDauHoaDon(dong[viTri]))
+                        throw new IllegalArgumentException("Thiếu số dòng chi tiết");
+                    int soLuongCT = Integer.parseInt(dong[viTri++].trim());
+                    if (soLuongCT <= 0 || soLuongCT > 10000)
+                        throw new IllegalArgumentException("Số dòng chi tiết không hợp lệ");
                     String[] dongCT = new String[soLuongCT];
                     for (int j = 0; j < soLuongCT; j++) {
-                        dongCT[j] = cacDong[dong++];
+                        if (viTri >= soDong || laDauHoaDon(dong[viTri]))
+                            throw new IllegalArgumentException("Hóa đơn bị thiếu dòng chi tiết");
+                        dongCT[j] = dong[viTri++];
                     }
-
-                    if (kh == null) {
-                        System.out.println("Bỏ qua hóa đơn " + maHD + " do không tìm thấy dữ liệu khách hàng.");
-                        continue;
-                    }
+                    KhachHang kh = dskh.timkiem_khachhang(info[2].trim());
+                    if (kh == null) throw new IllegalArgumentException("Không tìm thấy khách hàng");
                     if (timKiem(maHD) != null) {
                         System.out.println("Bỏ qua hóa đơn " + maHD + " do bị trùng mã với hóa đơn đã có.");
                         continue;
                     }
-
-                    // Tra nhân viên thật trong danh sách nhân viên theo mã đã lưu.
-                    // Không còn trong danh sách (đã nghỉ/xóa) thì giữ lại mã và tên đã lưu để hóa đơn vẫn có người lập.
+                    if (info.length == 6 && !info[5].trim().equals("0") && !info[5].trim().equals("1"))
+                        throw new IllegalArgumentException("Trạng thái thanh toán không hợp lệ");
                     NhanVienBanHang nv = null;
-                    if (info.length > 3 && !info[3].trim().isEmpty()) {
-                        String maNV = info[3].trim();
-                        NhanVien tim = (dsnv == null) ? null : dsnv.timTheoMa(maNV);
-                        if (tim instanceof NhanVienBanHang) {
-                            nv = (NhanVienBanHang) tim;
-                        } else if (info.length > 4) {
-                            nv = new NhanVienBanHang(maNV, info[4].trim(), "", "", "", 0);
-                        }
+                    if (info.length == 6 && !info[3].isBlank()) {
+                        NhanVien tim = dsnv == null ? null : dsnv.timTheoMa(info[3].trim());
+                        nv = tim instanceof NhanVienBanHang ? (NhanVienBanHang) tim
+                                : new NhanVienBanHang(info[3].trim(), info[4].trim(), "", "", "", 0);
                     }
-
-                    boolean daThanhToan = info.length > 5 && info[5].trim().equals("1");
-
                     HoaDon hd = new HoaDon(maHD, ngayLap, kh, nv);
-                    boolean chiTietHopLe = true;
                     int hangLichSu = 0;
-                    for (int j = 0; j < soLuongCT; j++) {
-                        String[] ctData = dongCT[j].split(";");
-                        MatHang mh = dsmh.timKiem_hang(ctData[0]);
-                        int slMua = Integer.parseInt(ctData[1].trim());
-                        if (mh == null && ctData.length < 3) {
-                            chiTietHopLe = false; // Không có mặt hàng và cũng không có đơn giá để khôi phục.
-                            continue;
-                        }
-                        // Giữ đúng đơn giá lúc bán; hàng lịch sử có tồn trên kệ bằng 0 nên không thể bán tiếp.
-                        double donGia = (ctData.length > 2) ? Double.parseDouble(ctData[2].trim()) : mh.tinhGiaBan();
+                    for (String chiTiet : dongCT) {
+                        String[] ct = chiTiet.split(";", -1);
+                        if ((ct.length != 2 && ct.length != 3) || ct[0].isBlank())
+                            throw new IllegalArgumentException("Dòng hàng không hợp lệ");
+                        MatHang mh = dsmh.timKiem_hang(ct[0].trim());
+                        int slMua = Integer.parseInt(ct[1].trim());
+                        if (mh == null && ct.length != 3)
+                            throw new IllegalArgumentException("Thiếu mặt hàng và đơn giá lịch sử");
+                        double donGia = ct.length == 3 ? Double.parseDouble(ct[2].trim()) : mh.tinhGiaBan();
                         if (mh == null) {
-                            mh = new MatHangLichSu(ctData[0].trim(), donGia);
+                            mh = new MatHangLichSu(ct[0].trim(), donGia);
+                            for (int j = 0; j < hd.getSoLuongChiTiet(); j++) {
+                                MatHang daCo = hd.getChiTiet()[j].getMathang();
+                                if (daCo.getMa().equalsIgnoreCase(mh.getMa())) { mh = daCo; break; }
+                            }
                             hangLichSu++;
                         }
-                        if (!hd.themChiTiet(new ChiTietHoaDon(slMua, mh, donGia))) chiTietHopLe = false;
+                        if (!hd.themChiTiet(new ChiTietHoaDon(slMua, mh, donGia)))
+                            throw new IllegalArgumentException("Số lượng hoặc đơn giá không hợp lệ");
                     }
-
-                    if (!chiTietHopLe || hd.getSoLuongChiTiet() == 0) {
-                        System.out.println("Bỏ qua hóa đơn " + maHD + " do chi tiết không hợp lệ hoặc thiếu mặt hàng.");
-                        continue;
-                    }
-                    // Phải đánh dấu sau khi đã thêm xong chi tiết; không trừ hàng lại vì lúc thanh toán đã trừ rồi
-                    if (daThanhToan) hd.danhDauDaThanhToan();
-
-                    if (soLuong == ds.length) tangKichThuocHoaDon();
-                    ds[soLuong++] = hd;
+                    if (info.length == 6 && info[5].trim().equals("1")) hd.danhDauDaThanhToan();
+                    them(hd);
                     if (hangLichSu > 0)
                         System.out.println("Hóa đơn " + maHD + " giữ " + hangLichSu
                                 + " dòng hàng lịch sử; đơn chưa thanh toán cần có hàng trên kệ trước khi thu tiền.");
-                } catch (RuntimeException e) {
-                    System.out.println("Bỏ qua hóa đơn không hợp lệ: " + e.getMessage());
+                } catch (IllegalArgumentException | java.time.DateTimeException ex) {
+                    System.out.println("Bỏ qua hóa đơn dòng " + dongDau + ": " + ex.getMessage());
                 }
             }
             System.out.println("Đã tải dữ liệu từ file " + duongDan);
         } catch (NoSuchFileException e) {
             System.out.println("Chưa tìm thấy file " + duongDan);
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("Lỗi khi đọc file: " + e.getMessage());
         }
+    }
+
+    private static boolean laDauHoaDon(String dong) {
+        String[] cot = dong.replace("\uFEFF", "").split(";", -1);
+        if (cot.length != 3 && cot.length != 6) return false;
+        try {
+            LocalDate.parse(cot[1].trim());
+            return !cot[0].isBlank() && !cot[2].isBlank();
+        } catch (java.time.DateTimeException ex) { return false; }
     }
 
 }
